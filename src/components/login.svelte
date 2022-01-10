@@ -37,7 +37,6 @@
 
 <div class="w-200px mx-auto mt-12 p-2 border border-bleuClair rounded-md">
     <img src="/img/logos/logoACLrond.png" class="mx-auto my-2 h-32 w-32" alt="logo ACL rond"  on:click={test}>
-<Counter />
     <div class={"mb-2 text-justify text-sm " + erreur}>{message}</div>
     <input 
         class="text-sm mb-2 bg-gray-900 text-gray-400 focus:outline-none border border-bleuClair rounded py-1 px-2 block w-full appearance-none leading-normal"
