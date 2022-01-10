@@ -1,0 +1,20 @@
+---
+// src/layouts/BaseLayout.astro
+const {title} = Astro.props;
+---
+<html>
+  <head>
+    <title>Example Layout: {title}</title>
+    <link rel="stylesheet" href={Astro.resolve('../styles/global.css')}>
+  </head>
+  <body>
+    <!-- Adds a navigation bar to every page. -->
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Posts</a>
+      <a href="#">Contact</a>
+    </nav>
+    <!-- slot: your page content will be injected here. -->
+    <slot />
+  </body>
+</html>

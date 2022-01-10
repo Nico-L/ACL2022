@@ -1,0 +1,17 @@
+---
+// src/pages/index.astro
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+// Component Imports
+import Counter from '../../components/counter.svelte';
+
+import { NhostClient } from '@nhost/nhost-js'
+})()
+---
+<BaseLayout title="Homepage">
+  <h1>Hello, world!</h1>
+  <p>This is my page content. It will be nested inside a layout.</p>
+  <Counter client:visible>
+				<h1>Hello, Svelte!</h1>
+			</Counter>
+</BaseLayout>

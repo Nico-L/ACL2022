@@ -1,0 +1,32 @@
+{
+  "name": "acl2022",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nico-L/ACL2022.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nico-L/ACL2022/issues"
+  },
+  "homepage": "https://github.com/Nico-L/ACL2022#readme",
+  "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "astro": "^0.22.9",
+    "svelte-fa": "^2.4.0"
+  },
+  "devDependencies": {
+    "@astrojs/renderer-svelte": "^0.3.1",
+    "@nhost/nhost-js": "^0.3.4",
+    "tailwindcss": "^3.0.12"
+  }
+}
