@@ -10,7 +10,6 @@
     import Fa from 'svelte-fa'
     import { faSignInAlt } from '@fortawesome/free-solid-svg-icons'
 
-    var counter = 0
     var email = ""
     var mdp = ""
     var occupe = false
@@ -19,7 +18,7 @@
     var message = "Merci de vous identifier."
 
     function login() {
-        console.log('uh ?')
+        console.log('uh ?', mdp)
         occupe=true
         nhost.auth.signUp({
             email: email,
@@ -29,15 +28,11 @@
                 occupe=false
             })
     }
-
-    function test() {
-        counter += 1
-    }
 </script>
 
 <div class="w-200px mx-auto mt-12 p-2 border border-bleuClair rounded-md">
-    <img src="/img/logos/logoACLrond.png" class="mx-auto my-2 h-32 w-32" alt="logo ACL rond"  on:click={test}>
-    <div class={"mb-2 text-justify text-sm " + erreur}>{message}</div>
+    <img src="/img/logos/logoACLrond.png" class="mx-auto my-2 h-32 w-32" alt="logo ACL rond" >
+    <div class={"mb-2 text-justify text-sm " + erreur}>{mdp}</div>
     <input 
         class="text-sm mb-2 bg-gray-900 text-gray-400 focus:outline-none border border-bleuClair rounded py-1 px-2 block w-full appearance-none leading-normal"
         type="text"
@@ -56,10 +51,9 @@
         <Bouton
             occupe={occupe}
             succes = {succes}
-            border="border-1"
             largeur="w-full"
             couleur="text-bleuClair border-bleuClair"
-            on:actionBouton={() => {message = "caca"}}>
+            on:actionBouton={() => {login()}}>
             <div class="mx-auto flex flex-row justify-center">
                 <div class="px-1 self-center">S'identifier</div>
                 <div class="px-1 self-center"><Fa icon={faSignInAlt} size="lg" class="mx-auto" /></div>
