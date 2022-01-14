@@ -1,5 +1,4 @@
 <script>
-    import Counter from './counter.svelte'
     import { NhostClient } from '@nhost/nhost-js'
 
     const nhost = new NhostClient({
@@ -10,6 +9,8 @@
     import Fa from 'svelte-fa'
     import { faSignInAlt } from '@fortawesome/free-solid-svg-icons'
 
+    var urlRetour = window.location.origin + "/admin/" + window.location.search.substring(1)
+
     var email = ""
     var mdp = ""
     var occupe = false
@@ -18,21 +19,22 @@
     var message = "Merci de vous identifier."
 
     function login() {
-        console.log('uh ?', mdp)
         occupe=true
-        nhost.auth.signUp({
+        nhost.auth.signIn({
             email: email,
             password: mdp
             }).then((retour)=> {
                 console.log('retour auth', retour)
                 occupe=false
+                localStorage.setItem('JWT', retour.session.accessToken);
+                window.location.replace(urlRetour);
             })
     }
 </script>
 
 <div class="w-200px mx-auto mt-12 p-2 border border-bleuClair rounded-md">
     <img src="/img/logos/logoACLrond.png" class="mx-auto my-2 h-32 w-32" alt="logo ACL rond" >
-    <div class={"mb-2 text-justify text-sm " + erreur}>{mdp}</div>
+    <div class={"mb-2 text-justify text-sm " + erreur}>{message}</div>
     <input 
         class="text-sm mb-2 bg-gray-900 text-gray-400 focus:outline-none border border-bleuClair rounded py-1 px-2 block w-full appearance-none leading-normal"
         type="text"

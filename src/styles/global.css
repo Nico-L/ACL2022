@@ -2,3 +2,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*****/
+/** global **/
+/******/
+
+h1 {
+    @apply text-4xl mb-2;
+  }
+  
+  div {
+    @apply ml-2;
+  }
+  
+  /******/
+  /** card prof **/
+  /******/
+  
+  .listeCartes {
+    @apply flex;
+  }
+  
+  .carteProf {
+    @apply border w-48 rounded m-0 p-2;
+  }

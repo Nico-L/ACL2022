@@ -7,5 +7,12 @@ export default /** @type {import('astro').AstroUserConfig} */ ({
     renderers: [
       '@astrojs/renderer-svelte'
     ],
-    vite: {},
+    vite: {
+      server: {
+        hmr: {
+          host: '24678-rose-deer-7ksxq7g7.ws-eu25.gitpod.io',
+          clientPort: 443
+        }
+      }
+    },
   });
