@@ -7,22 +7,39 @@
 /** global **/
 /******/
 
+* {
+  @apply m-0 p-0;
+}
+
 h1 {
     @apply text-4xl mb-2;
   }
   
-  div {
-    @apply ml-2;
-  }
+h2 {
+  @apply text-2xl mb-1;
+}
   
   /******/
   /** card prof **/
   /******/
   
   .listeCartes {
-    @apply flex;
+    @apply flex flex-wrap p-0 m-0 w-full;
   }
   
   .carteProf {
-    @apply border w-48 rounded m-0 p-2;
+    @apply border w-full min-w-full sm:max-w-fit sm:min-w-max rounded-lg m-0 mb-3 sm:mx-4 p-2;
+    @apply flex flex-wrap sm:flex-col;
+  }
+
+  .photo {
+    @apply w-32 h-32 min-w-32 rounded bg-gray-800 mx-auto p-0 m-0 mb-2 mt-1;
+    @apply text-gray-700 flex items-center justify-center;
+  }
+
+  /*******/
+  /** formulaire **/
+  /******/
+.label {
+    @apply font-semibold mt-2;
   }
