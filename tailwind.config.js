@@ -25,6 +25,7 @@ module.exports = {
     colors: {
       "bleuClair": "#5db7c5",
       "rougeClair": "#db222a",
+      "jauneClair": "#f7db44",
       gray: {
         100: "#f7fafc",
         200: "#edf2f7",
