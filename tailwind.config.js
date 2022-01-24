@@ -6,6 +6,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      borderWidth: {
+        '6': '6px',
+        '10': '10px',
+      },
       minWidth: {
         '200px': '200px',
         '32': '8rem'
@@ -20,6 +24,7 @@ module.exports = {
     },
     colors: {
       "bleuClair": "#5db7c5",
+      "rougeClair": "#db222a",
       gray: {
         100: "#f7fafc",
         200: "#edf2f7",

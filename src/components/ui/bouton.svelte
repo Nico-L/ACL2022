@@ -10,40 +10,32 @@
         component.dispatchEvent && component.dispatchEvent(new CustomEvent(name, { detail }))
     }
     const actionBouton = () => {
-        document.getElementById('leBouton').blur()
+        document.getElementById('leBouton'+couleur).blur()
         dispatch("actionBouton")
         }
     
     export let occupe = false;
     export let succes = false;
-    export let couleur = "text-bleuClair border-bleuClair"
-    export let couleurSVG = "text-bleuClair bg-bleuClair"
+    export let couleur = "rougeClair"
     export let largeur = "w-32"
     export let noBorder = false;
     export let disabled = false;
+
+    var lesCouleurs = []
+    lesCouleurs["rougeClair"] = {bouton: "text-rougeClair border-rougeClair", spinner: "border-t-rougeClair"}
+    lesCouleurs["bleuClair"] = {bouton: "text-bleuClair border-bleuClair", spinner: "border-t-bleuClair"}
+    
     
     $: border = occupe || disabled || succes ?"cursor-default":noBorder?"cursor-pointer":"border-2 cursor-pointer"
-    $: classBouton = "h-10 px-1 my-auto rounded text-base font-medium focus:outline-none " + couleur + " " + border + " " + largeur
-    const classSVG = "fill-current stroke-current h-8 w-8 mx-auto " + couleurSVG
-    
+    $: classBouton = "h-10 px-1 my-auto rounded text-base font-medium focus:outline-none " + border + lesCouleurs[couleur].bouton + " " + largeur
+
     </script>
     
-    <button on:click={() => {if (!occupe && !disabled) {actionBouton()}}} class={classBouton} id="leBouton">
+    <button on:click={() => {if (!occupe && !disabled) {actionBouton()}}} class={classBouton} id={"leBouton"+couleur}>
         {#if occupe}
-            <svg xmlns="http://www.w3.org/2000/svg" class={classSVG} viewBox="0 0 50 50">
-                <g fill="none" fill-rule="evenodd" stroke-width="2">
-                    <circle cx="22" cy="22" r="1">
-                        <animate attributeName="r" begin="0s" dur="1.8s" values="1; 20" calcMode="spline" keyTimes="0; 1" keySplines="0.165, 0.84, 0.44, 1" repeatCount="indefinite"/>
-                        <animate attributeName="stroke-opacity" begin="0s" dur="1.8s" values="1; 0" calcMode="spline" keyTimes="0; 1" keySplines="0.3, 0.61, 0.355, 1" repeatCount="indefinite"/>
-                    </circle>
-                    <circle cx="22" cy="22" r="1">
-                        <animate attributeName="r" begin="-0.9s" dur="1.8s" values="1; 20" calcMode="spline" keyTimes="0; 1" keySplines="0.165, 0.84, 0.44, 1" repeatCount="indefinite"/>
-                        <animate attributeName="stroke-opacity" begin="-0.9s" dur="1.8s" values="1; 0" calcMode="spline" keyTimes="0; 1" keySplines="0.3, 0.61, 0.355, 1" repeatCount="indefinite"/>
-                    </circle>
-                </g>
-            </svg>
+            <div class={"loader ease-linear rounded-full border-4 border-t-4 border-gray-700 h-8 w-8 mx-auto " + lesCouleurs[couleur].spinner}></div>
         {:else if succes}
-            <div class={couleur}>
+            <div class={lesCouleurs[couleur].bouton}>
                 <Fa icon={faCheck} size="2x" class="mx-auto"/>
             </div>
         {:else}

@@ -11,6 +11,8 @@
   @apply m-0 p-0;
 }
 
+*[contenteditable="true"]{display: inline-block;}
+
 h1 {
     @apply text-4xl mb-2;
   }
@@ -164,3 +166,80 @@ h2 {
   .close:active {
     outline: none;
   }
+
+  /******/
+  /*** spinner ***/
+  /*******/
+  .loader {
+    -webkit-animation: spinner 1.5s linear infinite;
+    animation: spinner 1.5s linear infinite;
+  }
+
+  @-webkit-keyframes spinner {
+    0% {
+      -webkit-transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+
+  @keyframes spinner {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+
+  /*****/
+  /** burger **/
+  /****/
+  #nav-Checkbox:checked ~ ul.nav-Menu li,
+#nav-Checkbox:checked ~ label#nav-Toggle #svg-close {
+  @apply block;
+}
+#nav-Checkbox:checked ~ label#nav-Toggle #svg-menu {
+  @apply hidden;
+}
+#nav-Checkbox:checked ~ ul.nav-Menu {
+  @apply pb-4;
+}
+
+/* 
+tranformation icon menu sur mobile
+*/
+
+#nav-icon {
+  @apply w-6 p-0 m-0;
+}
+
+#nav-icon:after,
+#nav-icon:before,
+#nav-icon div {
+  @apply bg-gray-500;
+  border-radius: 2px;
+  content: "";
+  display: block;
+  height: 5px;
+  margin: 5px 0;
+  transition: all 0.1s ease-out;
+}
+
+#menu-toggle:checked ~ #menu {
+  @apply scale-100;
+}
+
+#menu-toggle:checked + label > #nav-icon::before {
+  transform: translateY(10px) rotate(135deg);
+}
+
+#menu-toggle:checked + label > #nav-icon:after {
+  transform: translateY(-10px) rotate(-135deg);
+}
+
+#menu-toggle:checked + label > #nav-icon > div {
+  transform: scale(0);
+}

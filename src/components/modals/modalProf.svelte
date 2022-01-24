@@ -1,6 +1,6 @@
 <script>
     import { getContext } from 'svelte';
-    import EditProf from './formProf.svelte';
+    import EditProf from './../forms/formProf.svelte';
 
     export let prof = {}
     const { open } = getContext('simple-modal');
@@ -11,4 +11,4 @@
   </script>
   
 
-<button on:click={showEdition}><Fa icon={faUserEdit} size="lg" /></button>
+<button on:click={showEdition} class="text-bleuClair"><Fa icon={faUserEdit} size="lg" /></button>

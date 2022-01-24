@@ -9,7 +9,7 @@
     import Fa from 'svelte-fa'
     import { faSignInAlt } from '@fortawesome/free-solid-svg-icons'
 
-    var urlRetour = window.location.origin + "/admin/" + window.location.search.substring(1)
+    var urlRetour = window.location.origin + window.location.search.substring(1)
 
     var email = ""
     var mdp = ""
@@ -54,8 +54,8 @@
             occupe={occupe}
             succes = {succes}
             largeur="w-full"
-            couleur="text-bleuClair border-bleuClair"
-            on:actionBouton={() => {login()}}>
+            couleur="bleuClair"
+            on:actionBouton={login}>
             <div class="mx-auto flex flex-row justify-center">
                 <div class="px-1 self-center">S'identifier</div>
                 <div class="px-1 self-center"><Fa icon={faSignInAlt} size="lg" class="mx-auto" /></div>

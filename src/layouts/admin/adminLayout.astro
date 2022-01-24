@@ -1,0 +1,24 @@
+---
+// src/layouts/BaseLayout.astro
+import Nav from './nav.astro'
+const {title} = Astro.props;
+---
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <link rel="stylesheet" href={Astro.resolve('../../styles/global.css')}>
+  </head>
+  <body class="w-full max-w-1024px bg-gray-900 text-gray-400 p-4 sm:flex sm:flex-row gap-4">
+      <div class="flew flex-col gap-4 justify-start items-center sm:w-200px border-0 rounded-lg border-bleuClair sm:border-2">
+        <img src="/img/logos/logoACLrond.png" class="mx-auto my-2 h-32 w-32 hidden sm:block relative" alt="logo ACL rond" >
+        <div class="w-full text-center font-bold text-lg hidden sm:block sm:mt-4">Navigation</div>
+        <Nav />
+      </div>
+      <div class="m-0 p-0">
+        <slot />
+      </div>
+
+  </body>
+</html>
