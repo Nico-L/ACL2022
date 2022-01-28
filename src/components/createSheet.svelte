@@ -14,4 +14,4 @@
     }
 </script>
 
-<Bouton on:action={createSheet}>Créer Sheet</Bouton>
+<Bouton on:actionBouton={createSheet}>Créer Sheet</Bouton>
