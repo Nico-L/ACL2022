@@ -2,3 +2,6 @@ ports:
   - port: 3000
     onOpen: open-browser
     visibility: public
+tasks:
+  - name: netlifyCLI
+    command: npm install -g netlify-cli
