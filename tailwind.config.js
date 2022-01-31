@@ -16,6 +16,7 @@ module.exports = {
       },
       maxWidth:  {
         '200px': '200px',
+        '380px': '380px',
         '1024px': '1024px'
       },
       spacing: {
@@ -24,7 +25,7 @@ module.exports = {
     },
     colors: {
       "bleuClair": "#5DB7C5",
-      "rougeClair": "#AB2728",
+      "rougeClair": "#DE5A5B",
       "jauneClair": "#f8c311",
       "vertClair": "#87c618",
       rouge: {

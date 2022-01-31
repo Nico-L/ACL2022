@@ -9,8 +9,9 @@ export default /** @type {import('astro').AstroUserConfig} */ ({
     ],
     vite: {
       server: {
+        host: true,
         hmr: {
-          host: '24678-rose-deer-7ksxq7g7.ws-eu28.gitpod.io',
+          host: '24678-rose-deer-7ksxq7g7.ws-eu29.gitpod.io',
           clientPort: 443
         }
       }

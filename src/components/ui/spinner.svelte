@@ -13,6 +13,7 @@
     lesCouleurs['gray-900'] = {texte: "text-gray-900", spinner: "border-t-gray-900"}
     lesCouleurs['rougeClair'] = {texte: "text-rougeClair", spinner: "border-t-rougeClair"}
     lesCouleurs['bleuClair'] = {texte: "text-bleuClair", spinner: "border-t-bleuClair"}
+    lesCouleurs['vertClair'] = {texte: "text-vertClair", spinner: "border-t-vertClair"}
 </script>
 
 <div class={"flex items-center justify-start p-0 m-0 " + tailles[taille].espace}>

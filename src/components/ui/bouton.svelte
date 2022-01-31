@@ -22,11 +22,11 @@
     export let disabled = false;
 
     var lesCouleurs = []
-    lesCouleurs["rougeClair"] = {bouton: "text-rougeClair border-rougeClair", spinner: "border-t-rougeClair"}
-    lesCouleurs["bleuClair"] = {bouton: "text-bleuClair border-bleuClair", spinner: "border-t-bleuClair"}
+    lesCouleurs["rougeClair"] = {bouton: "text-rougeClair border-rougeClair", spinner: "border-t-rougeClair", text: "text-rougeClair"}
+    lesCouleurs["bleuClair"] = {bouton: "text-bleuClair border-bleuClair", spinner: "border-t-bleuClair", text: "text-bleuClair"}
     
     
-    $: border = occupe || disabled || succes ?"cursor-default":noBorder?"cursor-pointer":"border-2 cursor-pointer"
+    $: border = occupe || disabled || succes ?"cursor-default":noBorder?"cursor-pointer":"border-2 cursor-pointer "
     $: classBouton = "h-10 px-1 my-auto rounded text-base font-medium focus:outline-none " + border + lesCouleurs[couleur].bouton + " " + largeur
 
     </script>
