@@ -20,6 +20,7 @@
     export let largeur = "w-32"
     export let noBorder = false;
     export let disabled = false;
+    export let hover = "";
 
     var lesCouleurs = []
     lesCouleurs["rougeClair"] = {bouton: "text-rougeClair border-rougeClair", spinner: "border-t-rougeClair", text: "text-rougeClair"}
@@ -27,7 +28,7 @@
     
     
     $: border = occupe || disabled || succes ?"cursor-default":noBorder?"cursor-pointer":"border-2 cursor-pointer "
-    $: classBouton = "h-10 px-1 my-auto rounded text-base font-medium focus:outline-none " + border + lesCouleurs[couleur].bouton + " " + largeur
+    $: classBouton = "h-10 px-1 my-auto rounded text-base font-medium focus:outline-none " + border + lesCouleurs[couleur].bouton + " " + largeur + " hover:" + hover
 
     </script>
     

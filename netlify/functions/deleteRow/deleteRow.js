@@ -3,8 +3,8 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 const handler = async (event) => {
-  const sheetId = process.env.SHEET_GESTION_ID
-  console.log('sheetId', sheetId)
+  const index = JSON.parse(event.queryStringParameters.index) || []
+  const sheetId =  event.queryStringParameters.sheetId || process.env.SHEET_GESTION_ID
   try {
     const doc = new GoogleSpreadsheet(sheetId);
     await doc.useServiceAccountAuth({
@@ -13,18 +13,11 @@ const handler = async (event) => {
     })
     await doc.loadInfo(); // loads sheets
     const ongletListeDossiers = doc.sheetsByTitle['dossiers']
-    var dossiers = []
-    if (ongletListeDossiers !== undefined) {
-      const rows = await ongletListeDossiers.getRows()
-      rows.forEach((row)=> {
-        dossiers.push({nom: row.nom, id: row.id, type: row.type, parent: row.parent, usage: row.usage})
-      })
-    }
-    
-    
+    const rows = await ongletListeDossiers.getRows()
+    await rows[index].delete()
     return {
       statusCode: 200,
-      body: JSON.stringify({ dossiers: dossiers}),
+      body: JSON.stringify({ message: "updateOK"}),
       // // more keys you can return:
       // headers: { "headerName": "headerValue", ... },
       // isBase64Encoded: true,

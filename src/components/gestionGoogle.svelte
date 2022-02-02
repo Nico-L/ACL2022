@@ -5,14 +5,14 @@
     import Spinner from './ui/spinner.svelte'
     import Editable from './ui/editable.svelte'
     import Fa from 'svelte-fa'
-    import { faFolderPlus, faCheck } from '@fortawesome/free-solid-svg-icons'
+    import { faFolderPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
     import { faCheckSquare, faSquare} from '@fortawesome/free-regular-svg-icons'
 
     var sheetGestionIdCall = {isDefined: false}
     var updating = false
     var loadingDossiers = false
-    var nomDossier = ""
     var dossiers = []
+    var nouveauDossier = {nom: "", inscriptions: false, professeurs: false, sections: false}
 
     onMount(async () => {
         sheetGestionIdCall = await functionsCall('creationSheetGestion')
@@ -22,7 +22,14 @@
         getListe()
     })
 
-    async function saveDossier() {}
+    async function saveDossier() {
+        loadingDossiers = true
+        functionsCall('addRow', {row: JSON.stringify(nouveauDossier)})
+        dossiers.push(nouveauDossier)
+        dossiers=dossiers
+        nouveauDossier = {nom: "", inscriptions: false, professeurs: false, sections: false}
+        loadingDossiers = false
+    }
 
     async function getListe() {
         loadingDossiers = true
@@ -42,10 +49,19 @@
                 dossier[type] = i === index
             })
         } else {
-            dossiers[index][type] = value
+            if (index >= 0) {dossiers[index][type] = value}
         }
+        nouveauDossier[type] = value && index < 0
         dossiers = dossiers
         update()
+    }
+
+    async function deleteItem(index) {
+        updating = true
+        functionsCall('deleteRow', {index: index})
+        dossiers.splice(index, 1)
+        dossiers=dossiers
+        updating = false
     }
 </script>
 
@@ -64,53 +80,85 @@
     {:else}
         <div class="flex flex-wrap justify-center gap-2 w-full my-2 p-1">
             {#each dossiers as dossier, index}
-                <div class="bg-gray-800 rounded-lg w-full sm:max-w-380px p-3">
+                <div class="bg-gray-800 rounded-lg w-full sm:max-w-380px p-3 relative">
+                    <div 
+                    on:click={() => deleteItem(index)} 
+                    class="hover:bg-rouge-900 cursor-pointer absolute top-1 right-1 h-6 w-6 rounded-full border-2 flex justify-center items-center text-rougeClair border-rougeClair p-0 m-0">
+                        <div class="p-0 m-0"><Fa icon={faTimes}></Fa></div>
+                    </div>
                     <div class="font-semibold">Dossier :</div>
                     <div class="flex gap-2">
                         <Editable bind:leHTML={dossier.nom} classes="rounded px-2 py-1 ml-2" on:update={(event) => update(event, index, "nom", dossier.nom)}/>
-                        <!-- {#if ('updating' in dossier) && dossier.updating}
-                            <Spinner taille="petit" couleur="bleuClair" caption={false}></Spinner>
-                        {:else}
-                            <div class="flex justify-center text-bleuClair h-8 w-8">
-                                <Fa icon={faCheck} size="2x" />
-                            </div>
-                        {/if} -->
                     </div>              
                     <div class="font-semibold mt-2">Usage :</div>
                     <div class="flex justify-around gap-2">
-                        <div class="flex gap-2 items-center text-bleuClair">
-                            <div on:click={()=>{updateUsage('inscriptions', index, !dossier.inscriptions)}}>
-                                {#if dossier.inscriptions}
-                                    <Fa icon={faCheckSquare}></Fa>
-                                {:else}
-                                    <Fa icon={faSquare}></Fa>
-                                {/if}
-                            </div>
+                        <div class="cursor-pointer flex justify-start items-center gap-1 sm:gap-2 text-bleuClair" on:click={()=>{updateUsage('inscriptions', index, !dossier.inscriptions)}}>
+                            {#if dossier.inscriptions}
+                                <Fa icon={faCheckSquare}></Fa>
+                            {:else}
+                                <Fa icon={faSquare}></Fa>
+                            {/if}
                             <div>Inscriptions</div>
                         </div>
-                        <div class="flex gap-2 items-center text-vertClair">
-                            <div on:click={()=>{updateUsage('professeurs', index, !dossier.professeurs)}}>
-                                {#if dossier.professeurs} 
-                                    <Fa icon={faCheckSquare}></Fa>
-                                {:else}
-                                    <Fa icon={faSquare}></Fa>
-                                {/if}
-                            </div>
+                        <div class="cursor-pointer flex justify-start items-center gap-1 sm:gap-2 text-vertClair" on:click={()=>{updateUsage('professeurs', index, !dossier.professeurs)}}>
+                            {#if dossier.professeurs} 
+                                <Fa icon={faCheckSquare}></Fa>
+                            {:else}
+                                <Fa icon={faSquare}></Fa>
+                            {/if}
                             <div>Professeurs</div>
                         </div>
-                        <div class="flex gap-2 items-center text-jauneClair">
-                            <div on:click={()=>{updateUsage('sections', index, !dossier.sections)}}>
-                                {#if dossier.sections} 
-                                    <Fa icon={faCheckSquare}></Fa>
-                                {:else}
-                                    <Fa icon={faSquare}></Fa>
-                                {/if}
-                            </div>
+                        <div class="cursor-pointer flex justify-start items-center gap-1 sm:gap-2 text-jauneClair" on:click={()=>{updateUsage('sections', index, !dossier.sections)}}>
+                            {#if dossier.sections} 
+                                <Fa icon={faCheckSquare}></Fa>
+                            {:else}
+                                <Fa icon={faSquare}></Fa>
+                            {/if}
                             <div>Sections</div>
                         </div>
                     </div>
                 </div>
             {/each}
+            <div class="bg-gray-800 rounded-lg w-full sm:max-w-380px p-3">
+                <div class="font-semibold">Ajouter un nouveau dossier :</div>
+                <div class="flex gap-2">
+                    <Editable bind:leHTML={nouveauDossier.nom} on:focus={()=>{console.log('bob ?')}} classes="rounded px-2 py-1 ml-2" />
+                </div>              
+                <div class="font-semibold mt-2">Usage :</div>
+                <div class="flex justify-around gap-2">
+                    <div class="cursor-pointer flex justify-start items-center gap-1 sm:gap-2  text-bleuClair" on:click={()=>{updateUsage('inscriptions', -1, !nouveauDossier.inscriptions)}}>
+                        {#if nouveauDossier.inscriptions}
+                            <Fa icon={faCheckSquare}></Fa>
+                        {:else}
+                            <Fa icon={faSquare}></Fa>
+                        {/if}
+                        <div>Inscriptions</div>
+                    </div>
+                    <div class="cursor-pointer flex justify-start items-center gap-1 sm:gap-2 text-vertClair" on:click={()=>{updateUsage('professeurs', -1, !nouveauDossier.professeurs)}}>
+                        {#if nouveauDossier.professeurs} 
+                            <Fa icon={faCheckSquare}></Fa>
+                        {:else}
+                            <Fa icon={faSquare}></Fa>
+                        {/if}
+                        <div>Professeurs</div>
+                    </div>
+                    <div class="cursor-pointer flex justify-start items-center gap-1 sm:gap-2 text-jauneClair" on:click={()=>{updateUsage('sections', -1, !nouveauDossier.sections)}}>
+                        {#if nouveauDossier.sections} 
+                            <Fa icon={faCheckSquare}></Fa>
+                        {:else}
+                            <Fa icon={faSquare}></Fa>
+                        {/if}
+                        <div>Sections</div>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-2">
+                    <Bouton couleur="bleuClair" on:actionBouton={saveDossier} largeur="w-12" hover="bg-bleu-900">
+                        <div class="flex justify-center">
+                            <Fa icon={faFolderPlus} size="lg"></Fa>
+                        </div>
+                    </Bouton>
+                </div>
+            </div>
         </div>
     {/if}
 {:else}

@@ -11,25 +11,30 @@
     export let leHTML = ""
     export let classes = ""
 
+
     function handleKeydown(e) {
         if (e.keyCode === 13) {
             e.preventDefault()
             document.activeElement.blur()
-            //updateSection(section,type)
         }
     }
 
     const update = () => {
         dispatch("update")
     }
+    
+    const focus = () => {
+        dispatch("focus")
+    }
 </script>
 
 <div
     contenteditable="true" 
-    bind:innerHTML={leHTML} 
+    bind:textContent={leHTML} 
     on:blur={update}
+    on:focus={focus}
     on:keydown={handleKeydown}
-    class={"focus:outline-none w-full bg-gray-900 "+classes}
+    class={"focus:outline-none w-full " + classes}
     >
     {leHTML}
 </div>
