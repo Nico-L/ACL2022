@@ -1,14 +1,18 @@
-<input class="hidden" type="checkbox" id="menu-toggle" />
-<label for="menu-toggle" class="sm:hidden mx-auto pointer-cursor inline-block absolute right-2 bottom-2 h-12 w-12 m-0 p-0 bg-gray-800 rounded-full border-bleuClair border-2 flex justify-center items-center">
-    <div class="nav-icon" id="nav-icon">
-        <div></div>
-    </div>
-</label>
+    <div class="flew flex-col gap-4 justify-start items-center sm:w-200px border-0 rounded-lg border-bleuClair sm:border-2">
+        <img src="/img/logos/logoACLrond.png" class="mx-auto my-2 h-32 w-32 hidden sm:block relative" alt="logo ACL rond" >
+        <div class="w-full text-center font-bold text-lg hidden sm:block sm:mt-4">Navigation</div>
+        <input class="hidden" type="checkbox" id="menu-toggle" />
+        <label for="menu-toggle" class="sm:hidden mx-auto pointer-cursor inline-block fixed right-2 bottom-2 h-12 w-12 m-0 p-0 bg-gray-800 rounded-full border-bleuClair border-2 flex justify-center items-center">
+            <div class="nav-icon" id="nav-icon">
+                <div></div>
+            </div>
+        </label>
 
-<nav class="absolute sm:relative right-2 sm:right-0 bottom-16 sm:bottom-0 shadow shadow-bleuClair/40 sm:shadow-none border-2 border-bleuClair sm:border-0 sm:scale-100 sm:w-full bg-gray-800 sm:bg-gray-900 rounded p-3 mb-2 scale-0 transition-all duration-150 origin-bottom ease-out" id="menu">
-    <ul class="text-lg font-semibold">
-        <li><a href="/admin/professeurs">Professeurs</a></li>
-        <li><a href="/admin/sections">Sections</a></li>
-        <li><a href="/admin/gestion">Gestion drive</a></li>
-    </ul>
-</nav>
+        <nav class="fixed sm:relative right-2 sm:right-0 bottom-16 sm:bottom-0 shadow shadow-bleuClair/40 sm:shadow-none border-2 border-bleuClair sm:border-0 sm:scale-100 sm:w-full bg-gray-800 sm:bg-gray-900 rounded p-3 mb-2 scale-0 transition-all duration-150 origin-bottom ease-out" id="menu">
+            <ul class="text-lg font-semibold">
+                <li><a href="/admin/professeurs">Professeurs</a></li>
+                <li><a href="/admin/sections">Sections</a></li>
+                <li><a href="/admin/gestion">Gestion drive</a></li>
+            </ul>
+        </nav>
+    </div>

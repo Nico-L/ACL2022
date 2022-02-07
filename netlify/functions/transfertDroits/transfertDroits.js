@@ -3,9 +3,9 @@ const { google } = require('googleapis');
 
 const handler = async (event) => {
   try {
-    const id = event.queryStringParameters.id || ''
-    const role = event.queryStringParameters.role || 'owner'
-    const email = event.queryStringParameters.email || 'luchier@gmail.com'
+    var id = event.queryStringParameters.id || ''
+    var role = event.queryStringParameters.role || 'owner'
+    var email = event.queryStringParameters.email || 'luchier@gmail.com'
     const jwtClient = new google.auth.JWT(
       process.env.EMAIL_SERVICE_GOOGLE,
       null,
@@ -14,7 +14,7 @@ const handler = async (event) => {
       null
     );
     drive = google.drive({ version: "v3", auth: jwtClient });
-    const changeDroits = await drive.permissions.create({
+    const changementDroits = await drive.permissions.create({
       resource: {
         type: "user",
         emailAddress: email,
@@ -23,16 +23,10 @@ const handler = async (event) => {
       transferOwnership: role === 'owner',
       fileId: id,
       fields: "id",
-    }, function (err, file)  {
-      if (err) {
-        console.log('err', err)
-      } else {
-        console.log('retour', file)
-      }
     })
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: "changement OK" }),
+      body: JSON.stringify(changementDroits),
       // // more keys you can return:
       // headers: { "headerName": "headerValue", ... },
       // isBase64Encoded: true,

@@ -4,7 +4,9 @@
  * @author Ross Turner (https://github.com/rossturner)
  */
 
-import exifr from 'exifr'
+//import exifr from 'exifr'
+
+import getExif from 'get-exif'
 
  export default function ImageResizer (files, config) {
     this.setConfig(config);
@@ -59,7 +61,7 @@ ImageResizer.prototype.handleFileSelection = function(file, completionCallback) 
                 if (This.config.debug) {
                     console.log('ImageResizer: detecting image orientation...');
                 }
-                var orientation =await exifr.orientation(img)
+                var orientation =getExif(img).orientation
                 This.scaleImage(img, completionCallback, orientation);
             } else {
                 //No rotation, just scale the image

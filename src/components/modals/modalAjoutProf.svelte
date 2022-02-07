@@ -2,8 +2,10 @@
     import { getContext } from 'svelte';
     import EditProf from './../forms/formProf.svelte';
 
+    export let sections = [];
+
     const { open } = getContext('simple-modal');
-    const showAjout = () => open(EditProf, { edition: false });
+    const showAjout = () => open(EditProf, { edition: false , sections: sections});
   </script>
   
 

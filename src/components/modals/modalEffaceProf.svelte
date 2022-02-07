@@ -5,9 +5,9 @@
     import Fa from 'svelte-fa'
     import { faTrashAlt} from '@fortawesome/free-solid-svg-icons'
 
-    export let prof = {}
+    export let index = -1
     const { open } = getContext('simple-modal');
-    const showEfface = () => open(effaceProf, { prof: prof });
+    const showEfface = () => open(effaceProf, { index: index });
   </script>
   
 

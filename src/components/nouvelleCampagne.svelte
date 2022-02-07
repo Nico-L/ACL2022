@@ -6,7 +6,7 @@
     import Editable from './ui/editable.svelte'
     import Fa from 'svelte-fa'
     import { faFolder, faFile, faPlusSquare, faSave, faSquare } from '@fortawesome/free-regular-svg-icons'
-    import { faFolderPlus, faTimes, faFolder as faFolderSolid, faFile as faFileSolid, faMusic, faUserTie, faUsers } from '@fortawesome/free-solid-svg-icons'
+    import { faCheck, faFolderPlus, faTimes, faFolder as faFolderSolid, faFile as faFileSolid, faMusic, faUserTie, faUsers } from '@fortawesome/free-solid-svg-icons'
     
     const d = new Date()
     const annee = d.getFullYear()
@@ -18,6 +18,17 @@
     var swap = {swapping: false, from: -1, type: ""}
     var editingCampagne = false
     var editing = []
+    var verifFiles = {adherents: false, professeurs: false, sections: false}
+    var creatingCampagne = 'not'
+    var creatingRacine = 'not'
+    var creatingFolders = 'not'
+    var currentFolder = 0
+    var totalFolders = 0
+    var creatingFiles = "not"
+    var totalFiles = 0
+    var currentFile = 0
+    var fini = 'not'
+    var MAJStructure = 'not'
 
     onMount(async () => {
         getListe()
@@ -30,47 +41,59 @@
         loadingDossiers = false
     }
 
-/*
-    async function leFetch(url) {
-        return fetch(url)
-            .then((leJSON) => {return leJSON.json()})
-            .then((retour) => {return retour})
-    }
-
-    async function createSheet() {
-        const url = `/.netlify/functions/createGSheet?nom=${nomCampagne}`;
-        leFetch(url).then((retour) => console.log(retour))
-    }
-
-    async function getInfo() {
-        const url = `/.netlify/functions/loadSheetInfo`;
-        let reponse
-        fetch(url).then((zeFetch) => {return zeFetch.json()}).then((retour)=>{console.log('retourInfo', retour);});
-        return reponse;
-    }
-
-    async function changeDroits(id) {
-        const url = `/.netlify/functions/transfertDroits?id=${id}`;
-        let reponse
-        fetch(url).then((zeFetch) => {return zeFetch.json()}).then((retour)=>{console.log('retourDroits', retour); reponse = retour});
-        return reponse;
-    }
-
-    async function createFolder() {
-        const url = `/.netlify/functions/createFolder`;
-        leFetch(url).then((retour) => console.log('folder', retour))
-    }
-
-     */
      async function creerCampagne() {
-        console.log('bob ?')
+        creatingCampagne = 'start'
+        const folders = structureDossiers.filter(item => item.type === "folder")
+        totalFolders = folders.length
+        const files = structureDossiers.filter(item => item.type === "file")
+        totalFiles = files.length
+        creatingRacine = 'start'
+        const racineId = (await functionsCall('createFolder', {parent: "top", folderName: nomCampagne})).id
+        //await functionsCall('transfertDroits', {id: racineId})
+        structureDossiers.forEach((item) => {
+            if (item.parent === "top") {item.parentId = racineId}
+        })
+        creatingRacine = 'done'
+        creatingFolders = 'start'
+        folders.forEach(async (folder) => {
+            const folderId = (await functionsCall('createFolder', {parent: racineId, folderName: folder.nom})).id
+            //await functionsCall('transfertDroits', {id: folderId})
+            folder.id = folderId
+            files.forEach((file) => {
+                if (file.parent === folder.nom) {file.parentId = folderId}
+            })
+            currentFolder += 1
+            if (currentFolder === totalFolders) {
+                creatingFolders = 'done'
+                creatingFiles = 'start'
+                files.forEach(async (file) => {
+                    const fileId = (await functionsCall('createGSheet', {parent: file.parentId, nom: file.nom})).id
+                    //await functionsCall('transfertDroits', {id: fileId})
+                    file.id = fileId
+                    currentFile += 1
+                    if (currentFile === totalFiles) {
+                        creatingFiles = 'done'
+                        MAJStructure = 'start'
+                        update(-1)
+                    }
+                })
+            }
+        })
+        
     }
 
     async function update(index) {
-        updating[index] = true
+        if (index > 0) updating[index] = true
         await functionsCall('updateRows', {rows: JSON.stringify(structureDossiers)})
-        updating[index] = false
-        editing[index] = false
+        if (MAJStructure === 'start') {
+            MAJStructure = 'done'
+            fini = 'done'
+            creatingCampagne = 'done'
+        }
+        if (index > 0) {
+            updating[index] = false
+            editing[index] = false
+        }
     }
 
     async function addItem(nom, parent, type) {
@@ -113,9 +136,7 @@
                     update(index)
                 }
                 if (swap.type === "file") {
-                    console.log('uh ?', nom)
                     structureDossiers[swap.from].parent = nom
-                    console.log('struc', structureDossiers)
                     update(swap.from)
                 }
                 swap = {swapping: false, from: -1, type: ""}
@@ -127,7 +148,6 @@
             }
         }
         if (type === "file" && !swap.swapping) {
-            console.log('ah ?')
             swap.from = index
             swap.swapping = true
             swap.type = type
@@ -151,11 +171,21 @@ function changeUsage(index) {
     structureDossiers = structureDossiers
     update(-1)
 }
+
+$: {
+    if (!loadingDossiers) {
+        Object.entries(verifFiles).forEach(([key, value]) => {
+            const file = structureDossiers.filter(item => (item.type === "file" && item.usage === key))
+            verifFiles[key] = file.length === 1
+        });
+        verifFiles = verifFiles
+    }
+}
 </script>
 
 <div class="w-full">
     <h1 class="text-center sm:text-left">Lancement des prochaines inscriptions</h1>
-    <div class="flex flex-wrap sm:flex-nowrap justify-start gap-2 p-2">
+    <div class="flex flex-wrap sm:flex-nowrap justify-start gap-2 p-0 sm:p-2">
         <div class="border border-jauneClair rounded-lg p-2 min-w-max mx-auto sm:m-0 flex flex-col justify-between">
             <div>
                 <h3 class="text-jauneClair font-semibold text-xl p-0" >Structure des dossiers</h3>
@@ -296,18 +326,105 @@ function changeUsage(index) {
             <div class="flex gap-2 items-center justify-start">
                 <div class="m-0 p-0 mx-2">Création du nouveau fichier</div><Spinner taille="xs" couleur="vertClair" caption={false}></Spinner>
             </div> -->
-            <div class="flex flex-col w-fit">
-                <h3 class="text-vertClair font-semibold text-xl p-0" >Mode d'emploi</h3>
-                <ul class="list-decimal list-inside px-1 marker:text-vertClair text-sm">
-                    <li>Le dossier racine <span class="text-vertClair">{nomCampagne}</span> est le nouveau dossier qui sera créé sur le drive.</li>
-                    <li>Vous pouvez créer l'aborescence complète ci-contre. Un dossier est créé en entrant un titre à côté de <span class="inline-flex items-center text-vertClair"><Fa icon={faFolderPlus}></Fa></span>, un fichier en cliquant sur le <span class="inline-flex items-center text-vertClair"><Fa icon={faPlusSquare}></Fa></span> du dossier correspondant.</li>
-                    <li>Vous pouvez réorganiser l'ordre des dossiers en cliquant sur <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faFolder}></Fa></span> du dossier à réarranger puis celui du dossier d'arrivée.</li>
-                    <li>Vous pouvez déplacer les fichiers en cliquant d'abord sur <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faFile}></Fa></span> du fichier puis sur <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faFolder}></Fa></span> du dossier destinataire.</li>
-                </ul>
-            </div>
-            <div class="">
-                bob
-            </div>
+            {#if creatingCampagne !== 'not'}
+                <div>
+                    <h3 class="text-vertClair font-semibold text-xl p-0" >Installation en cours...</h3>
+                    <div>Ne fermez pas la fenêtre avant la fin du processus...</div>
+                    <div class="flex gap-2 items-center justify-start text-vertClair">
+                        {#if creatingRacine !== "not"}
+                            <div class="m-0 p-0 mx-2">Création dossier racine</div>
+                            <div class="w-6">
+                                {#if creatingRacine === "start"}
+                                    <Spinner taille="xs" couleur="jauneClair" caption={false}></Spinner>
+                                {:else}
+                                    <Fa icon={faCheck} size="lg"></Fa>
+                                {/if}
+                            </div>
+                        {/if}
+                    </div>
+                    <div class="flex gap-2 items-center justify-start text-vertClair">
+                        {#if creatingFolders !== "not"}
+                            <div class="m-0 p-0 mx-2">Création des dossiers {currentFolder}/{totalFolders}</div>
+                            <div class="w-6">
+                                {#if creatingFolders === "start"}
+                                    <Spinner taille="xs" couleur="jauneClair" caption={false}></Spinner>
+                                {:else}
+                                    <Fa icon={faCheck} size="lg"></Fa>
+                                {/if}
+                            </div>
+                        {/if}
+                    </div>
+                    <div class="flex gap-2 items-center justify-start text-vertClair">
+                        {#if creatingFiles !== "not"}
+                            <div class="m-0 p-0 mx-2">Création des fichiers {currentFile}/{totalFiles}</div>
+                            <div class="w-6">
+                                {#if creatingFiles === "start"}
+                                    <Spinner taille="xs" couleur="jauneClair" caption={false}></Spinner>
+                                {:else}
+                                    <Fa icon={faCheck} size="lg"></Fa>
+                                {/if}
+                            </div>
+                        {/if}
+                    </div>
+                    <div class="flex gap-2 items-center justify-start text-vertClair">
+                        {#if MAJStructure !== "not"}
+                            <div class="m-0 p-0 mx-2">Mise à jour du fichier source</div>
+                            <div class="w-6">
+                                {#if MAJStructure === "start"}
+                                    <Spinner taille="xs" couleur="jauneClair" caption={false}></Spinner>
+                                {:else}
+                                    <Fa icon={faCheck} size="lg"></Fa>
+                                {/if}
+                            </div>
+                        {/if}
+                    </div>  
+                </div>
+                {#if fini === 'done'}
+                    <div>
+                        <h2 class="text-vertClair font-semibold">Terminé !</h2>
+                        <div>Vous pouvez fermer cette fenêtre, les inscriptions peuvent être ouvertes.</div>
+                    </div>
+                {/if}
+            {:else}
+                <div class="flex flex-col w-fit">
+                    <h3 class="text-vertClair font-semibold text-xl p-0" >Mode d'emploi</h3>
+                    <ul class="list-decimal list-inside px-1 marker:text-vertClair text-sm">
+                        <li>Le dossier racine <span class="text-vertClair">{nomCampagne}</span> est le nouveau dossier qui sera créé sur le drive.</li>
+                        <li>Vous pouvez créer l'aborescence complète ci-contre. Un dossier est créé en entrant un titre à côté de <span class="inline-flex items-center text-vertClair"><Fa icon={faFolderPlus}></Fa></span>.</li>
+                        <li>Vous pouvez réorganiser l'ordre des dossiers en cliquant sur <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faFolder}></Fa></span> du dossier à réarranger puis celui du dossier d'arrivée.</li>
+                        <li class="font-semibold text-vert-600">Le système a besoin de trois fichiers pour fonctionner : un fichier "adhérents" <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faUsers}></Fa></span>, un fichiers "professeurs" <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faUserTie}></Fa></span> et un fichier "sections" (instruments et ateliers) <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faMusic}></Fa></span></li>
+                        <li>Un fichier se crée en cliquant sur le <span class="inline-flex items-center text-vertClair"><Fa icon={faPlusSquare}></Fa></span> du dossier correspondant. Le type de fichier est choisi en cliquant sur l'icone (<span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faUsers}></Fa></span>, <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faUserTie}></Fa></span> ou <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faMusic}></Fa></span>)</li>
+                        <li>Vous pouvez déplacer les fichiers en cliquant d'abord sur <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faFile}></Fa></span> du fichier puis sur <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faFolder}></Fa></span> du dossier destinataire.</li>
+                        <li>Une fois l'arborescence OK, vous pouvez cliquer sur le bouton ci-dessous si les trois icones suivantes sont au vert :
+                            {#if !loadingDossiers}
+                                <div class="inline-flex flex gap-2 ml-2 items-center">
+                                    {#if verifFiles.adherents}
+                                        <span class={"inline-flex items-center mx-1 text-vertClair"}><Fa icon={faUsers}></Fa></span>
+                                    {:else}
+                                        <span class={"inline-flex items-center mx-1 text-rougeClair"}><Fa icon={faUsers}></Fa></span>
+                                    {/if}
+                                    {#if verifFiles.professeurs}
+                                        <span class={"inline-flex items-center mx-1 text-vertClair"}><Fa icon={faUserTie}></Fa></span>
+                                    {:else}
+                                        <span class={"inline-flex items-center mx-1 text-rougeClair"}><Fa icon={faUserTie}></Fa></span>
+                                    {/if}
+                                    {#if verifFiles.sections}
+                                        <span class={"inline-flex items-center mx-1 text-vertClair"}><Fa icon={faMusic}></Fa></span>
+                                    {:else}
+                                        <span class={"inline-flex items-center mx-1 text-rougeClair"}><Fa icon={faMusic}></Fa></span>
+                                    {/if}
+                                </div>
+                            {/if} 
+                        </li>
+                    </ul>
+                </div>
+                <div class="p-2">
+                    <Bouton largeur="w-full" couleur="vertClair" hover="bg-vert-900"
+                        on:actionBouton={creerCampagne}>
+                        Lancer la campagne
+                    </Bouton>
+                </div>
+            {/if}
         </div>
     </div>
 </div>

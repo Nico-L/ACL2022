@@ -10,7 +10,7 @@
       isPropagationStopped,
       onDocumentDragOver,
       TOO_MANY_FILES_REJECTION
-    } from "./../utils/dropzone";
+    } from "../utils/dropzone";
     import { onMount, onDestroy, createEventDispatcher } from "svelte";
     //props
     /**

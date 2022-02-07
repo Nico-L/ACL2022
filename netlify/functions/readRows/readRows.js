@@ -3,9 +3,8 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 const handler = async (event) => {
-  const index = event.queryStringParameters.index || []
-  const onglet = event.queryStringParameters.onglet || "dossiers"
-  const sheetId =  event.queryStringParameters.sheetId || process.env.SHEET_GESTION_ID
+  const onglet = event.queryStringParameters.onglet
+  const sheetId = process.env.SHEET_GESTION_ID
   try {
     const doc = new GoogleSpreadsheet(sheetId);
     await doc.useServiceAccountAuth({
@@ -14,11 +13,9 @@ const handler = async (event) => {
     })
     await doc.loadInfo(); // loads sheets
     const ongletListe = doc.sheetsByTitle[onglet]
-    var rows = await ongletListe.getRows()
-    await rows[index].delete()
-    rows = await ongletListe.getRows()
     var retour = []
     if (ongletListe !== undefined) {
+      const rows = await ongletListe.getRows()
       const headers = ongletListe.headerValues    
       rows.forEach((row)=> {
         var zeRow = {}
@@ -26,9 +23,11 @@ const handler = async (event) => {
         retour.push(zeRow)
       })
     }
+    
+    
     return {
       statusCode: 200,
-      body: JSON.stringify({ data: retour}),
+      body: JSON.stringify({data: retour}),
       // // more keys you can return:
       // headers: { "headerName": "headerValue", ... },
       // isBase64Encoded: true,

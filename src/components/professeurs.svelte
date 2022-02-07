@@ -1,11 +1,19 @@
 <script>
+  import { onMount } from 'svelte'
+  import functionsCall from './utils/functionsCall.js'
+
   import Modal from './ui/modal.svelte'
   import EditionProf from './modals/modalProf.svelte'
   import ConfirmationEffacer from './modals/modalEffaceProf.svelte'
   import AjoutProf from './modals/modalAjoutProf.svelte'
   import Spinner from './ui/spinner.svelte'
-  import Dropzone from "./ui/Dropzone.svelte"
-  import ImageResizer from './utils/imageResize.js'
+  //import Dropzone from "./ui/Dropzone.svelte"
+  import GestionImage from "./ui/gestionImage.svelte"
+  import loadImage from 'blueimp-load-image'
+  import strapiUpload from './utils/strapiUpload.js'
+
+  //import verifJWT from './utils/verifJWT.js'
+  //import ImageResizer from './utils/imageResize.js'
   import Fa from 'svelte-fa'
   import {faCamera, faPhoneAlt, faAt, faTimes} from '@fortawesome/free-solid-svg-icons'
 
@@ -17,37 +25,42 @@
 
   let promise = listeProfs()
   var occupeImg = []
-  var message = "Cliquer pour ajouter une image"
-  var couleurMessage = "text-gray-500"
+
+
+  var sections = []
+
+  onMount (async () => {
+    sections = (await functionsCall("readRows", {onglet: "sections"})).data
+  })
 
   async function listeProfs() {
-    const query = `
-      query listeProfesseur {
-          professeurs(order_by: {nom: asc}) {
-            id
-            nom
-            prenom
-            email
-            telephone
-            photoId
-            prof_section {
-              id
-              section {
-                id
-                titre
-              }
-            }
-          }
-        }
-    `
-    return queryNHost(query,{},{}).then((retour) => {return retour.data.professeurs})
+    return (await functionsCall("readRows", {onglet: "professeurs"})).data
   }
 
-  async function handleFilesSelect(e, profId, photoId) {
+ /*async function handleFilesSelect(e, profId, photoId) {
     const { acceptedFiles, fileRejections } = e.detail;
+    loadImage(acceptedFiles[0], { meta: true, canvas: true, maxWidth: 800 })
+      .then(function (data) {
+        if (!data.imageHead) throw new Error('Could not parse image metadata')
+        return new Promise(function (resolve) {
+          data.image.toBlob(function (blob) {
+            data.blob = blob
+            resolve(data)
+          }, 'image/jpeg')
+        })
+      })
+      .then(function (data) {
+        return loadImage.replaceHead(data.blob, data.imageHead)
+      })
+      .then(async (blob) => {
+        // do something with the new Blob object
+        strapiUpload(blob, JSON.parse(localStorage.getItem('userInfo')).jwt, {titre: "un test"})
+      })
+      .catch(function (err) {
+        console.error(err)
+  })
     var uploader = new ImageResizer(acceptedFiles, {
             onComplete : async function(event) {
-              console.log('blob size', event.imgResized[0].size)
               var uploadVariables = { file: event.imgResized[0], bucketId: "ACL"}
               if (photoId !== null) {
                   await nhost.storage.delete({fileId: photoId})
@@ -75,14 +88,14 @@
                   }
                   `
                 queryNHost(query,{"id": profId, "photoId": retour.fileMetadata.id},{}).then((modif) => {occupeImg[profId] = false;  promise = listeProfs(); return modif.data.professeurs; })
-              })
+              }) 
             },
             maxWidth: 800,
             maxHeight: 800,
             quality: 0.90, 
             debug : false
         });
-  }
+  }*/
 
 
   async function getImgUrl (fileId) {
@@ -104,12 +117,18 @@
     }
   }
 
+  async function updateProf (event, prof, index) {
+    //prof.dataPhoto = JSON.stringify(event.detail)
+    //await functionsCall("updateRow", {onglet: "professeurs", index:index, row: JSON.stringify(prof)})
+    promise = listeProfs()
+  }
+
 </script>
 
-  <div class="flex justify-start items-center gap-4">
+<div class="flex justify-start items-center gap-4">
       <h1>Les professeurs</h1>
       <Modal styleWindow="bg-gray-800" styleContent="text-bleuClair" styleCloseButton="p-0" on:closed={() => promise = listeProfs()}>
-        <AjoutProf />
+        <AjoutProf sections={sections} />
       </Modal>
   </div>
   <div class="text-sm mb-4">Cliquer sur le <span class="w-4 h-4 text-bleuClair border border-bleuClair rounded-full p-0 px-1 m-0">+</span> pour ajouter un professeur</div>
@@ -119,58 +138,30 @@
     </div>
   {:then profs}
     <div class="listeCartes">
-      {#each profs as prof,i}
+      {#each profs as prof,index}
         <div class="carteProf">
           <div class="m-0 p-0 w-full min-w-full text-2xl text-center font-semibold font-mono ">{prof.prenom} {prof.nom}</div>
           <ul class="min-w-full mx-auto flex justify-around gap-2 m-2 mt-0">
-            {#each prof.prof_section as sectionData}
-                <li>{sectionData.section.titre}</li>
+            {#each prof.sections.split(', ') as sectionData}
+                <li>{sectionData}</li>
             {/each}
           </ul>
-          <div class="photo relative">
-            <Dropzone 
-              on:drop={(e) => {occupeImg[prof.id] = true; handleFilesSelect(e, prof.id, prof.photoId)}} 
-              disableDefaultStyles={true} 
-              containerClasses="w-full h-full m-0 p-0" 
-              accept="image/*">
-              {#if prof.photoId === null}
-                <div class="mx-auto h-full w-full justify-center flex flex-col m-0 p-0 "><Fa icon={faCamera} size="4x"/><div class={"text-sm m-1 text-center " + couleurMessage}>{message}</div></div>
-              {:else}
-                {#await getImgUrl(prof.photoId)}
-                  <div class="mx-auto flex flex-col"><Fa icon={faCamera} size="4x"/><div class={"text-sm m-1 text-center " + couleurMessage}>{message}</div></div>
-                {:then url}
-                    <img class="object-cover h-full w-full rounded" src="{url}" alt={"photo de " + prof.prenom + " " + prof.nom}/>            
-                {/await}
-              {/if}
-            </Dropzone>
-            {#if occupeImg[prof.id]}
-              <div class="h-full w-full bg-gray-900/75 absolute top-0 left-0 flex justify-center items-center m-0 p-0">
-                <Spinner couleur="bleuClair" taille="moyen" caption={false}></Spinner>
-              </div>
-            {:else if prof.photoId }
-              <div 
-                  class="h-6 w-6 m-1 p-0 absolute text-gray-500 bg-gray-900/50 border-2 border-gray-500 rounded-full top-0 right-0 flex justify-center items-center font-bold"
-                  on:click={() => {occupeImg[prof.id] = true; effaceImg(prof.photoId, prof.id)}}
-                  >
-                    <Fa icon={faTimes} />
-                </div>
-            {/if}
-          </div>
+            <GestionImage prof={prof} index={index} on:updatedProf={(e) => updateProf(e, prof, index)}/>
           <div class="mt-1">
             <div class="flex items-center p-0 ml-2 sm:m-0 my-1"><Fa icon={faAt} /> <span class="ml-2"><a href="mailto:{prof.email}">{prof.email}</a></span></div>
             <div class="flex items-center p-0 ml-2 sm:m-0 "><Fa icon={faPhoneAlt} /> <span class="ml-2"><a href="tel:{prof.telephone}">{prof.telephone}</a></span></div>
           </div>
            <div class="w-full flex justify-end items-center gap-3 mt-2 p-1">
             <Modal styleWindow="bg-gray-800" styleContent="text-bleuClair" styleCloseButton="p-2" on:closed={() => promise = listeProfs()}>
-              <ConfirmationEffacer prof={prof} />
+              <ConfirmationEffacer index={index} />
             </Modal>
             <Modal styleWindow="bg-gray-800" styleContent="text-bleuClair" styleCloseButton="p-2" on:closed={() => promise = listeProfs()}>
-              <EditionProf prof={prof} />
+              <EditionProf prof={prof} sections={sections} index={index}/>
             </Modal>
           </div>
         </div>
       {:else}
-        <div>Aucun professeur enregistré</div>
+        <div>Remplir le formulaire ci-dessous pour créer une fiche professeur.</div>
       {/each}
     </div>
   {/await}

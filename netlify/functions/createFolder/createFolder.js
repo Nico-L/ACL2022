@@ -3,6 +3,14 @@ const { google } = require('googleapis');
 
 const handler = async (event) => {
     try {
+      const parent = event.queryStringParameters.parent
+      const folderName = event.queryStringParameters.folderName
+      var parentFolder = ""
+      if (parent === "top") {
+        parentFolder = process.env.DRIVE_FOLDER_ID
+      } else {
+        parentFolder = parent
+      }
         const jwtClient = new google.auth.JWT(
             process.env.EMAIL_SERVICE_GOOGLE,
             null,
@@ -12,9 +20,9 @@ const handler = async (event) => {
           );
           drive = google.drive({ version: "v3", auth: jwtClient });
           const fileMetadata = {
-            'name': '2021-2022',
+            'name': folderName,
             'mimeType': 'application/vnd.google-apps.folder',
-            parents: ['1Jb46IIuwMOlmRfycVRkaVBpPLNQkADWr']
+            parents: [parentFolder]
           };
           const folder = await drive.files.create({
             resource: fileMetadata,

@@ -2,6 +2,8 @@
 const { google } = require('googleapis');
 
 const handler = async (event) => {
+  const parent = event.queryStringParameters.parent
+  const nom = event.queryStringParameters.nom
     const jwtClient = new google.auth.JWT(
         process.env.EMAIL_SERVICE_GOOGLE,
         null,
@@ -11,9 +13,9 @@ const handler = async (event) => {
       );
       drive = google.drive({ version: "v3", auth: jwtClient });
       const fileMetadata = {
-        'name': 'inscrits',
+        'name': nom,
         'mimeType': 'application/vnd.google-apps.spreadsheet',
-        parents: ['1fLxx_OkNVCX92OT-ztAEfq2IDBAhQj2A']
+        parents: [parent]
       };
       const spreadsheet = await drive.files.create({
         resource: fileMetadata,

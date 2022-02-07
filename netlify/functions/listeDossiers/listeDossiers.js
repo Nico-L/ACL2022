@@ -4,7 +4,6 @@ const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 const handler = async (event) => {
   const sheetId = process.env.SHEET_GESTION_ID
-  console.log('sheetId', sheetId)
   try {
     const doc = new GoogleSpreadsheet(sheetId);
     await doc.useServiceAccountAuth({
@@ -17,7 +16,7 @@ const handler = async (event) => {
     if (ongletListeDossiers !== undefined) {
       const rows = await ongletListeDossiers.getRows()
       rows.forEach((row)=> {
-        dossiers.push({nom: row.nom, id: row.id, type: row.type, parent: row.parent, usage: row.usage})
+        dossiers.push({nom: row.nom, id: row.id, type: row.type, parent: row.parent, usage: row.usage, parentId: row.parentId})
       })
     }
     

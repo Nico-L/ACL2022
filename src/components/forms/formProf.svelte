@@ -1,5 +1,6 @@
 <script>
     import queryNHost from '../../nhost/query';
+    import functionsCall from '../utils/functionsCall.js'
 
     import Bouton from '../ui/bouton.svelte';
     import Spinner from '../ui/spinner.svelte'
@@ -10,8 +11,9 @@
 
     export let prof = {}
     export let edition = false
+    export let sections = []
+    export let index = -1
     var sectionsProf = []
-    console.log('prof', prof)
     var nomPrenom = edition?prof.prenom + " " + prof.nom:""
     const nomPrenomPlaceHolder = edition?prof.prenom + " " + prof.nom:"prénom nom"
     var nom = ""
@@ -22,7 +24,7 @@
     if (!edition) {
       prof = {email: "", telephone: ""}
     } else {
-      prof.prof_section.forEach((relation) => sectionsProf.push(relation.section.id))
+      sectionsProf = prof.sections.split(', ')
     }
 
     function processProf () {
@@ -31,96 +33,39 @@
 
     async function saveProf() {
       occupeSave = true
-      const query = `
-        mutation AjoutProf($prenom: String, $nom: String, $email: String, $telephone: String, $instruments: [prof_section_insert_input!]!) {
-          insert_professeurs(objects: [{nom: $nom, prenom: $prenom, email: $email, telephone: $telephone, prof_section: {data: $instruments}}]) {
-            returning {
-              id
-            }
-          }
-        }
-      `
-
-      const listeInstrums = []
-        sectionsProf.forEach((item) => {
-          listeInstrums.push({"section_id": item})
-        })
-
-      const variables = {
-          prenom: prenom, 
-          nom: nom, 
+      const listeSections = sectionsProf.join(', ')
+      const row = {
+        prenom: prenom, 
+          nom: nom,
+          prenom: prenom,
           email: prof.email, 
           telephone: prof.telephone, 
-          sections: listeInstrums
-        }
-
-      queryNHost(query,variables,{}).then((retour) => {
-        console.log('retour', retour)
-        occupeSave = false
-        if (retour.error === null) {
-          succesSave = true
-          setTimeout(close, 500)
-        }
-      })
+          sections: listeSections
+      }
+      await functionsCall("addRow", {onglet: "professeurs", row: JSON.stringify(row)})
+      occupeSave = false
+      succesSave = true
+      setTimeout(close, 500)
     }
 
     async function updateProf() {
-      occupeSave = true
-      const query = `
-        mutation modifProf($id: Int!, $prenom: String, $nom: String, $email: String, $telephone: String, $sections: [prof_section_insert_input!]!) {
-          delete_prof_section(where: {prof_id: {_eq: $id}}) {
-              returning {
-                id
-              }
-          }
-          update_professeurs_by_pk(pk_columns: {id: $id}, _set: {prenom: $prenom, nom: $nom, email: $email, telephone: $telephone}) {
-            id
-            nom
-            prenom
-          }
-          insert_prof_section(objects: $sections, on_conflict: {constraint: prof_section_prof_id_section_id_key, }) {
-            returning {
-              section_id
-              prof_id
-            }
-          }
-        } 
-      `
-      const listeInstrums = []
-      sectionsProf.forEach((item) => {
-        listeInstrums.push({"section_id": item, "prof_id": prof.id})
-      })
-
-      const variables = {
-        id: prof.id, 
-        prenom: prenom, 
-        nom: nom, 
-        email: prof.email, 
-        telephone: prof.telephone, 
-        sections: listeInstrums
-      }
-
-      queryNHost(query,variables,{}, "update_professeurs_by_pk").then((retour) => {
-        console.log('retour', retour)
+      if (index >= 0) {
+        occupeSave = true
+        const row = {
+          prenom: prenom, 
+          nom: nom,
+          prenom: prenom,
+          email: prof.email, 
+          telephone: prof.telephone, 
+          sections: sectionsProf.join(', ')
+        }
+        await functionsCall("updateRow", {row: JSON.stringify(row), onglet: "professeurs", index: index})
         occupeSave = false
-        if (retour.error === null) {
-          succesSave = true
-          setTimeout(close, 500)
-        }
-      })
+        succesSave = true
+        setTimeout(close, 500)
+      }
     }
 
-    async function listeSections () {
-      const query = `
-        query listeSections {
-          sections {
-            titre
-            id
-          }
-        }
-      `
-      return (await queryNHost(query,{},{}, "sections")).data.sections
-    }
     $: {
       prenom = nomPrenom.split(" ")[0]
       nom = nomPrenom.slice(prenom.length + 1)
@@ -141,16 +86,12 @@
     <label for="sections">
       <div class="label">section(s)</div>
       <div class="ml-2" id="sections">
-        {#await listeSections()}
-          <Spinner taille="xs" couleur="bleuClair"></Spinner>
-        {:then sections}
-          {#each sections as section}
-              <label class="mx-2">
-                  <input type=checkbox bind:group={sectionsProf} value={section.id}>
-                  {section.titre}
-              </label>
-          {/each}
-        {/await}
+        {#each sections as section}
+            <label class="mx-2">
+                <input type=checkbox bind:group={sectionsProf} value={section.titre}>
+                {section.titre}
+            </label>
+        {/each}
     </div>
     </label>
     <label for="email" >

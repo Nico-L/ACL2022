@@ -1,5 +1,8 @@
 <script>
-    export let prof={};
+    import functionsCall from '../utils/functionsCall'
+    export let index = -1
+
+    console.log('index', index)
 
     import { getContext } from 'svelte';
     const { close } = getContext('simple-modal');
@@ -8,18 +11,23 @@
     import Fa from 'svelte-fa'
     import { faTrashAlt, faTimes } from '@fortawesome/free-solid-svg-icons'
 
-    import queryNHost from '../../nhost/query';
+    /*import queryNHost from '../../nhost/query';
     import { NhostClient } from '@nhost/nhost-js'
     const nhost = new NhostClient({
         backendUrl: 'https://sctrlobpphheqczuduth.nhost.run'
-    });
+    }); */
 
     var occupe = false
     var succes = false
 
     async function effaceProf() {
-        if (prof.id) {
-            const query = `
+        if (index >= 0) {
+            occupe = true
+            await functionsCall("deleteRow", {onglet: "professeurs", index: index})
+            occupe = false
+            succes = true
+            setTimeout(close, 500)
+            /*const query = `
                 mutation effaceProf($id: Int!) {
                     delete_prof_section(where: {prof_id: {_eq: $id}}) {
                         returning {
@@ -50,10 +58,10 @@
                         setTimeout(close, 500)
                     }
                 }
-            })
+            }) */
         } else {
             close()
-        }
+        } 
     }
 
 </script>
