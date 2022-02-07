@@ -1,8 +1,8 @@
 <script>
     //import { onMount } from 'svelte'
-    import Sections from './ui/listeSections.svelte'
+    import Sections from './ui/sections.svelte'
     import Spinner from './ui/spinner.svelte'
-    import functionsCall from './utils/functionsCall.js'
+    import {listeSections} from './utils/strapiSections.js'
 
     var occupe = false
     var reload = false
@@ -12,12 +12,6 @@
         promise = listeSections()
         reload = false
     }}
-
-    
-
-    async function listeSections() {
-        return (await functionsCall('readRows', {onglet: 'sections'})).data
-    }
 
     let promise = listeSections()
 </script>

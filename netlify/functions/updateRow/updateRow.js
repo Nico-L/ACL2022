@@ -6,7 +6,6 @@ const handler = async (event) => {
   const indexRow = event.queryStringParameters.index || -1
   const onglet = event.queryStringParameters.onglet || "dossiers"
   const sheetId =  event.queryStringParameters.sheetId || process.env.SHEET_GESTION_ID
-  console.log('row', updateRow)
   try {
     var retour = []
     if (indexRow >= 0)

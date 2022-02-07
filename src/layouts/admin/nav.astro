@@ -1,6 +1,5 @@
     <div class="flew flex-col gap-4 justify-start items-center sm:w-200px border-0 rounded-lg border-bleuClair sm:border-2">
         <img src="/img/logos/logoACLrond.png" class="mx-auto my-2 h-32 w-32 hidden sm:block relative" alt="logo ACL rond" >
-        <div class="w-full text-center font-bold text-lg hidden sm:block sm:mt-4">Navigation</div>
         <input class="hidden" type="checkbox" id="menu-toggle" />
         <label for="menu-toggle" class="sm:hidden mx-auto pointer-cursor inline-block fixed right-2 bottom-2 h-12 w-12 m-0 p-0 bg-gray-800 rounded-full border-bleuClair border-2 flex justify-center items-center">
             <div class="nav-icon" id="nav-icon">
@@ -9,10 +8,21 @@
         </label>
 
         <nav class="fixed sm:relative right-2 sm:right-0 bottom-16 sm:bottom-0 shadow shadow-bleuClair/40 sm:shadow-none border-2 border-bleuClair sm:border-0 sm:scale-100 sm:w-full bg-gray-800 sm:bg-gray-900 rounded p-3 mb-2 scale-0 transition-all duration-150 origin-bottom ease-out" id="menu">
-            <ul class="text-lg font-semibold">
-                <li><a href="/admin/professeurs">Professeurs</a></li>
-                <li><a href="/admin/sections">Sections</a></li>
-                <li><a href="/admin/gestion">Gestion drive</a></li>
+            <div class="w-full text-center font-bold text-xl mt-0 sm:mt-2 text-bleu-600 mb-2">Processus</div>
+            <ul class="text-lg font-semibold w-full">
+                <li class="text-center"><a href="/admin/sections">Sections</a></li>
+                <div class="text-bleuClair flex justify-center">
+                    <svg aria-hidden="true" data-prefix="fas" data-icon="long-arrow-alt-down" class="h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
+                        <path fill="currentColor" d="M168 345.941V44c0-6.627-5.373-12-12-12h-56c-6.627 0-12 5.373-12 12v301.941H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.569 9.373 33.941 0l86.059-86.059c15.119-15.119 4.411-40.971-16.971-40.971H168z"/>
+                    </svg>
+                </div>
+                <li class="text-center"><a href="/admin/professeurs">Professeurs</a></li>
+                <div class="text-bleuClair flex justify-center">
+                    <svg aria-hidden="true" data-prefix="fas" data-icon="long-arrow-alt-down" class="h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
+                        <path fill="currentColor" d="M168 345.941V44c0-6.627-5.373-12-12-12h-56c-6.627 0-12 5.373-12 12v301.941H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.569 9.373 33.941 0l86.059-86.059c15.119-15.119 4.411-40.971-16.971-40.971H168z"/>
+                    </svg>
+                </div>
+                <li class="text-center"><a href="/admin/nouvelleCampagne">Gestion drive</a></li>
             </ul>
         </nav>
     </div>

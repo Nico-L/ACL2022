@@ -2,8 +2,7 @@
     import Editable from './editable.svelte'
     import Fa from 'svelte-fa'
     import { faSave, faTimes} from '@fortawesome/free-solid-svg-icons'
-    import functionsCall from '../utils/functionsCall.js'
-    import queryNHost from '../../nhost/query';
+    import {saveSection, deleteSection} from "../utils/strapiSections.js"
 
     export let sections = []
     export let type = "instrument"
@@ -18,23 +17,28 @@
 
     var nouvelleSection = ""
 
-    async function updateSection (row, index) {
+    async function updateSection (section) {
         occupe = true;
-        sections = (await functionsCall('updateRow', {onglet: 'sections', index: index, row: JSON.stringify(row) })).data
+        await saveSection(section, section.id)
         occupe = false;
     }
 
-    async function removeSection(index) {
+    async function removeSection(id, index) {
+        console.log('index', index)
         occupe = true
-        sections = (await functionsCall('deleteRow', {index: index, onglet: "sections"})).data
+        await deleteSection(id)
+        sections.splice(index, 1)
+        sections = sections
         occupe = false;
     }
 
-    async function saveSection() {
+    async function sauveSection() {
         if (nouvelleSection !== "") {
             occupe = true
             const variables = {titre: nouvelleSection, type: type}
-            sections = (await functionsCall('addRow', {row: JSON.stringify(variables), onglet: "sections"})).data
+            variables.id = (await saveSection(variables)).id
+            sections.push(variables)
+            sections = sections
             nouvelleSection = ""
             occupe = false;
         }
@@ -49,11 +53,11 @@
                     <Editable 
                         bind:leHTML={section.titre} 
                         classes="text-base" 
-                        on:update={() => updateSection(section, index)}
+                        on:update={() => updateSection(section)}
                         />
                     <div 
                         class={"text-sm flex justify-center items-center h-5 w-5 rounded-sm m-0 p-0 font-semibold font-lg cursor-pointer " + lesCouleurs[couleur].text} 
-                        on:click={()=>{removeSection(index)}}>
+                        on:click={()=>{removeSection(section.id, index)}}>
                         <Fa icon={faTimes} class="mx-auto" /> 
                     </div>                  
                 </li>
@@ -64,9 +68,9 @@
             <Editable 
                 bind:leHTML={nouvelleSection} 
                 classes="text-sm" 
-                on:update={saveSection}
+                on:update={sauveSection}
                 />
-          <div class={"h-8 w-8 text-bleuClair m-0 p-1 px-2 cursor-pointer " + lesCouleurs[couleur].text} on:click={saveSection}>
+          <div class={"h-8 w-8 text-bleuClair m-0 p-1 px-2 cursor-pointer " + lesCouleurs[couleur].text} on:click={sauveSection}>
             <Fa icon={faSave} class="mx-auto" size="lg"/>  
         </div> 
     </div>

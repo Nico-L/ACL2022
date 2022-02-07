@@ -1,10 +1,4 @@
 <script>
-    /*import { NhostClient } from '@nhost/nhost-js'
-
-    const nhost = new NhostClient({
-        backendUrl: 'https://sctrlobpphheqczuduth.nhost.run'
-    }); */
-
     import Bouton from './ui/bouton.svelte';
     import Fa from 'svelte-fa'
     import { faSignInAlt } from '@fortawesome/free-solid-svg-icons'
@@ -18,18 +12,6 @@
     var erreur = "text-gray-400"
     var message = "Merci de vous identifier."
 
-    /*function login() {
-        occupe=true
-        nhost.auth.signIn({
-            email: email,
-            password: mdp
-            }).then((retour)=> {
-                console.log('retour auth', retour)
-                occupe=false
-                localStorage.setItem('JWT', retour.session.accessToken);
-                window.location.replace(urlRetour);
-            })
-    } */
     function login() {
         if (email==="" || mdp==="") {
             return
@@ -43,7 +25,7 @@
             mode: 'cors',
             cache: 'default',
             body: JSON.stringify({
-                identifier: email,
+                identifier: email.trim(),
                 password: mdp
             })
         };
@@ -79,6 +61,13 @@
                 })
             )
     }
+
+    function handleKeydown(e) {
+        if (e.keyCode === 13) {
+            e.preventDefault()
+            login()
+        }
+    }
 </script>
 
 <div class="w-200px mx-auto mt-12 p-2 border border-bleuClair rounded-md">
@@ -97,6 +86,7 @@
         id="motDePasse"
         placeholder="mot de passe"
         bind:value={mdp}
+        on:keydown={handleKeydown}
         />
     <div class="text-right m-0 p-0 mt-2">
         <Bouton

@@ -1,9 +1,8 @@
 <script>
-    import queryNHost from '../../nhost/query';
     import functionsCall from '../utils/functionsCall.js'
+    import {saveProf} from '../utils/strapiProfesseurs.js'
 
     import Bouton from '../ui/bouton.svelte';
-    import Spinner from '../ui/spinner.svelte'
     import Fa from 'svelte-fa'
     import { faSave } from '@fortawesome/free-solid-svg-icons'
     import { getContext } from 'svelte';
@@ -24,25 +23,21 @@
     if (!edition) {
       prof = {email: "", telephone: ""}
     } else {
-      sectionsProf = prof.sections.split(', ')
+      sectionsProf = prof.acl_sections
     }
 
-    function processProf () {
-      if(edition) {updateProf()} else {saveProf()}
-    }
-
-    async function saveProf() {
+    async function sauveProf() {
       occupeSave = true
-      const listeSections = sectionsProf.join(', ')
       const row = {
         prenom: prenom, 
           nom: nom,
           prenom: prenom,
           email: prof.email, 
           telephone: prof.telephone, 
-          sections: listeSections
+          acl_sections: sectionsProf
       }
-      await functionsCall("addRow", {onglet: "professeurs", row: JSON.stringify(row)})
+      const id=prof.id?prof.id:null
+      await saveProf(row, id)
       occupeSave = false
       succesSave = true
       setTimeout(close, 500)
@@ -57,9 +52,9 @@
           prenom: prenom,
           email: prof.email, 
           telephone: prof.telephone, 
-          sections: sectionsProf.join(', ')
+          sections: sectionsProf
         }
-        await functionsCall("updateRow", {row: JSON.stringify(row), onglet: "professeurs", index: index})
+        //await functionsCall("updateRow", {row: JSON.stringify(row), onglet: "professeurs", index: index})
         occupeSave = false
         succesSave = true
         setTimeout(close, 500)
@@ -88,7 +83,7 @@
       <div class="ml-2" id="sections">
         {#each sections as section}
             <label class="mx-2">
-                <input type=checkbox bind:group={sectionsProf} value={section.titre}>
+                <input type=checkbox bind:group={sectionsProf} value={section}>
                 {section.titre}
             </label>
         {/each}
@@ -120,7 +115,7 @@
           succes = {succesSave}
           largeur="w-20"
           couleur="bleuClair"
-          on:actionBouton={processProf}>
+          on:actionBouton={sauveProf}>
             <div class="flex justify-center text-bleuClair">
                 <Fa icon={faSave} size="lg" />
             </div>
