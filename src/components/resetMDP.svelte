@@ -19,7 +19,7 @@
     }
 
     function renvoiOubliMDP() {
-        var urlLogin = window.location.origin + "/oubliMDP"
+        var urlLogin = window.location.origin + "/admin/oubliMDP"
         window.location.replace(urlLogin)
     }
 
@@ -45,11 +45,6 @@
                     if (retour2.jwt && retour2.user) {
                         window.location.replace(window.location.origin)
                     } else {
-                        if (retour2.data[0].messages[0].id==="Auth.form.error.password.matching") {
-                            message="Les mots de passe ne coincident pas. Merci d'essayer à nouveau."
-                            erreur="text-orangeLBF"
-                            return
-                        }
                         if (retour2.data[0].messages[0].id==="Auth.form.error.password.matching") {
                             message="Les mots de passe ne coincident pas. Merci d'essayer à nouveau."
                             erreur="text-orangeLBF"

@@ -9,7 +9,7 @@
     var erreur = "text-gray-400"
     var message = "Renseignez votre adresse email pour recevoir un lien permettant de modifier votre mot de passe."
 
-    var urlLogin = window.location.origin + "/login"
+    var urlLogin = window.location.origin + "/admin/login"
 
     function demandeLien() {
         if (email==="") {

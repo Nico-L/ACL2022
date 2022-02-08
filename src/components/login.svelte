@@ -101,7 +101,7 @@
             </div>
         </Bouton>
         <div class="text-sm text-gray-400 mt-2">
-            Mot de passe oublié ?
+            <a href="/admin/oubliMDP">Mot de passe oublié ?</a>
         </div>
     </div>
 </div>
