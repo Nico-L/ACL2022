@@ -4,14 +4,18 @@
     import Spinner from './ui/spinner.svelte'
     import functionsCall from './utils/functionsCall.js'
     import Editable from './ui/editable.svelte'
+    import {getDerniereCampagne, saveCampagne} from './utils/strapiCampagne.js'
     import Fa from 'svelte-fa'
-    import { faFolder, faFile, faPlusSquare, faSave, faSquare } from '@fortawesome/free-regular-svg-icons'
-    import { faCheck, faFolderPlus, faTimes, faFolder as faFolderSolid, faFile as faFileSolid, faMusic, faUserTie, faUsers } from '@fortawesome/free-solid-svg-icons'
+    import { faFolder, faFile, faSave } from '@fortawesome/free-regular-svg-icons'
+    import { faCheck, faFolderPlus, faTimes, faFolder as faFolderSolid, faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
     
     const d = new Date()
     const annee = d.getFullYear()
     var nomCampagne = "ACL " + annee.toString() + "-" + (annee+1).toString()
+    var fichierAdherents = {nom: "ACL adhérents " + annee.toString() + "-" + (annee+1).toString(), type: "file", parent: "top"}
+    var placedFichierAdherent = false
     var loadingDossiers = false
+    var derniereCampagne = {}
     var structureDossiers = []
     var updating = []
     var nouveauDossier = ""
@@ -36,8 +40,10 @@
 
     async function getListe() {
         loadingDossiers = true
-        structureDossiers = (await functionsCall('listeDossiers')).dossiers
-        structureDossiers.forEach((item) => {updating.push(false); editing.push(false)})
+        derniereCampagne = (await getDerniereCampagne())[0]
+        if (derniereCampagne.arborescence) structureDossiers = derniereCampagne.arborescence
+        console.log('structure dossier', structureDossiers)
+        structureDossiers.forEach((item) => {updating.push(false); editing.push(false); if (item.type === "file") {placedFichierAdherent = true}})
         loadingDossiers = false
     }
 
@@ -71,10 +77,18 @@
                     //await functionsCall('transfertDroits', {id: fileId})
                     file.id = fileId
                     currentFile += 1
+                    const variables = {
+                        titre: nomCampagne,
+                        enCours: true,
+                        gSheetId: fileId,
+                        arborescence: structureDossiers
+                    }
                     if (currentFile === totalFiles) {
                         creatingFiles = 'done'
                         MAJStructure = 'start'
-                        update(-1)
+                        const saveCamp = await saveCampagne(variables)
+                        MAJStructure = 'done'
+                        fini = 'done'
                     }
                 })
             }
@@ -83,14 +97,16 @@
     }
 
     async function update(index) {
-        if (index > 0) updating[index] = true
-        await functionsCall('updateRows', {rows: JSON.stringify(structureDossiers)})
+        if (index >= 0) updating[index] = true
+        //await functionsCall('updateRows', {rows: JSON.stringify(structureDossiers)})
+        //const variables = {arborescence: structureDossiers}
+        //if (derniereCampagne.id) {await saveCampagne(variables, derniereCampagne.id)}
         if (MAJStructure === 'start') {
             MAJStructure = 'done'
             fini = 'done'
             creatingCampagne = 'done'
         }
-        if (index > 0) {
+        if (index >= 0) {
             updating[index] = false
             editing[index] = false
         }
@@ -100,9 +116,14 @@
         if (nom !== "") {
             structureDossiers.push({nom: nom, type: type, parent: parent})
             structureDossiers = structureDossiers
+            /*const variables = {arborescence: structureDossiers}
+            if (derniereCampagne.id) {
+                console.log('derniereCampagne.id', variables)
+                //await saveCampagne(variables, derniereCampagne.id)
+            } */
             nouveauDossier = ""
             updating[structureDossiers.length -1] = true
-            await functionsCall('addRow', {row: JSON.stringify({nom: nom, type: type, parent: parent})})
+            //await functionsCall('addRow', {row: JSON.stringify({nom: nom, type: type, parent: parent})})
             updating[structureDossiers.length -1] = false
         }        
     }
@@ -110,11 +131,11 @@
     async function deleteItem(index) {
         const nomItem = structureDossiers[index].nom
         updating[index]  = true
-        await functionsCall('deleteRow', {index: index})
+        //await functionsCall('deleteRow', {index: index})
         structureDossiers.splice(index, 1)
         structureDossiers.forEach(async (item, i) => {
             if (item.parent === nomItem) {
-                await functionsCall('deleteRow', {index: i})
+                //await functionsCall('deleteRow', {index: i})
                 structureDossiers.splice(i, 1)
             }
         })
@@ -130,14 +151,19 @@
         if (type === "folder") {
             if (swap.swapping) {
                 if (swap.type === "folder") {
-                    const temp = structureDossiers[swap.from]
-                    structureDossiers[swap.from] = structureDossiers[index]
-                    structureDossiers[index] = temp
-                    update(index)
+                    structureDossiers.splice(index + 1, 0, structureDossiers[swap.from])
                 }
                 if (swap.type === "file") {
-                    structureDossiers[swap.from].parent = nom
-                    update(swap.from)
+                    fichierAdherents.parent = nom
+                    structureDossiers.splice(index + 1, 0, fichierAdherents)
+                    placedFichierAdherent = true
+                }
+                if (swap.from > -1) {
+                    if (swap.from < index) {
+                        structureDossiers.splice(swap.from,1)
+                    } else {
+                        structureDossiers.splice(swap.from+1,1)
+                    }  
                 }
                 swap = {swapping: false, from: -1, type: ""}
                 structureDossiers = structureDossiers
@@ -151,26 +177,8 @@
             swap.from = index
             swap.swapping = true
             swap.type = type
-        }  
+        }
     }
-
-function changeUsage(index) {
-    switch(structureDossiers[index].usage) {
-        case "adherents":
-            structureDossiers[index].usage = "professeurs"
-            break;
-        case "professeurs":
-            structureDossiers[index].usage = "sections"
-            break;
-        case "section":
-            structureDossiers[index].usage = "professeurs"
-            break;
-    default:
-        structureDossiers[index].usage = "adherents"
-    }
-    structureDossiers = structureDossiers
-    update(-1)
-}
 
 $: {
     if (!loadingDossiers) {
@@ -189,6 +197,23 @@ $: {
         <div class="border border-jauneClair rounded-lg p-2 min-w-max mx-auto sm:m-0 flex flex-col justify-between">
             <div>
                 <h3 class="text-jauneClair font-semibold text-xl p-0" >Structure des dossiers</h3>
+                {#if !placedFichierAdherent}
+                    <div class="min-w-max flex my-1">
+                        <div 
+                            class="w-fit text-jauneClair cursor-pointer hover:bg-jaune-900 p-1 rounded"
+                            on:click={() => swapping(-1,null,"file")}>
+                            {#if swap.swapping && swap.type === "file"}
+                                <Fa icon={faFileSolid}></Fa>
+                            {:else}
+                                <Fa icon={faFile}></Fa>
+                            {/if}
+                        </div>
+                        <Editable 
+                            bind:leHTML={fichierAdherents.nom} 
+                            classes="rounded p-0 m-0 focus:bg-gray-800" 
+                            />
+                    </div>
+                {/if}                
                 <div class="flex justify-start items-center gap-2">
                     <div class="text-jauneClair"><Fa icon={faFolder}></Fa></div>
                     <Editable 
@@ -228,11 +253,6 @@ $: {
                                     on:update={() => update(index)}
                                     on:focus={() => editing[index] = true}
                                     />
-                                <div
-                                    on:click={() => addItem("fichier", dossier.nom, "file")} 
-                                    class="text-jauneClair h-6 w-6 flex justify-center items-center cursor-pointer hover:bg-jaune-900 p-1 rounded">
-                                    <Fa icon={faPlusSquare}></Fa>
-                                </div>
                                 {#if editing[index]} 
                                     <div 
                                         on:click={() => update(index)}
@@ -269,19 +289,6 @@ $: {
                                             on:update={() => update(indexFichier)}
                                             on:focus={() => editing[indexFichier] = true}
                                             />
-                                        <div
-                                            on:click={()=>changeUsage(indexFichier)}
-                                            class="text-jauneClair h-6 w-6 flex justify-center items-center cursor-pointer hover:bg-jaune-900 p-1 rounded">
-                                            {#if fichier.usage === "adherents"}
-                                            <Fa icon={faUsers} ></Fa>
-                                        {:else if fichier.usage === "professeurs"}
-                                            <Fa icon={faUserTie} ></Fa>
-                                        {:else if fichier.usage === "sections"}
-                                            <Fa icon={faMusic} ></Fa>
-                                        {:else}
-                                            <Fa icon={faSquare} ></Fa>
-                                        {/if}
-                                        </div>
                                         {#if editing[indexFichier]} 
                                             <div 
                                                 on:click={() => update(indexFichier)}
@@ -290,9 +297,7 @@ $: {
                                             </div>
                                         {:else}
                                             <div 
-                                                on:click={() => deleteItem(indexFichier)}
                                                 class="text-rougeClair h-6 w-6 flex justify-center items-center cursor-pointer hover:bg-rouge-900 p-1 rounded"> 
-                                                <Fa icon={faTimes} size="lg"></Fa>
                                             </div>
                                         {/if}
                                     {/if}
@@ -321,11 +326,6 @@ $: {
         </div>
     
         <div class="mx-auto sm:m-0 border border-vertClair p-2 rounded-lg w-fit flex flex-col justify-between">
-            <!--<div class="font-bold">Préparation en cours</div>
-            <div class="mx-2">Création du nouveau dossier</div>
-            <div class="flex gap-2 items-center justify-start">
-                <div class="m-0 p-0 mx-2">Création du nouveau fichier</div><Spinner taille="xs" couleur="vertClair" caption={false}></Spinner>
-            </div> -->
             {#if creatingCampagne !== 'not'}
                 <div>
                     <h3 class="text-vertClair font-semibold text-xl p-0" >Installation en cours...</h3>
@@ -368,7 +368,7 @@ $: {
                     </div>
                     <div class="flex gap-2 items-center justify-start text-vertClair">
                         {#if MAJStructure !== "not"}
-                            <div class="m-0 p-0 mx-2">Mise à jour du fichier source</div>
+                            <div class="m-0 p-0 mx-2">Mise à jour des données.</div>
                             <div class="w-6">
                                 {#if MAJStructure === "start"}
                                     <Spinner taille="xs" couleur="jauneClair" caption={false}></Spinner>
@@ -389,33 +389,12 @@ $: {
                 <div class="flex flex-col w-fit">
                     <h3 class="text-vertClair font-semibold text-xl p-0" >Mode d'emploi</h3>
                     <ul class="list-decimal list-inside px-1 marker:text-vertClair text-sm">
-                        <li>Le dossier racine <span class="text-vertClair">{nomCampagne}</span> est le nouveau dossier qui sera créé sur le drive.</li>
-                        <li>Vous pouvez créer l'aborescence complète ci-contre. Un dossier est créé en entrant un titre à côté de <span class="inline-flex items-center text-vertClair"><Fa icon={faFolderPlus}></Fa></span>.</li>
-                        <li>Vous pouvez réorganiser l'ordre des dossiers en cliquant sur <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faFolder}></Fa></span> du dossier à réarranger puis celui du dossier d'arrivée.</li>
-                        <li class="font-semibold text-vert-600">Le système a besoin de trois fichiers pour fonctionner : un fichier "adhérents" <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faUsers}></Fa></span>, un fichiers "professeurs" <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faUserTie}></Fa></span> et un fichier "sections" (instruments et ateliers) <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faMusic}></Fa></span></li>
-                        <li>Un fichier se crée en cliquant sur le <span class="inline-flex items-center text-vertClair"><Fa icon={faPlusSquare}></Fa></span> du dossier correspondant. Le type de fichier est choisi en cliquant sur l'icone (<span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faUsers}></Fa></span>, <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faUserTie}></Fa></span> ou <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faMusic}></Fa></span>)</li>
-                        <li>Vous pouvez déplacer les fichiers en cliquant d'abord sur <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faFile}></Fa></span> du fichier puis sur <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faFolder}></Fa></span> du dossier destinataire.</li>
-                        <li>Une fois l'arborescence OK, vous pouvez cliquer sur le bouton ci-dessous si les trois icones suivantes sont au vert :
-                            {#if !loadingDossiers}
-                                <div class="inline-flex flex gap-2 ml-2 items-center">
-                                    {#if verifFiles.adherents}
-                                        <span class={"inline-flex items-center mx-1 text-vertClair"}><Fa icon={faUsers}></Fa></span>
-                                    {:else}
-                                        <span class={"inline-flex items-center mx-1 text-rougeClair"}><Fa icon={faUsers}></Fa></span>
-                                    {/if}
-                                    {#if verifFiles.professeurs}
-                                        <span class={"inline-flex items-center mx-1 text-vertClair"}><Fa icon={faUserTie}></Fa></span>
-                                    {:else}
-                                        <span class={"inline-flex items-center mx-1 text-rougeClair"}><Fa icon={faUserTie}></Fa></span>
-                                    {/if}
-                                    {#if verifFiles.sections}
-                                        <span class={"inline-flex items-center mx-1 text-vertClair"}><Fa icon={faMusic}></Fa></span>
-                                    {:else}
-                                        <span class={"inline-flex items-center mx-1 text-rougeClair"}><Fa icon={faMusic}></Fa></span>
-                                    {/if}
-                                </div>
-                            {/if} 
-                        </li>
+                        <li>Le cadre jaune reprend la structure des dossiers du drive de l'année dernière. Il peut être modifié à votre convenance.</li>
+                        <li>Cliquer sur les titres permet de les modifier.</li>
+                        <li>Vous pouvez créer un nouveau dossier en entrant un titre à côté de <span class="inline-flex items-center text-vertClair"><Fa icon={faFolderPlus}></Fa></span>.</li>
+                        <li>Vous pouvez réorganiser l'ordre des dossiers en cliquant sur <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faFolder}></Fa></span> du dossier à réarranger puis celui du dossier sous lequel l'insérer.</li>
+                       <li>De même, vous pouvez modifier le dossier parent du fichier d'inscriptions en cliquant sur <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faFile}></Fa></span> puis sur <span class="inline-flex items-center mx-1 text-vertClair"><Fa icon={faFolder}></Fa></span> du dossier de destination.</li>
+                       <li>Une fois l'arborescence OK, vous pouvez cliquer sur le bouton ci-dessous et <span class="bg-rouge-900 rounded px-1 font-semibold">ne pas quitter la page avant la fin du processus</span>.</li>
                     </ul>
                 </div>
                 <div class="p-2">
