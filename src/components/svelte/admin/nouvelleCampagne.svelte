@@ -1,10 +1,10 @@
 <script>
     import {onMount} from 'svelte'
-    import Bouton from './ui/bouton.svelte'
-    import Spinner from './ui/spinner.svelte'
-    import functionsCall from './utils/functionsCall.js'
-    import Editable from './ui/editable.svelte'
-    import {getDerniereCampagne, saveCampagne} from './utils/strapiCampagne.js'
+    import Bouton from '../ui/bouton.svelte'
+    import Spinner from '../ui/spinner.svelte'
+    import functionsCall from '../../utils/functionsCall.js'
+    import Editable from '../ui/editable.svelte'
+    import {getDerniereCampagne, saveCampagne} from '../../utils/strapiCampagne.js'
     import Fa from 'svelte-fa'
     import { faFolder, faFile, faSave } from '@fortawesome/free-regular-svg-icons'
     import { faCheck, faFolderPlus, faTimes, faFolder as faFolderSolid, faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
@@ -34,6 +34,8 @@
     var fini = 'not'
     var MAJStructure = 'not'
 
+    const header = ["email référent", "nom référent", "prénom inscrit", "nom inscrit", "email 1", "email 2", "naissance", "téléphone 1", "téléphone 2", "commune", "type adhésion", "adhésion", "instrument", "durée", "professeur d'instrument", "atelier", "total avant QF", "% réduction QF 40%<600 20%<900", "total après QF dont adhésion", "réglé", "remarques"]
+
     onMount(async () => {
         getListe()
     })
@@ -42,7 +44,6 @@
         loadingDossiers = true
         derniereCampagne = (await getDerniereCampagne())[0]
         if (derniereCampagne.arborescence) structureDossiers = derniereCampagne.arborescence
-        console.log('structure dossier', structureDossiers)
         structureDossiers.forEach((item) => {updating.push(false); editing.push(false); if (item.type === "file") {placedFichierAdherent = true}})
         loadingDossiers = false
     }
@@ -74,6 +75,8 @@
                 creatingFiles = 'start'
                 files.forEach(async (file) => {
                     const fileId = (await functionsCall('createGSheet', {parent: file.parentId, nom: file.nom})).id
+                    const zeHeader = (await functionsCall('prepareSheet', {id: fileId, header: JSON.stringify(header)})).data
+                    console.log('zzeHeaer', zeHeader)
                     //await functionsCall('transfertDroits', {id: fileId})
                     file.id = fileId
                     currentFile += 1
@@ -101,11 +104,11 @@
         //await functionsCall('updateRows', {rows: JSON.stringify(structureDossiers)})
         //const variables = {arborescence: structureDossiers}
         //if (derniereCampagne.id) {await saveCampagne(variables, derniereCampagne.id)}
-        if (MAJStructure === 'start') {
+        /*if (MAJStructure === 'start') {
             MAJStructure = 'done'
             fini = 'done'
             creatingCampagne = 'done'
-        }
+        } */
         if (index >= 0) {
             updating[index] = false
             editing[index] = false
@@ -116,14 +119,8 @@
         if (nom !== "") {
             structureDossiers.push({nom: nom, type: type, parent: parent})
             structureDossiers = structureDossiers
-            /*const variables = {arborescence: structureDossiers}
-            if (derniereCampagne.id) {
-                console.log('derniereCampagne.id', variables)
-                //await saveCampagne(variables, derniereCampagne.id)
-            } */
             nouveauDossier = ""
             updating[structureDossiers.length -1] = true
-            //await functionsCall('addRow', {row: JSON.stringify({nom: nom, type: type, parent: parent})})
             updating[structureDossiers.length -1] = false
         }        
     }
@@ -131,11 +128,9 @@
     async function deleteItem(index) {
         const nomItem = structureDossiers[index].nom
         updating[index]  = true
-        //await functionsCall('deleteRow', {index: index})
         structureDossiers.splice(index, 1)
         structureDossiers.forEach(async (item, i) => {
             if (item.parent === nomItem) {
-                //await functionsCall('deleteRow', {index: i})
                 structureDossiers.splice(i, 1)
             }
         })
@@ -193,8 +188,8 @@ $: {
 
 <div class="w-full">
     <h1 class="text-center sm:text-left">Lancement des prochaines inscriptions</h1>
-    <div class="flex flex-wrap sm:flex-nowrap justify-start gap-2 p-0 sm:p-2">
-        <div class="border border-jauneClair rounded-lg p-2 min-w-max mx-auto sm:m-0 flex flex-col justify-between">
+    <div class="flex flex-wrap justify-start gap-2 p-0 sm:p-2">
+        <div class="border border-jauneClair rounded-lg p-2 sm:m-0 flex flex-col justify-between">
             <div>
                 <h3 class="text-jauneClair font-semibold text-xl p-0" >Structure des dossiers</h3>
                 {#if !placedFichierAdherent}
@@ -324,8 +319,8 @@ $: {
                 {/if}
             </div>
         </div>
-    
-        <div class="mx-auto sm:m-0 border border-vertClair p-2 rounded-lg w-fit flex flex-col justify-between">
+
+        <div class="sm:m-0 border border-vertClair p-2 rounded-lg flex flex-col justify-between max-w-380px">
             {#if creatingCampagne !== 'not'}
                 <div>
                     <h3 class="text-vertClair font-semibold text-xl p-0" >Installation en cours...</h3>

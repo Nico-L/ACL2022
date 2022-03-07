@@ -1,5 +1,5 @@
 <script>
-    import Bouton from './ui/bouton.svelte';
+    import Bouton from '../ui/bouton.svelte';
     import Fa from 'svelte-fa'
     import { faSignInAlt } from '@fortawesome/free-solid-svg-icons'
 
@@ -100,7 +100,7 @@
                 <div class="px-1 self-center"><Fa icon={faSignInAlt} size="lg" class="mx-auto" /></div>
             </div>
         </Bouton>
-        <div class="text-sm text-gray-400 mt-2">
+        <div class="text-sm text-gray-400 mt-2 hover:bg-bleu-900 rounded p-1">
             <a href="/admin/oubliMDP">Mot de passe oublié ?</a>
         </div>
     </div>

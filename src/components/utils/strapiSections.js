@@ -1,7 +1,7 @@
 import verifJWT from './verifJWT.js'
 
 export async function listeSections() {
-    const url = "https://cms.labonnefabrique.fr/acl-sections"
+    const url = "https://cms.labonnefabrique.fr/acl-sections?_sort=titre:ASC"
     return verifJWT().then((token)=> 
         {
             const auth = "Bearer " + token

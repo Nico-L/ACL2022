@@ -1,5 +1,5 @@
 <script>
-    import Bouton from './ui/bouton.svelte'
+    import Bouton from '../ui/bouton.svelte'
     import Fa from 'svelte-fa'
     import { faSignInAlt } from '@fortawesome/free-solid-svg-icons'
 
@@ -53,12 +53,12 @@
 </script>
 
 <main>
-    <div class="w-200px border border-vertLBF rounded-md mx-auto mt-12 p-2">
+    <div class="w-200px border border-jauneClair rounded-md mx-auto mt-12 p-2">
         <img src="/img/logos/logoACLrond.png" class="mx-auto my-2 h-32 w-32" alt="logo ACL rond" >
         {#if succes}
             <div class="mb-2 text-justify text-sm text-gray-400">Un mail vous a été envoyé. Il peut mettre quelques minutes à vous parvenir.</div>
             <div class="mt-2">
-                <Bouton border="border-1" largeur="w-full" couleur="text-vertLBF border-vertLBF" on:actionBouton={() => {window.location.replace(urlLogin)}}>
+                <Bouton border="border-1" largeur="w-full" couleur="jauneClair" on:actionBouton={() => {window.location.replace(urlLogin)}}>
                     <div class="mx-auto flex flex-row justify-center">
                         <div class="px-1 self-center">connexion</div>
                         <div class="px-1 self-center"><Fa icon={faSignInAlt} size="lg" class="mx-auto" /></div>
@@ -68,14 +68,14 @@
         {:else}
             <div class={"mb-2 text-justify text-sm " + erreur}>{message}</div>
             <input 
-                class="mb-2 text-sm bg-gray-900 text-gray-400 focus:outline-none border border-vertLBFT rounded py-1 px-2 block w-full appearance-none leading-normal"
+                class="mb-2 text-sm bg-gray-900 text-gray-400 focus:outline-none border border-jauneClair rounded py-1 px-2 block w-full appearance-none leading-normal"
                 type="text"
                 id="identifiant"
                 placeholder="email"
                 bind:value={email}
                 />
             <div class="mt-2">
-                <Bouton occupe={occupe} succes={succes} border="border-1" largeur="w-full" couleur="text-vertLBF border-vertLBF" on:actionBouton={() => {demandeLien()}}>
+                <Bouton occupe={occupe} succes={succes} border="border-1" largeur="w-full" couleur="jauneClair" on:actionBouton={() => {demandeLien()}}>
                     <div class="mx-auto flex flex-row justify-center">
                         <div class="px-1 self-center">Envoyer un lien</div>
                         <div class="px-1 self-center"><Fa icon={faSignInAlt} size="lg" class="mx-auto" /></div>

@@ -8,7 +8,7 @@
     import { getContext } from 'svelte';
     const { close } = getContext('simple-modal');
 
-    import Bouton from '../ui/bouton.svelte'
+    import Bouton from '../svelte/ui/bouton.svelte'
     import Fa from 'svelte-fa'
     import { faTrashAlt, faTimes } from '@fortawesome/free-solid-svg-icons'
 
@@ -23,8 +23,6 @@
                 message = "suppression image"
                 promises += effaceImg(prof.photo.id).then((retour) => {message = "suppression fiche prof"})
             }
-            //message = "suppression fiche prof"
-            //await functionsCall("deleteRow", {onglet: "professeurs", index: index})
             promises += deleteProf(prof.id)
             Promise.all(promises).then((retour) => console.log('hop'))
             occupe = false

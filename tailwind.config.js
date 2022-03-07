@@ -12,18 +12,31 @@ module.exports = {
       },
       minWidth: {
         '200px': '200px',
-        '32': '8rem'
+        '380px': '380px',
+        '32': '8rem',
+        '1/3': '33%',
+        '1/2': '50%'
       },
       maxWidth:  {
         '200px': '200px',
         '380px': '380px',
-        '1024px': '1024px'
+        '460px': '460px',
+        '1024px': '1024px',
+        '1/2': '50%',
+        '1/4': '25%',
+        '1/3': '33%',
+        'full': '100%'
       },
       spacing: {
         "200px": "200px",
+        '460px': '460px',
+        '40%': '40%',
+        '1/2': '50%'
       }
     },
     colors: {
+      "fondSite": "#fff5d1",
+      "fondContenu": "#fefaeb",
       "bleuClair": "#5DB7C5",
       "rougeClair": "#DE5A5B",
       "jauneClair": "#f8c311",
@@ -85,10 +98,9 @@ module.exports = {
       }
     }
   },
-  variants: {
-    cursor: ["hover", "focus", "disabled"],
-    backgroundColor: ["hover", "focus", "disabled"],
-    display: ["responsive", "disabled"],
-    maxWidth: ["responsive"]
-  },
+  plugins: [
+    require("@tailwindcss/forms")({
+      strategy: 'class',
+    }),
+   ]
 };

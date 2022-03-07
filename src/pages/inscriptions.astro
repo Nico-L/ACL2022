@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Inscriptions from '../components/svelte/site/inscriptions.svelte'
+var data = await fetch(import.meta.env.PUBLIC_CMS + "acl-sections?_sort=titre:ASC&token=" + import.meta.env.PUBLIC_TOKEN_SITE)
+const sections = await data.json()
+data = await fetch(import.meta.env.PUBLIC_CMS + "acl-professeurs?_sort=nom:ASC&token=" + import.meta.env.PUBLIC_TOKEN_SITE)
+const professeurs = await data.json()
+---
+<BaseLayout title="Inscriptions">
+  <Inscriptions client:visible {professeurs} {sections}/>
+</BaseLayout>

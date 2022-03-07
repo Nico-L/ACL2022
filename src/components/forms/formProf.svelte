@@ -1,8 +1,7 @@
 <script>
-    import functionsCall from '../utils/functionsCall.js'
     import {saveProf} from '../utils/strapiProfesseurs.js'
 
-    import Bouton from '../ui/bouton.svelte';
+    import Bouton from '../svelte/ui/bouton.svelte';
     import Fa from 'svelte-fa'
     import { faSave } from '@fortawesome/free-solid-svg-icons'
     import { getContext } from 'svelte';
@@ -41,24 +40,6 @@
       occupeSave = false
       succesSave = true
       setTimeout(close, 500)
-    }
-
-    async function updateProf() {
-      if (index >= 0) {
-        occupeSave = true
-        const row = {
-          prenom: prenom, 
-          nom: nom,
-          prenom: prenom,
-          email: prof.email, 
-          telephone: prof.telephone, 
-          sections: sectionsProf
-        }
-        //await functionsCall("updateRow", {row: JSON.stringify(row), onglet: "professeurs", index: index})
-        occupeSave = false
-        succesSave = true
-        setTimeout(close, 500)
-      }
     }
 
     $: {

@@ -1,5 +1,5 @@
 <script>
-    import Bouton from './ui/bouton.svelte';
+    import Bouton from '../ui/bouton.svelte';
     import Fa from 'svelte-fa'
     import { faSave } from '@fortawesome/free-solid-svg-icons' 
 

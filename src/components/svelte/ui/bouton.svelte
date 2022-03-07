@@ -21,7 +21,6 @@
     export let noBorder = false;
     export let disabled = false;
     export let hover = "";
-    console.log('hover', hover)
 
     var lesCouleurs = []
     lesCouleurs["rougeClair"] = {bouton: "text-rougeClair border-rougeClair", spinner: "border-t-rougeClair", text: "text-rougeClair"}

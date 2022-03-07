@@ -2,7 +2,7 @@
     import Editable from './editable.svelte'
     import Fa from 'svelte-fa'
     import { faSave, faTimes} from '@fortawesome/free-solid-svg-icons'
-    import {saveSection, deleteSection} from "../utils/strapiSections.js"
+    import {saveSection, deleteSection} from "../../utils/strapiSections.js"
 
     export let sections = []
     export let type = "instrument"

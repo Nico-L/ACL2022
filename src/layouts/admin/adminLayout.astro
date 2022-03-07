@@ -7,7 +7,9 @@ const {title} = Astro.props;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
-    <link rel="stylesheet" href={Astro.resolve('../../styles/global.css')}>
+    <style global>
+      @import "../../styles/global.css";
+    </style>
   </head>
   <body class="w-full max-w-1024px bg-gray-900 text-gray-400 p-1 sm:p-4 sm:flex sm:flex-row gap-4">
     <Nav />
@@ -17,4 +19,4 @@ const {title} = Astro.props;
   </body>
 </html>
 
-<script src={Astro.resolve('./verifJWT.js')}/>
+<script src="./verifJWT.js"/>

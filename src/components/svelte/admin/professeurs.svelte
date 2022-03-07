@@ -1,15 +1,14 @@
 <script>
   import { onMount } from 'svelte'
-  import functionsCall from './utils/functionsCall.js'
-  import {listeProfs} from "./utils/strapiProfesseurs.js"
-  import {listeSections} from "./utils/strapiSections.js"
+  import {listeProfs} from "../../utils/strapiProfesseurs.js"
+  import {listeSections} from "../../utils/strapiSections.js"
 
-  import Modal from './ui/modal.svelte'
-  import EditionProf from './modals/modalProf.svelte'
-  import ConfirmationEffacer from './modals/modalEffaceProf.svelte'
-  import AjoutProf from './modals/modalAjoutProf.svelte'
-  import Spinner from './ui/spinner.svelte'
-  import GestionImage from "./ui/gestionImage.svelte"
+  import Modal from '../ui/modal.svelte'
+  import EditionProf from '../../modals/modalProf.svelte'
+  import ConfirmationEffacer from '../../modals/modalEffaceProf.svelte'
+  import AjoutProf from '../../modals/modalAjoutProf.svelte'
+  import Spinner from '../ui/spinner.svelte'
+  import GestionImage from "../ui/gestionImage.svelte"
   import Fa from 'svelte-fa'
   import {faPhoneAlt, faAt} from '@fortawesome/free-solid-svg-icons'
 

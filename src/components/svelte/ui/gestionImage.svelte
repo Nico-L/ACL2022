@@ -4,7 +4,7 @@
     import Spinner from './spinner.svelte'
     import Fa from 'svelte-fa'
     import {faCamera, faTimes} from '@fortawesome/free-solid-svg-icons'
-    import {effaceImg} from '../utils/strapiProfesseurs.js'
+    import {effaceImg} from '../../utils/strapiProfesseurs.js'
 
     export let prof = {}
     var dataPhoto = prof.dataPhoto?JSON.parse(prof.dataPhoto):{}
@@ -91,9 +91,6 @@
         occupe= true
         effaceImg(prof.photo.id).then(async (retour) => {
             prof.photo = null
-            //prof.dataPhoto = null
-            //if (index >= 0) {await functionsCall("updateRow", {onglet: "professeurs", index:index, row: JSON.stringify(prof)})}
-            //dataPhoto = {}
             occupe = false
             processMessage = ""
         })

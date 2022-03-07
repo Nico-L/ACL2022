@@ -11,7 +11,7 @@ export default /** @type {import('astro').AstroUserConfig} */ ({
       server: {
         host: true,
         hmr: {
-          host: '24678-rose-deer-7ksxq7g7.ws-eu30.gitpod.io',
+          host: '24678-rose-deer-7ksxq7g7.ws-eu34.gitpod.io',
           clientPort: 443
         }
       }

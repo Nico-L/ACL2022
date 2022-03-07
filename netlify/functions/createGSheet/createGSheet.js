@@ -2,8 +2,8 @@
 const { google } = require('googleapis');
 
 const handler = async (event) => {
-  const parent = event.queryStringParameters.parent
-  const nom = event.queryStringParameters.nom
+  const parent = event.queryStringParameters.parent || ''
+  const nom = event.queryStringParameters.nom || ''
     const jwtClient = new google.auth.JWT(
         process.env.EMAIL_SERVICE_GOOGLE,
         null,

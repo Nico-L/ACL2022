@@ -1,21 +1,33 @@
 ---
-// src/layouts/BaseLayout.astro
 const {title} = Astro.props;
 ---
 <html>
   <head>
-  <meta charset="UTF-8">
-    <title>Example Layout: {title}</title>
-    <link rel="stylesheet" href={Astro.resolve('../styles/global.css')}>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+
+    <style global>
+      @import "../styles/global.css";
+      @import "../styles/site.css";
+    </style>
   </head>
-  <body>
-    <!-- Adds a navigation bar to every page. -->
-    <nav>
-      <a href="#">Home</a>
-      <a href="#">Posts</a>
-      <a href="#">Contact</a>
-    </nav>
-    <!-- slot: your page content will be injected here. -->
-    <slot />
+  <body class="w-full bg-fondSite text-gray-900 p-4">
+      <div class="max-w-1024px flex justify-between items-end sm:items-center mx-auto my-2 sm:my-12">
+      
+        <div class="w-full flex flex-col justify-center sm:mx-6">
+          <div class="text-2xl text-center sm:text-4xl font-bold text-bleu-800">Association Culture & loisirs</div>
+          <div class="flex justify-between items-start">
+            <img class="sm:hidden h-20 mr-2" src="/img/logos/mascotteGauche.png" alt="mascottes acl" >
+            <div class="text-base text-center sm:text-left mt-1 sm:mt-0 sm:text-xl font-semibold text-bleu-600">&#xC9;cole de musique du Sappey en Chartreuse</div>
+            <img class="sm:hidden h-20 ml-2 " src="/img/logos/mascotteDroite.png" alt="mascottes acl" >
+          </div>
+          
+        </div>
+        <img class="hidden sm:block" src="/img/logos/mascottes.png" alt="mascottes acl" >  
+      </div>
+    <div class="m-0 p-0 sm:p-4 max-w-1024px bg-fondContenu mx-auto">
+      <slot />
+    </div>
   </body>
 </html>
