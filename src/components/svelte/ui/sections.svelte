@@ -126,7 +126,7 @@
 </script>
 <div class="w-full rounded p-1 mb-2 border border-bleuClair rounded-lg">
     <h2 class="font-semibold text-bleu-700">Formation musicale</h2>
-    <div class="w-full p-1 mb-2 fm ">
+    <div class="w-full p-1 mb-2 fm grid grid-cols-4">
         <div class={"p-1 border-r border-b border-bleu-800 text-center font-semibold " + lesCouleurs["bleu"].textSombre }>Titre</div>
         <div class={"p-1 border-r border-b border-bleu-800 text-center font-semibold " + lesCouleurs["bleu"].textSombre}>Durée</div>
         <div class={"p-1 border-b border-bleu-800 text-center font-semibold " + lesCouleurs["bleu"].textSombre}>Tarif</div>
