@@ -1,6 +1,4 @@
 <script>
-    import Fa from 'svelte-fa'
-    import { faSquare} from '@fortawesome/free-regular-svg-icons'
     import CheckBox from '../ui/checkBox.svelte'
 
 

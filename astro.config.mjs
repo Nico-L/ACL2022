@@ -4,6 +4,9 @@ export default /** @type {import('astro').AstroUserConfig} */ ({
     public: './public/',
     dist: './dist/',
     src: './src/',
+    buildOptions: {
+      site: 'https://acl-sappey.netlify.app/',
+    },
     renderers: [
       '@astrojs/renderer-svelte'
     ],
