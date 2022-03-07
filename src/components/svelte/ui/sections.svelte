@@ -11,7 +11,6 @@
     var fm = []
     var tarifsInstruments = []
     var tarifsFm = []
-    var occupe = false
     var newAtelier = {titre:"", type:"atelier", tarifs: [{duree:"", creneau:"", tarif: 0}]}
 
     var nouvelleSection = ""
@@ -259,7 +258,7 @@
     </div>
     <div class="w-full p-1 mb-2 border border-vertClair rounded-lg">
         <h2 class="font-semibold text-vert-600">Ateliers</h2>
-        <div class="w-full p-1 mb-2 ateliers ">
+        <div class="w-full p-1 mb-2 ateliers grid grid-cols-5">
                 <div class={"p-1 border-r border-b border-vert-800 text-center font-semibold " + lesCouleurs["vert"].textSombre }>Titre</div>
                 <div class={"p-1 border-r border-b border-vert-800 text-center font-semibold " + lesCouleurs["vert"].textSombre}>Créneau</div>
                 <div class={"p-1 border-r border-b border-vert-800 text-center font-semibold " + lesCouleurs["vert"].textSombre}>Durée</div>
