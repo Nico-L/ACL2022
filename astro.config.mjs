@@ -9,8 +9,20 @@ export default /** @type {import('astro').AstroUserConfig} */ ({
     },
     renderers: [
       '@astrojs/renderer-svelte'
-    ],
-    vite: {
+    ], vite: {
+      server: {
+        // configure vite for HMR with Gitpod
+        hmr: process.env.GITPOD_WORKSPACE_URL
+          ? {
+              // removes the protocol and replaces it with the port we're connecting to
+              host: process.env.GITPOD_WORKSPACE_URL.replace('https://', '8888-'),
+              protocol: 'wss',
+              clientPort: 443
+            }
+          : true
+      }
+    },
+ /*   vite: {
       server: {
         host: true,
         hmr: {
@@ -18,5 +30,5 @@ export default /** @type {import('astro').AstroUserConfig} */ ({
           clientPort: 443
         }
       }
-    },
+    }, */
   });
