@@ -281,7 +281,7 @@
     }
 
     async function envoiEmail() {
-        const emailSent = await functionsCall("envoyerEmail")
+        const emailSent = await functionsCall("sendEmailGo")
         console.log('email envoyé ?', emailSent)
     }
 
