@@ -16,43 +16,29 @@
     export let value = ""
     export let label = ""
     export let placeHolder = ""
-    export let largeur = ""
+    export let largeur = "w-full"
     export let classes = ""
     export let maxWidth = ""
-    export let pattern = ""
-
     let hidden
 
   $: hidden = label === ""
 </script>
 
-<div class="flex flex-wrap gap-2 justify-start items-center w-full">
+<div class={"flex flex-wrap gap-2 justify-start items-center " + largeur}>
    <label for={id} class="whitespace-nowrap" class:hidden>
         {#if label !== ""}
-        {label}
+            {label}
         {/if}
     </label>
-    <div class={"p-1 rounded bg-fondContenu border border-gray-900 " + largeur + " " + classes + " " + maxWidth}>
+    <div class={"p-1 rounded bg-fondContenu flex-grow border border-gray-900 " + classes + " " + maxWidth}>
         <input 
             {id}
-            pattern={pattern}
-            type="number"
+            type="email"
             bind:value={value}
             {placeHolder}
-            class="mx-auto w-full focus:outline-none bg-fondContenu placeholder:text-gray-700"
+            class="mx-auto focus:outline-none bg-fondContenu placeholder:text-gray-700 w-full"
             on:input={change}
             />
     </div> 
 </div>
-
-<style>
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { 
-    -webkit-appearance: none; 
-    margin: 0; 
-    }
-    input[type=number] {
-        -moz-appearance: textfield;
-        }
-</style>
 

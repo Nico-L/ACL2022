@@ -59,7 +59,7 @@
               <ConfirmationEffacer prof={prof} />
             </Modal>
             <Modal styleWindow="bg-gray-800" styleContent="text-bleuClair" styleCloseButton="p-2" on:closed={() => promise = listeProfs()}>
-              <EditionProf prof={prof} sections={sections} index={index}/>
+              <EditionProf prof={prof} sections={sections} />
             </Modal>
           </div>
         </div>

@@ -28,6 +28,8 @@
     "file-selector": "^0.2.4",
     "google-spreadsheet": "^3.2.0",
     "googleapis": "^92.0.0",
+    "node-fetch": "^3.2.3",
+    "node-mailjet": "^3.3.7",
     "svelte-fa": "^2.4.0"
   },
   "devDependencies": {

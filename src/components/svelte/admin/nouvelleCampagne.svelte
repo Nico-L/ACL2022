@@ -34,7 +34,7 @@
     var fini = 'not'
     var MAJStructure = 'not'
 
-    const header = ["email référent", "nom référent", "prénom inscrit", "nom inscrit", "email 1", "email 2", "naissance", "téléphone 1", "téléphone 2", "commune", "type adhésion", "adhésion", "instrument", "durée", "professeur d'instrument", "atelier", "total avant QF", "% réduction QF 40%<600 20%<900", "total après QF dont adhésion", "réglé", "remarques"]
+    var header = []
 
     onMount(async () => {
         getListe()
@@ -43,6 +43,8 @@
     async function getListe() {
         loadingDossiers = true
         derniereCampagne = (await getDerniereCampagne())[0]
+        derniereCampagne.titreColonnes.forEach((item)=> header.push(item.titre))
+        header = header
         if (derniereCampagne.arborescence) structureDossiers = derniereCampagne.arborescence
         structureDossiers.forEach((item) => {updating.push(false); editing.push(false); if (item.type === "file") {placedFichierAdherent = true}})
         loadingDossiers = false
@@ -76,7 +78,6 @@
                 files.forEach(async (file) => {
                     const fileId = (await functionsCall('createGSheet', {parent: file.parentId, nom: file.nom})).id
                     const zeHeader = (await functionsCall('prepareSheet', {id: fileId, header: JSON.stringify(header)})).data
-                    console.log('zzeHeaer', zeHeader)
                     //await functionsCall('transfertDroits', {id: fileId})
                     file.id = fileId
                     currentFile += 1

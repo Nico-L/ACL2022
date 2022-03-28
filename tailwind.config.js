@@ -18,6 +18,8 @@ module.exports = {
         '1/2': '50%'
       },
       maxWidth:  {
+        '20px': '20px',
+        '100px': '100px',
         '200px': '200px',
         '380px': '380px',
         '460px': '460px',

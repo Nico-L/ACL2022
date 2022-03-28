@@ -1,5 +1,6 @@
 <script>
     import {saveProf} from '../utils/strapiProfesseurs.js'
+    import CheckBox from '../svelte/ui/checkBox.svelte'
 
     import Bouton from '../svelte/ui/bouton.svelte';
     import Fa from 'svelte-fa'
@@ -10,7 +11,7 @@
     export let prof = {}
     export let edition = false
     export let sections = []
-    export let index = -1
+    //export let index = -1
     var sectionsProf = []
     var nomPrenom = edition?prof.prenom + " " + prof.nom:""
     const nomPrenomPlaceHolder = edition?prof.prenom + " " + prof.nom:"prénom nom"
@@ -42,6 +43,19 @@
       setTimeout(close, 500)
     }
 
+    function choixSection(section) {
+      if (isChecked(section.titre)) {
+        sectionsProf = sectionsProf.filter((i) => i.titre !== section.titre)
+      } else {
+        sectionsProf.push(section)
+      }
+      sectionsProf = sectionsProf
+    }
+
+    function isChecked(instrument) {
+      return sectionsProf.filter((i) => i.titre === instrument).length > 0
+    }
+
     $: {
       prenom = nomPrenom.split(" ")[0]
       nom = nomPrenom.slice(prenom.length + 1)
@@ -61,12 +75,26 @@
     </label>
     <label for="sections">
       <div class="label">section(s)</div>
-      <div class="ml-2" id="sections">
+      <div class="ml-2 flex gap-2 flex-wrap justify-around" id="sections">
         {#each sections as section}
-            <label class="mx-2">
-                <input type=checkbox bind:group={sectionsProf} value={section}>
+        <CheckBox 
+          label={section.titre}
+          cbClass="border-bleu-700 checked:border-bleu-700 text-bleu-700 focus:ring-bleu-700"
+          on:checkChange={()=>choixSection(section)}
+          flexWrap = {false}
+          checked={isChecked(section.titre)}
+          />
+           <!-- <CheckBox 
+          label={section.titre} 
+          lblClass={lesCouleurs[index % 3].textSombre}
+          cbClass={lesCouleurs[index % 3].cb}
+          checked={lesInscriptions[index].FM === "EM"}
+          on:checkChange={()=>choixSection("EM", index)}
+          />
+          <label class="mx-2">
+                <input type=checkbox bind:group={sectionsProf} value={section.titre}>
                 {section.titre}
-            </label>
+            </label> -->
         {/each}
     </div>
     </label>

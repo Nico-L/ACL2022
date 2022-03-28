@@ -16,30 +16,34 @@
     export let value = ""
     export let label = ""
     export let placeHolder = ""
-    export let largeur = ""
+    export let largeur = "w-full"
     export let classes = ""
     export let maxWidth = ""
+    export let pattern = ""
+    export let inputmode = ""
 
     let hidden
 
   $: hidden = label === ""
 </script>
 
-<div class="flex flex-wrap gap-2 justify-start items-center w-full">
+<div class={"flex flex-wrap gap-2 justify-start items-center " + largeur}>
    <label for={id} class="whitespace-nowrap" class:hidden>
         {#if label !== ""}
         {label}
         {/if}
     </label>
-<div class={"p-1 rounded bg-fondContenu flex-grow border border-gray-900 " + largeur + " " + classes + " " + maxWidth}>
-    <input 
-        {id}
-        type="text"
-        bind:value={value}
-        {placeHolder}
-        class={"mx-auto focus:outline-none bg-fondContenu placeholder:text-gray-700 " + maxWidth}
-        on:input={change}
-        />
-</div> 
+    <div class={"p-1 rounded bg-fondContenu flex-grow border border-gray-900 " + classes + " " + maxWidth}>
+        <input 
+            {id}
+            {inputmode}
+            type="text"
+            pattern={pattern}
+            bind:value={value}
+            {placeHolder}
+            class="mx-auto focus:outline-none bg-fondContenu placeholder:text-gray-700 w-full"
+            on:input={change}
+            />
+    </div> 
 </div>
 

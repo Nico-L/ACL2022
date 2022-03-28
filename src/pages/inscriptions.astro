@@ -4,8 +4,11 @@ import Inscriptions from '../components/svelte/site/inscriptions.svelte'
 var data = await fetch(import.meta.env.PUBLIC_CMS + "acl-sections?_sort=titre:ASC&token=" + import.meta.env.PUBLIC_TOKEN_SITE)
 const sections = await data.json()
 data = await fetch(import.meta.env.PUBLIC_CMS + "acl-professeurs?_sort=nom:ASC&token=" + import.meta.env.PUBLIC_TOKEN_SITE)
-const professeurs = await data.json()
+const professeursTemp = await data.json()
+const professeurs = professeursTemp.map(prof => {return {prenom: prof.prenom, nom: prof.nom, acl_sections: prof.acl_sections}})
+const adhesionsTarifsTemp = await fetch(import.meta.env.PUBLIC_CMS + "acl-adhesions?token=" + import.meta.env.PUBLIC_TOKEN_SITE)
+const adhesionsTarifs = await adhesionsTarifsTemp.json()
 ---
 <BaseLayout title="Inscriptions">
-  <Inscriptions client:visible {professeurs} {sections}/>
+  <Inscriptions client:visible {professeurs} {sections} {adhesionsTarifs}/>
 </BaseLayout>

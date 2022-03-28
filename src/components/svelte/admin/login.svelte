@@ -32,7 +32,6 @@
         fetch('https://cms.labonnefabrique.fr/auth/local', options)
             .then((leJSON)=>
                 leJSON.json().then((retour)=> {
-                    console.log('retour login', retour)
                     occupe = false
                     if (retour.jwt && retour.user) {
                         succes = true

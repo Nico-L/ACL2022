@@ -21,16 +21,20 @@
     export let noBorder = false;
     export let disabled = false;
     export let hover = "";
+    export let active = "";
 
     var lesCouleurs = []
     lesCouleurs["rougeClair"] = {bouton: "text-rougeClair border-rougeClair", spinner: "border-t-rougeClair", text: "text-rougeClair"}
     lesCouleurs["bleuClair"] = {bouton: "text-bleuClair border-bleuClair", spinner: "border-t-bleuClair", text: "text-bleuClair"}
     lesCouleurs["vertClair"] = {bouton: "text-vertClair border-vertClair", spinner: "border-t-vertClair", text: "text-vertClair"}
     lesCouleurs["jauneClair"] = {bouton: "text-jauneClair border-jauneClair", spinner: "border-t-jauneClair", text: "text-jauneClair"}
+    lesCouleurs["bleuSombre"] = {bouton: "text-bleu-900 border-bleu-900", spinner: "border-t-bleu-900", text: "text-bleu-900"}
+    lesCouleurs["vertSombre"] = {bouton: "text-vert-900 border-vert-900", spinner: "border-t-vert-900", text: "text-vert-900"}
+    lesCouleurs["jauneSombre"] = {bouton: "text-jaune-900 border-jaune-900", spinner: "border-t-jaune-900", text: "text-jaune-900"}
     
     
     $: border = occupe || disabled || succes ?"cursor-default":noBorder?"cursor-pointer":"border-2 cursor-pointer "
-    $: classBouton = "h-10 px-1 my-auto rounded text-base font-medium focus:outline-none " + border + lesCouleurs[couleur].bouton + " " + largeur + " hover:" + hover
+    $: classBouton = "h-10 px-1 my-auto rounded text-base font-medium focus:outline-none " + border + lesCouleurs[couleur].bouton + " " + largeur + " " + hover + " " + active
 
     </script>
     

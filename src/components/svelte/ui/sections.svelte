@@ -17,27 +17,21 @@
     var newTarif = {duree: "", tarif: ""}
 
     async function updateSection (section) {
-        occupe = true;
         await saveSection(section, section.id)
-        occupe = false;
     }
 
     async function removeSection(id, index = null) {
-        occupe = true
         await deleteSection(id)
         sections = sections.filter((section) => section.id !== id)
-        occupe = false;
     }
 
     async function saveInstrument() {
         if (nouvelleSection !== "") {
-            occupe = true
             const variables = {titre: nouvelleSection, type: "instrument", tarifs: tarifsInstruments}
             variables.id = (await saveSection(variables)).id
             sections.push(variables)
             sections = sections
             nouvelleSection = ""
-            occupe = false;
         }
     }
 
@@ -61,7 +55,6 @@
 
     function sauveTarif() {
         if (newTarif.duree !== "" && newTarif.tarif !== "") {
-            occupe = true
             newTarif.tarif = parseInt(newTarif.tarif)
             tarifsInstruments.push(newTarif)
             updateSections()
@@ -78,11 +71,9 @@
         newTarif = {duree: "", tarif: ""}
         sections = sections
         tarifsInstruments = tarifsInstruments
-        occupe = false
     }
 
     function removeTarif (index) {
-        occupe = true
         tarifsInstruments.splice(index, 1)
         updateSections()
     }
@@ -119,7 +110,7 @@
                 atelier.tarifs=[{duree: "", creneau: "", tarif: 0}]
             }
         })
-        fm = sections.filter((section) => section.type === "fm")
+        fm = sections.filter((section) => section.type === "fm" || section.type === "em")
         MAJTarifs()
     }
 </script>
@@ -146,15 +137,16 @@
                 bind:leHTML={section.tarifs[0].tarif}
                 on:update={() => updateSection(section)}
                 />
-            <div class="w-10 flex justify-center items-center">
+            <!-- <div class="w-10 flex justify-center items-center">
                 <div 
                 class="w-fit text-bleu-400 hover:bg-bleu-900 p-1 rounded cursor-pointer" 
                 on:click={()=>{removeSection(section.id)}}>
                     <Fa icon={faTimes} size="lg"></Fa>
                 </div>
-            </div>
+            </div> -->
+            <div></div>
         {/each}
-        <Editable 
+        <!-- <Editable 
                 classes="whitespace-nowrap border-r border-t border-bleu-800 text-center px-2 py-1"
                 bind:leHTML={newAtelier.titre}
                 on:update={saveFm}
@@ -173,7 +165,7 @@
                 on:click={saveFm}>
                 <Fa icon={faSave} size="lg"></Fa>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
     <div class="w-full rounded p-1 mb-2 border border-jauneClair rounded-lg">
