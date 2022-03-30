@@ -1,0 +1,114 @@
+<mjml>
+<mj-head>
+  <mj-preview>Votre inscription a bien été enregitrée.</mj-preview>
+  <mj-title>Votre inscription ACL</mj-title>
+</mj-head>
+<mj-body background-color="#fff5d1">
+   <!-- logo -->
+    <mj-section background-color="#fefaeb" padding="0px" border-top="2px solid #5DB7C5" border-left="2px solid #5DB7C5" border-right="2px solid #5DB7C5" border-radius="5px">
+      <mj-column>
+        <mj-image src="https://0p4ng.mjt.lu/tplimg/0p4ng/b/1jmgw/g0nz.png" alt="logo acl rond" width="160px" height="158px" />
+      </mj-column>
+    </mj-section>
+  
+  <mj-wrapper background-color="#fefaeb" border-left="2px solid #5DB7C5" border-right="2px solid #5DB7C5" padding="0px" padding-left="5px" padding-right="5px">
+    <!-- titre -->
+  <mj-section>
+      <mj-column>
+        <mj-text font-size="28px" font-weight="600" align="center" color="#116B79" padding="0px" line-height="0px">
+          Association Culture et Loisirs
+        </mj-text>
+      </mj-column>
+  </mj-section>
+        <!-- intro -->
+    <mj-section>
+      <mj-column>
+        <mj-text font-size="16px" padding="0px" line-height="0px">
+          Votre inscription a bien été enregistrée. Voici un récapitulatif.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    
+    <mj-section>
+      <mj-column>
+        <mj-text font-size="20px" font-weight="600" align="left" color="#116B79" padding="0px" line-height="20px">
+          Récapitulatif
+        </mj-text>
+        <mj-table padding="0px" padding-left="5px" padding-right="5px" font-size="16px">
+        <tr>
+          <td style="width:80%">{{adhesion.titre}}</td>
+            <td style="text-align:right">{{adhesion.tarif}}</td>
+          </tr>
+          {{#if qf!="" }}
+            <tr>
+              <td style="width:80%">Quotient familiale</td>
+              <td style="text-align:right">{{qf}}</td>
+            </tr>
+          {{/if}}
+          {{#if reduction!=""}}
+            <tr>
+              <td style="width:80%">Réduction</td>
+              <td style="text-align:right">{{reduction}}</td>
+            </tr>
+          {/if}
+        </mj-table>
+        <mj-raw>
+        {{#each inscrits}}
+        </mj-raw>
+        <mj-text  font-size="18px" font-weight="400" align="left" color="#116B79" padding="0px">
+        {{inscrit.prenom}}
+        </mj-text>
+        <mj-divider border-width="2px" border-style="solid" border-color="#116B79" padding="0px" padding-top="4px" padding-bottom="5px"/>
+        <mj-table padding="0px" padding-left="5px" padding-right="5px" font-size="16px">
+          {{#each inscriptions}}
+          <tr>
+              <td style="width:80%">{{inscription.titre}}</td>
+              <td style="text-align:right">{{inscription.tarif}}</td>
+            </tr>
+          {{/each}}
+        </mj-table>
+        <mj-raw>
+        {{/each}}
+        </mj-raw>
+      </mj-column>
+  </mj-section>
+    <!-- text info !-->
+    <mj-section>
+    <mj-column>
+      <mj-text font-size="16px" padding="0px" padding-bottom="5px">
+        Vous avez choisi de régler en {{reglement}}, merci de nous les faire parvenir en les déposant dans la boîte aux lettres de l'association situées en façade de la mairie.
+        </mj-text>
+        {{#if reduction != ""}}
+          <mj-text font-size="16px" padding="0px" padding-bottom="5px">
+            Vous bénéficiez d'une réduction en raison de votre quotient familiale, merci de joindre un justificatif avec votre réglement.
+          </mj-text>
+        {{/if}}
+        <mj-text font-size="16px" padding="0px">
+        Ne jetez pas cette email !! Vous trouverez ci-dessous un lien pour retourner vers la page d'inscription. Il vous permettra de la modifier si besoin.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="0px">
+    <mj-column>
+      <mj-button background-color="#116b79" font-size="18px" href="" border-radius="5px">
+        Votre page d'inscription
+        </mj-button>
+      </mj-column>
+    </mj-section>
+  </mj-wrapper>
+  
+<mj-section background-color="#fefaeb" padding="0px" border-bottom="2px solid #5DB7C5" border-left="2px solid #5DB7C5" border-right="2px solid #5DB7C5" border-radius="5px">
+  <mj-column>
+    <mj-text>
+      Musicalement,
+      </mj-text>
+      <mj-text>
+      Le bureau ACL.
+      </mj-text>
+    </mj-column>
+  </mj-section>
+
+  
+
+</mj-body>
+</mjml>

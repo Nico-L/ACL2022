@@ -1,2 +1,5 @@
 [functions]
   node_bundler = "esbuild"
+ 
+ [functions.sendEmail]
+  included_files = ["./netlify/functions/sendEmail/template/**"]

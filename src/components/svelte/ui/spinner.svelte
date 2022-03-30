@@ -16,10 +16,13 @@
     lesCouleurs['bleuClair'] = {texte: "text-bleuClair", spinner: "border-t-bleuClair"}
     lesCouleurs['vertClair'] = {texte: "text-vertClair", spinner: "border-t-vertClair"}
     lesCouleurs['jauneClair'] = {texte: "text-jauneClair", spinner: "border-t-jauneClair"}
+    lesCouleurs['jauneSombre'] = {texte: "text-jaune-800", spinner: "border-t-jaune-800"}
+    lesCouleurs['bleuSombre'] = {texte: "text-jaune-800", spinner: "border-t-bleu-800"}
+    lesCouleurs['vertSombre'] = {texte: "text-jaune-800", spinner: "border-t-vert-800"}
 </script>
 
 <div class={"flex items-center justify-start p-0 m-0 " + tailles[taille].espace}>
-    <div class={classes + " loader ease-linear rounded-full p-0 m-0 border-gray-700 border " + lesCouleurs[couleur].spinner + " " + tailles[taille].spinner}></div>
+    <div class={classes + " loader ease-linear border-gray-200/0 rounded-full p-0 m-0 " + lesCouleurs[couleur].spinner + " " + tailles[taille].spinner}></div>
     {#if caption}
         <div class={tailles[taille].texte + " ml-2"}>
             <slot ></slot>

@@ -22,15 +22,18 @@
   "dependencies": {
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@sendgrid/mail": "^7.6.2",
     "astro": "^0.23.7",
     "blueimp-load-image": "^5.16.0",
     "dropzone": "^6.0.0-beta.2",
     "file-selector": "^0.2.4",
     "google-spreadsheet": "^3.2.0",
     "googleapis": "^92.0.0",
+    "handlebars": "^4.7.7",
+    "mjml": "^4.12.0",
     "node-fetch": "^3.2.3",
-    "node-mailjet": "^3.3.7",
-    "svelte-fa": "^2.4.0"
+    "svelte-fa": "^2.4.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@astrojs/renderer-svelte": "^0.3.1",

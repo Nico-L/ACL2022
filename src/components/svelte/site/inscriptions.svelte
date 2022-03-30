@@ -8,6 +8,9 @@
     import InputNumber from "../ui/inputNum.svelte"
     import InputEmail from "../ui/inputEmail.svelte"
     import Chevron from "../ui/chevron.svelte"
+    import Spinner from '../ui/spinner.svelte'
+
+    import { v4 as uuidv4 } from 'uuid';
 
     export let sections = ""
     export let professeurs = ""
@@ -20,20 +23,24 @@
     const fms = sections.filter((section) => {return section.type === "fm"})
     const ems = sections.filter((section) => {return section.type === "em"})
 
-    var inscription = {referent: "", emailReferent: "", commune: "Le Sappey en Chartreuse", QF:null, facteurQF: 1, adhesion: 0, verif: {referent: false, emailReferent: false}}
-    var prenomsInscription = "Bob, Bobette"
+    var inscription = {uuid: uuidv4(), referent: "", emailReferent: "", commune: "Le Sappey en Chartreuse", QF:null, facteurQF: 1, adhesion: 0, verif: {referent: false, emailReferent: false}}
+    var prenomsInscription = "Bob"
     var uneInscription = {nom:"", prenom:"", email1:"", email2:"", naissance:"", telephone1:"", telephone2:"", FM:{titre: "", tarif: null, duree: null}, instruments:[], profs:[], durees:[], ateliers:[], verif: {prenom: false, telephone: false, email: false}}
     var lesInscriptions = []
     var isOpen = []
     var lesCouleurs = [
-        {border: "border-bleu-700", bgCadre:"bg-bleu-400/50", textSombre: "text-bleu-900", hover:"hover:bg-bleu-400/50", bg:"bg-bleu-800", cb:"border-bleu-700 checked:border-bleu-700 text-bleu-700 focus:ring-bleu-700", bouton:"bleuSombre", active:"active:bg-bleu-900 active:text-gray-100"},
-        {border:"border-vert-700", bgCadre:"bg-vert-400/50", textSombre: "text-vert-900", hover:"hover:bg-vert-400/50", bg:"bg-vert-800", cb:"border-vert-700 checked:border-vert-700 text-vert-700 focus:ring-vert-700", bouton:"vertSombre",  active:"active:bg-vert-900 active:text-gray-100"},
-        {border:"border-jaune-700", bgCadre:"bg-jaune-400/50", textSombre: "text-jaune-900", hover:"hover:bg-jaune-400/50", bg:"bg-jaune-800", cb:"border-jaune-700 checked:border-jaune-700 text-jaune-700 focus:ring-jaune-700", bouton:"jauneSombre", active:"active:bg-jaune-900 active:text-gray-100"},
+        {border: "border-bleu-700", bgCadre:"bg-bleu-400/50", textSombre: "text-bleu-900", hover:"hover:bg-bleu-400/50", bg:"bg-bleu-800", cb:"border-bleu-700 checked:border-bleu-700 text-bleu-700 focus:ring-bleu-700", sombre:"bleuSombre", active:"active:bg-bleu-900 active:text-gray-100"},
+        {border:"border-vert-700", bgCadre:"bg-vert-400/50", textSombre: "text-vert-900", hover:"hover:bg-vert-400/50", bg:"bg-vert-800", cb:"border-vert-700 checked:border-vert-700 text-vert-700 focus:ring-vert-700", sombre:"vertSombre",  active:"active:bg-vert-900 active:text-gray-100"},
+        {border:"border-jaune-700", bgCadre:"bg-jaune-400/50", textSombre: "text-jaune-900", hover:"hover:bg-jaune-400/50", bg:"bg-jaune-800", cb:"border-jaune-700 checked:border-jaune-700 text-jaune-700 focus:ring-jaune-700", sombre:"jauneSombre", active:"active:bg-jaune-900 active:text-gray-100"},
     ]
     var nRecap = -1
     var reglement = "1 chèque"
     var noProbleme = true
     var noSave = false
+
+    var busySaving = false
+    var messageSaving = "Enregistrement"
+    var saveOK = false
 
     let onClick = (i) => {
         isOpen = isOpen.map((tiroir, index) => {
@@ -42,22 +49,29 @@
     }
 
     function PrepareInscriptions () {
-        if (prenomsInscription !== "")
+        const inscritsPrenoms = lesInscriptions.map(inscrit => inscrit.prenom)
+        if (prenomsInscription.split(",").length > 0)
         {
             let lesPrenoms = prenomsInscription.split(",")
-            lesPrenoms.forEach((prenom, index) => {
-                lesInscriptions[index] = JSON.parse(JSON.stringify(uneInscription))
-                lesInscriptions[index].prenom = prenom.trim()
-                lesInscriptions[index].verif.prenom = true
-                lesInscriptions[index].nom = inscription.referent
-                lesInscriptions[index].tarifs = {FM: null, instruments: [], ateliers: []}
-                isOpen[index] = index === 0
-            })
-            if (lesPrenoms.length < lesInscriptions.length) {
-                lesInscriptions = JSON.parse(JSON.stringify(lesInscriptions.slice(0, lesPrenoms.length)))
+            lesPrenoms = lesPrenoms.map((prenom) => prenom.trim())
+            lesPrenoms = lesPrenoms.filter((prenom) => {return prenom && prenom !== ""})
+            if (lesPrenoms.length > inscritsPrenoms.length) {
+                lesInscriptions.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
+                var temp = JSON.parse(JSON.stringify(uneInscription))
+                temp.prenom = lesPrenoms.slice(-1)
+                temp.verif.prenom = true
+                temp.nom = inscription.referent
+                temp.tarifs = {FM: null, instruments: [], ateliers: []}
+                lesInscriptions.push(temp)
+                isOpen.push(isOpen.length === 0)
+            } else if (lesPrenoms.length === inscritsPrenoms.length) {
+                lesInscriptions.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
+            } else {
+                lesInscriptions = JSON.parse(JSON.stringify(lesInscriptions.slice(0,lesPrenoms.length)))
+                lesInscriptions.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
             }
-            lesInscriptions = lesInscriptions
-            
+            lesInscriptions = lesInscriptions 
+            isOpen = isOpen  
         } else {
             lesInscriptions = []
         }
@@ -117,7 +131,6 @@
         if (event.detail) {
                 lesInscriptions[inscrit].instruments[indexInstrument].duree = tarifInstruments[nbDuree].duree
                 lesInscriptions[inscrit].instruments[indexInstrument].tarif = tarifInstruments[nbDuree].tarif
-                //lesInscriptions[inscrit].durees[index] = durees[nbDuree]
             } else {
                 lesInscriptions[inscrit].instruments[indexInstrument].duree = tarifInstruments[(nbDuree + 1) % 2].duree
                 lesInscriptions[inscrit].instruments[indexInstrument].tarif = tarifInstruments[(nbDuree + 1) % 2].tarif
@@ -128,10 +141,8 @@
     function choixFM(fm, infosFM, index) {
         if (lesInscriptions[index].FM.titre !== fm) {
             lesInscriptions[index].FM = {titre: fm, tarif: infosFM[0].tarif, duree: infosFM[0].duree}
-            //lesInscriptions[index].tarifs.FM = tarif[0]
         } else {
             lesInscriptions[index].FM = {titre: "", tarif: null, duree: null}
-            //lesInscriptions[index].tarifs.FM = null
         }
         lesInscriptions = lesInscriptions
     }
@@ -164,8 +175,10 @@
     }
 
     async function saveInscription() {
-        if (noProbleme) {
+        if (noProbleme || saveOK) {
             noSave = false
+            busySaving = true
+            messageSaving = "Enregistrement en cours"
             var tableau = []
             lesInscriptions.forEach((inscrit, index) => {
                 var stringInstrument = ""
@@ -190,6 +203,7 @@
                 stringAteliers = ateliersTemp.join("\n")
                 const reduction = inscription.facteurQF < 1 ? (100*(1-inscription.facteurQF)).toString() + "%":""
                 var uneInscription = [
+                    inscription.uuid,
                     inscription.emailReferent,
                     inscription.referent,
                     inscription.commune,
@@ -215,7 +229,46 @@
                 ]
                 tableau.push(uneInscription)
             })
-            const saveInscriptions = await functionsCall('saveInscriptions', {inscriptions: JSON.stringify(tableau)})
+            functionsCall('saveInscriptions', {inscriptions: JSON.stringify(tableau)})
+                .then((retour) => {
+                    if (retour.data === "ok") {
+                        messageSaving = "Envoi du mail récapitulatif"
+                        var dataEmail = {
+                            adhesion: {titre: "Adhesion " + adhesion.adhesion, tarif: parseFloat(adhesion.tarif).toFixed(2)+"€"},
+                            qf: adhesion.QF,
+                            reglement: reglement,
+                            coutTotal: (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.tarif)).toFixed(2)+"€",
+                            inscrits: []
+                        }
+                        if (inscription.facteurQF < 1) {
+                            dataEmail.reduction = "-" + parseFloat(1-inscription.facteurQF).toFixed(2)*100 + "%"
+                        }
+                        if (lesInscriptions.length > 0) {
+                            lesInscriptions.forEach((inscrit) => {
+                                var dataInscrit = {
+                                    prenom: inscrit.prenom,
+                                    inscriptions: []
+                                }
+                                if (inscrit.FM.tarif !== null) {
+                                    dataInscrit.inscriptions.push({titre: inscrit.FM.titre, tarif: parseFloat(inscription.facteurQF*inscrit.FM.tarif).toFixed(2)+"€"})
+                                }
+                                if (inscrit.instruments.length > 0) {
+                                    inscrit.instruments.forEach((instrument) => {
+                                        dataInscrit.inscriptions.push({titre: instrument.instrument, tarif: parseFloat(inscription.facteurQF*instrument.tarif).toFixed(2)+"€", prof: instrument.prof, duree:instrument.duree})
+                                    })
+                                }
+                                if (inscrit.ateliers.length > 0) {
+                                    inscrit.ateliers.forEach((atelier) => {
+                                        dataInscrit.inscriptions.push({titre: atelier.titre, tarif: parseFloat(inscription.facteurQF*atelier.tarif).toFixed(2)+"€"})
+                                    })
+                                }
+                                dataEmail.inscrits.push(dataInscrit)
+                            })
+                        }
+                        functionsCall("sendEmail", {email: inscription.emailReferent, dataEmail:JSON.stringify(dataEmail)})
+                            .then((retour2) => {busySaving = false; saveOK = true})
+                    }
+                })
         } else {
             noSave = true
         }
@@ -281,8 +334,8 @@
     }
 
     async function envoiEmail() {
-        const emailSent = await functionsCall("sendEmailGo")
-        console.log('email envoyé ?', emailSent)
+        const emailHtml = await functionsCall("sendEmail")
+        console.log('email envoyé ?', emailHtml)
     }
 
     PrepareInscriptions()
@@ -323,11 +376,6 @@
 </script>
 
 <div>
-    <Bouton
-    on:actionBouton={envoiEmail}
-    >
-            envoie email
-        </Bouton>
     <h1 class="px-2">Inscriptions à l'école de musique</h1>
     <div class="flex flex-wrap justify-between">
         <!-- cadre email general -->
@@ -688,7 +736,7 @@
                     </div>
                     {#if inscription.facteurQF < 1}
                         <div class="w-full flex flex-nowrap justify-between">
-                            <div class="ligne overflow-hidden px-1 whitespace-nowrap">Quotient familial</div>
+                            <div class="ligne overflow-hidden px-1 whitespace-nowrap">Réduction QF</div>
                             <div class="grow-0 px-1">-{parseFloat(1-inscription.facteurQF).toFixed(2)*100}%</div>
                         </div>
                     {/if}
@@ -740,8 +788,8 @@
                                 label="3 chèques" 
                                 lblClass={lesCouleurs[nRecap % 3].textSombre}
                                 cbClass={lesCouleurs[nRecap % 3].cb}
-                                checked={reglement === "3 chèque"}
-                                on:checkChange={(e)=>{if (reglement !== "3 chèque") {reglement = "3 chèque"}}}/>
+                                checked={reglement === "3 chèques"}
+                                on:checkChange={(e)=>{if (reglement !== "3 chèques") {reglement = "3 chèques"}}}/>
                         </div>
                         {#if inscription.facteurQF < 1}
                             <div class={"mt-2 bg-fondContenu rounded p-1 border border " + lesCouleurs[nRecap % 3].border}>Merci de nous faire parvenir l'attestation de quotient familial avec votre réglement.</div>
@@ -785,17 +833,31 @@
                         <div class="flex flex-wrap justify-center mt-2">
                             <Bouton
                                 largeur="w-80"
-                                couleur={lesCouleurs[nRecap % 3].bouton}
+                                couleur={lesCouleurs[nRecap % 3].sombre}
                                 active = {lesCouleurs[nRecap % 3].active}
                                 on:actionBouton={saveInscription}
                                 >
                                 <div class="flex justify-center items-center px-3">
-                                    Enregistrer votre inscription
+                                    {#if busySaving}
+                                    <Spinner couleur={lesCouleurs[nRecap % 3].sombre} caption={true}>{messageSaving}</Spinner>
+                                    {:else}
+                                    <div>Enregistrer votre inscription</div>
+                                    {/if}
                                 </div>
                             </Bouton>
                             {#if noSave}
                                 <div class="text-rouge-800 text-sm">
-                                    Merci de corriger votre formulaire avant d'enregister
+                                    Merci de corriger votre formulaire avant d'enregister.
+                                </div>
+                            {/if}
+                            {#if busySaving}
+                                <div class="text-rouge-800 text-sm">
+                                    Ne quittez pas la page avant la fin du processus.
+                                </div>
+                            {/if}
+                            {#if saveOK}
+                                <div class="text-vert-800 text-sm">
+                                    Enregistrement réussi, vous pouvez quittez la page.
                                 </div>
                             {/if}
                         </div>

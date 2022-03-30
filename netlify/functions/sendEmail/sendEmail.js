@@ -4,54 +4,64 @@
  *
  */
 
- const mailjet = require ('node-mailjet').connect(process.env.MAILJET_API_KEY, process.env.MAILJET_SECRET)
+ const sendgrid = require('@sendgrid/mail');
+ const handlebars = require('handlebars');
+ const fs = require('fs');
 
-const variables = {
-    adhesion: {titre: "adhésion sappeyarde familiale"},
-    QF: "300",
+ sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
+
+/*const variables = {
+    adhesion: {titre: "adhésion sappeyarde familiale", tarif: "30€"},
+    qf: "300",
     reduction: "-40%",
-    inscrits: {
+    inscrits: [{
         prenom: "Bob",
         inscriptions: [
             {titre: "FM5", tarif: "200 €"},
             {titre: "Cours guitare", tarif:"300 €"}
         ]
-    },
+    }],
     reglement: "3 chèques",
     coutTotal: "500€"
-}
+} */
+
+
+const fileName = "./netlify/functions/sendEmail/template/confirmationEmail.hbs"
+const mjmlTemplateFile = fs.readFileSync(fileName, 'utf8');
+const template = handlebars.compile(mjmlTemplateFile);
+let hbsHtml;
+
 
  const handler = async (event) => {
-     console.log('parti')
-     const init = mailjet.post("send", {'version': 'v3.1'})
-     console.log('init', init)
-   const request = await init
-    .request({
-        "Messages":[
-            {
-                "From": {
-                    "Email": "nicolas@luchier.fr",
-                    "Name": "acl"
+    
+    const dataEmail = JSON.parse(event.queryStringParameters.dataEmail) || null
+    const email = event.queryStringParameters.email || null
+    
+    if (dataEmail) {
+        hbsHtml = template(dataEmail);
+
+        if(email)
+        {
+            const msg = {
+                to: email,
+                from: {
+                email: "nicolas@luchier.fr",
+                name: "Nicolas"
                 },
-                "To": [
-                    {
-                        "Email": "nicolas@luchier.fr",
-                        "Name": "passenger 1"
-                    }
-                ],
-                "TemplateID": 3812910,
-                "TemplateLanguage": true,
-                "Subject": "tst",
-                "Variables": {
-                    var: variables
-                }
+                subject: "Votre inscription à l'ACL",
+                html: hbsHtml
             }
-        ]
-    })
-   console.log("request", request)
-      return {
+            
+            sendgrid.send(msg).then(() => {
+                console.log("ça marche ?");
+            }, (error) => {
+                console.log("erreur", error);    
+            });
+        }
+    }
+    return {
         statusCode: 200,
-        body: JSON.stringify({ id: "bob ?"}),
+        body: JSON.stringify({ retour: "ok"}),
         // // more keys you can return:
         // headers: { "headerName": "headerValue", ... },
         // isBase64Encoded: true,
