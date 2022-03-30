@@ -58,8 +58,10 @@
             if (lesPrenoms.length > inscritsPrenoms.length) {
                 lesInscriptions.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
                 var temp = JSON.parse(JSON.stringify(uneInscription))
-                temp.prenom = lesPrenoms.slice(-1)
+                temp.prenom = lesPrenoms.slice(-1)[0]
                 temp.verif.prenom = true
+                temp.email1 = inscription.emailReferent
+                temp.verif.email = inscription.verif.emailReferent
                 temp.nom = inscription.referent
                 temp.tarifs = {FM: null, instruments: [], ateliers: []}
                 lesInscriptions.push(temp)
@@ -208,7 +210,7 @@
                     inscription.referent,
                     inscription.commune,
                     inscrit.prenom,
-                    inscrit.nom,
+                    inscrit.nom === ""?inscription.referent:inscrit.nom,
                     inscrit.naissance,
                     inscrit.email1,
                     inscrit.email2,
@@ -272,7 +274,7 @@
         } else {
             noSave = true
         }
-            }
+    }
 
     function numTel(index, num) {
         const el1 = document.getElementById(index+'-telephone1')

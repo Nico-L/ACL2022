@@ -7,24 +7,32 @@ const adresseFetch = "https://cms.labonnefabrique.fr/acl-inscriptions-campagnes?
 const handler = async (event) => {
   try {
     //const id = event.queryStringParameters.id || ''
-    const leFetch = await fetch(adresseFetch, {
-        method: "get",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        cache: "no-store",
-    });
-    const campagne = await leFetch.json()
-    const gSheetId = campagne[0].gSheetId
-    const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
-    const doc = new GoogleSpreadsheet(gSheetId);
+      const leFetch = await fetch(adresseFetch, {
+          method: "get",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          cache: "no-store",
+      });
+      const campagne = await leFetch.json()
+      
+      const gSheetId = campagne[0].gSheetId
+      const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
+      const doc = new GoogleSpreadsheet(gSheetId);
       await doc.useServiceAccountAuth({
         client_email: process.env.EMAIL_SERVICE_GOOGLE,
         private_key: process.env.KEY_SERVICE_GOOGLE.replace(/\\n/g, "\n"),
       })
-    await doc.loadInfo();
+      await doc.loadInfo();
+      const firstSheet = doc.sheetsByIndex[0];
+      try {
+        await firstSheet.addRows(inscriptions)
+      } catch(erreur) {console.log('errur', erreur)}
+      
+    /*console.log('bob ?', campagne)
+    
     const firstSheet = doc.sheetsByIndex[0];
-    await firstSheet.addRows(inscriptions)
+    await firstSheet.addRows(inscriptions) */
     return {
       statusCode: 200,
       body: JSON.stringify({ data: "ok" }),
