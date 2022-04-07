@@ -19,7 +19,7 @@ const handler = async (event, context) => {
       const gSheetId = campagne[0].gSheetId
       const titreColonnes = campagne[0].titreColonnes
       console.log('recup campagne OK', event, context)
-      const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
+      const inscriptions = event.queryStringParameters.inscriptions || []
       const effacer = JSON.parse(event.queryStringParameters.effacer) || []
       console.log('creation doc start')
       const doc = new GoogleSpreadsheet(gSheetId);
