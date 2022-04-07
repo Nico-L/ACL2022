@@ -343,7 +343,7 @@
                     tableau.push(uneInscription)
                 }
             })
-            functionsCall('saveInscriptions', {inscriptions: JSON.stringify(tableau), effacer: JSON.stringify(inscritAEffacer)})
+            functionsCall('saveInscriptions', {inscriptions: tableau, effacer: JSON.stringify(inscritAEffacer)})
                 .then((retour) => {
                     inscritAEffacer = []
                     if (retour.data === "ok") {
