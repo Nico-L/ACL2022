@@ -18,7 +18,7 @@ const handler = async (event) => {
       const campagne = await leFetch.json()
       const gSheetId = campagne[0].gSheetId
       const titreColonnes = campagne[0].titreColonnes
-      console.log('recup campagne OK', event.queryStringParameters)
+      console.log('recup campagne OK', event)
       const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
       const effacer = JSON.parse(event.queryStringParameters.effacer) || []
       console.log('creation doc start')
