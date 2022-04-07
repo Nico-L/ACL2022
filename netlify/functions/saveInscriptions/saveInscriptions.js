@@ -18,14 +18,15 @@ const handler = async (event) => {
       const campagne = await leFetch.json()
       const gSheetId = campagne[0].gSheetId
       const titreColonnes = campagne[0].titreColonnes
-      console.log('recup campagne', campagne[0])
       const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
       const effacer = JSON.parse(event.queryStringParameters.effacer) || []
       const doc = new GoogleSpreadsheet(gSheetId);
+      console.log('creation doc OK')
       await doc.useServiceAccountAuth({
         client_email: process.env.EMAIL_SERVICE_GOOGLE,
         private_key: process.env.KEY_SERVICE_GOOGLE.replace(/\\n/g, "\n"),
       })
+      console.log('retour google service account')
       await doc.loadInfo();
       const firstSheet = doc.sheetsByIndex[0];
       const rows = await firstSheet.getRows();
