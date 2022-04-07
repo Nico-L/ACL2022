@@ -345,7 +345,7 @@
                 }
             })
             //functionsCall('saveInscriptions', {inscriptions: JSON.stringify(tableau), effacer: JSON.stringify(inscritAEffacer)})
-            functionsCall2('saveInscriptions', "inscriptions=" + JSON.stringify(tableau) + "?effacer=" + JSON.stringify(inscritAEffacer))
+            functionsCall2('saveInscriptions', "inscriptions=" + JSON.stringify(tableau) + "&effacer=" + JSON.stringify(inscritAEffacer))
                 .then((retour) => {
                     inscritAEffacer = []
                     if (retour.data === "ok") {

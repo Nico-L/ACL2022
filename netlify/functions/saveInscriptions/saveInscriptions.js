@@ -5,7 +5,6 @@ const tokenSite = process.env.PUBLIC_TOKEN_SITE
 const adresseFetch = "https://cms.labonnefabrique.fr/acl-inscriptions-campagnes?_sort=id:DESC&_limit=1&token=" + tokenSite
 
 const handler = async (event, context) => {
-  console.log('parti', process.env.PUBLIC_TOKEN_SITE, process.env.EMAIL_SERVICE_GOOGLE, process.env.KEY_SERVICE_GOOGLE)
   try {
     //const id = event.queryStringParameters.id || ''
       const leFetch = await fetch(adresseFetch, {
