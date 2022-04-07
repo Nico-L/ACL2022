@@ -3,6 +3,7 @@
     import CheckBox from '../ui/checkBox.svelte'
     import Bouton from '../ui/bouton.svelte'
     import functionsCall from '../../utils/functionsCall.js'
+    import functionsCall2 from '../../utils/functionsCall2.js'
 
     import { slide } from 'svelte/transition'
     import Input from "../ui/input.svelte"
@@ -343,7 +344,8 @@
                     tableau.push(uneInscription)
                 }
             })
-            functionsCall('saveInscriptions', {inscriptions: tableau, effacer: JSON.stringify(inscritAEffacer)})
+            //functionsCall('saveInscriptions', {inscriptions: JSON.stringify(tableau), effacer: JSON.stringify(inscritAEffacer)})
+            functionsCall2('saveInscriptions', "inscriptions=" + JSON.stringify(tableau) + "?effacer=" + JSON.stringify(inscritAEffacer))
                 .then((retour) => {
                     inscritAEffacer = []
                     if (retour.data === "ok") {

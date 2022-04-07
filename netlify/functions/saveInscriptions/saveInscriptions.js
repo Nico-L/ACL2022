@@ -18,21 +18,17 @@ const handler = async (event, context) => {
       const campagne = await leFetch.json()
       const gSheetId = campagne[0].gSheetId
       const titreColonnes = campagne[0].titreColonnes
-      console.log('recup campagne OK', event, context)
-      const inscriptions = event.queryStringParameters.inscriptions || []
+      console.log('recup campagne OK', event)
+      const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
       const effacer = JSON.parse(event.queryStringParameters.effacer) || []
-      console.log('creation doc start')
       const doc = new GoogleSpreadsheet(gSheetId);
-      console.log('creation doc OK')
       await doc.useServiceAccountAuth({
         client_email: process.env.EMAIL_SERVICE_GOOGLE,
         private_key: process.env.KEY_SERVICE_GOOGLE.replace(/\\n/g, "\n"),
       })
-      console.log('retour google service account')
       await doc.loadInfo();
       const firstSheet = doc.sheetsByIndex[0];
       const rows = await firstSheet.getRows();
-      console.log('recup rows', rows)
       try {
         effacer.forEach(async (efface) => {
           await rows[efface].delete()
