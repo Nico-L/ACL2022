@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 const tokenSite = process.env.PUBLIC_TOKEN_SITE
 const adresseFetch = "https://cms.labonnefabrique.fr/acl-inscriptions-campagnes?_sort=id:DESC&_limit=1&token=" + tokenSite
 
-const handler = async (event) => {
+const handler = async (event, context) => {
   console.log('parti', process.env.PUBLIC_TOKEN_SITE, process.env.EMAIL_SERVICE_GOOGLE, process.env.KEY_SERVICE_GOOGLE)
   try {
     //const id = event.queryStringParameters.id || ''
@@ -18,7 +18,7 @@ const handler = async (event) => {
       const campagne = await leFetch.json()
       const gSheetId = campagne[0].gSheetId
       const titreColonnes = campagne[0].titreColonnes
-      console.log('recup campagne OK', event)
+      console.log('recup campagne OK', event, context)
       const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
       const effacer = JSON.parse(event.queryStringParameters.effacer) || []
       console.log('creation doc start')
