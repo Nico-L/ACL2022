@@ -20,6 +20,7 @@ const handler = async (event) => {
       const titreColonnes = campagne[0].titreColonnes
       const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
       const effacer = JSON.parse(event.queryStringParameters.effacer) || []
+      console.log('creation doc start')
       const doc = new GoogleSpreadsheet(gSheetId);
       console.log('creation doc OK')
       await doc.useServiceAccountAuth({
