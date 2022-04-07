@@ -20,7 +20,6 @@
     let adhesion
     const instruments = sections.filter((section) => {return section.type === "instrument"})
     const tarifInstruments = instruments[0].tarifs
-    console.log('tarifs', tarifInstruments)
     const ateliers = sections.filter((section) => {return section.type === "atelier"})
     const fms = sections.filter((section) => {return section.type === "fm"})
     
@@ -90,10 +89,8 @@
                     }
                     var lesAteliers = []
                     if (row.ateliers) {
-                        console.log('bob ?')
                         const atelierTemp = row.ateliers.split('\n')
                         atelierTemp.forEach((item) => {
-                            console.log('item', item)
                             const temp = ateliers.filter((at) => {return at.titre === item})[0]
                             temp.tarif = temp.tarifs[0].tarif
                             lesAteliers.push(temp)
@@ -128,7 +125,6 @@
                 })
                 inscription = inscription
                 lesInscriptions = lesInscriptions
-                console.log('lesInscriptions', lesInscriptions)
                 isOpen = isOpen
                 recupEnCours = false
             } else {
@@ -136,8 +132,22 @@
                 recupEnCours = false
                 etatInconnu = false
             }
+        } else {
+            etatInconnu = false
         }
     })
+
+    function effacerInscrit(index) {
+        const retirer = lesInscriptions.splice(index, 1)
+        retirer.forEach((item) => {
+                    if (item.hasOwnProperty('nrow')) {
+                        inscritAEffacer.push(item.nrow)
+                    }
+                })
+        lesInscriptions = lesInscriptions
+        const inscritsPrenoms = lesInscriptions.map(inscrit => inscrit.prenom)
+        prenomsInscription = inscritsPrenoms.join(", ")
+    }
 
     function PrepareInscriptions () {
         const inscritsPrenoms = lesInscriptions.map(inscrit => inscrit.prenom)
@@ -581,14 +591,35 @@
         </div>
         <div class="flex flex-col w-full mx-auto m-0 p-0">
             {#each lesInscriptions as inscrit, index}
-                <div class={"m-2 p-1 border rounded " + lesCouleurs[index % 3].border + " " + lesCouleurs[index % 3].bgCadre}>
+                <div class={"m-2 p-0 px-1 border rounded " + lesCouleurs[index % 3].border + " " + lesCouleurs[index % 3].bgCadre}>
                     <header 
-                        class={"py-1 font-semibold flex gap-2 rounded cursor-pointer " + lesCouleurs[index % 3].textSombre + " " + lesCouleurs[index % 3].hover} 
-                        on:click={() => onClick(index)}>
-                        <Chevron 
-                            open={isOpen[index]} 
-                            />
-                            Inscription {inscrit.prenom}
+                        class={"py-1 font-semibold flex gap-2 justify-between items-center w-full " + lesCouleurs[index % 3].textSombre} 
+                        >
+                        <div class={"w-full flex items-center justify-start rounded cursor-pointer p-1 " + lesCouleurs[index % 3].hover}
+                            on:click={() => onClick(index)}
+                        >
+                            <Chevron 
+                                open={isOpen[index]} 
+                                />
+                            <div class="ml-2">
+                                Inscription {inscrit.prenom}
+                            </div>
+                        </div>
+                        <div class={"rounded cursor-pointer p-1 " + lesCouleurs[index % 3].hover}
+                            on:click={() => effacerInscrit(index)}
+                            >
+                            <svg 
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 320 512" 
+                                class="w-6 h-6 mx-auto"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="3"
+                                >
+                                <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+                                <path fill ="currentColor" stroke="currentColor" d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"/>
+                            </svg>
+                        </div>
                     </header>
                     {#if isOpen[index]}
                         <div transition:slide={{ duration: 200 }} class="mt-1">
