@@ -10,5 +10,5 @@ const adhesionsTarifsTemp = await fetch(import.meta.env.PUBLIC_CMS + "acl-adhesi
 const adhesionsTarifs = await adhesionsTarifsTemp.json()
 ---
 <BaseLayout title="Inscriptions">
-  <Inscriptions client:visible {professeurs} {sections} {adhesionsTarifs}/>
+  <Inscriptions client:load {professeurs} {sections} {adhesionsTarifs}/>
 </BaseLayout>

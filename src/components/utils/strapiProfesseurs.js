@@ -1,6 +1,6 @@
 import verifJWT from './verifJWT.js'
 
-const url = "https://cms.labonnefabrique.fr/acl-professeurs?_sort=nom:ASC"
+const url = "https://cms.labonnefabrique.fr/acl-professeurs"
 
 export async function effaceImg (imageId) {
     const urlImage = "https://cms.labonnefabrique.fr/upload/files/" + imageId
@@ -32,7 +32,7 @@ export async function listeProfs() {
                 mode: 'cors',
                 cache: 'default'
             }
-            return fetch(url, options)
+            return fetch(url+"?_sort=nom:ASC", options)
                 .then((leJSON)=> {return leJSON.json()})
                 .then((retour)=> {return retour})
         }

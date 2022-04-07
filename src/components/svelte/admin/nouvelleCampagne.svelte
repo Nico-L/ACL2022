@@ -85,7 +85,8 @@
                         titre: nomCampagne,
                         enCours: true,
                         gSheetId: fileId,
-                        arborescence: structureDossiers
+                        arborescence: structureDossiers,
+                        titreColonnes: derniereCampagne.titreColonnes
                     }
                     if (currentFile === totalFiles) {
                         creatingFiles = 'done'

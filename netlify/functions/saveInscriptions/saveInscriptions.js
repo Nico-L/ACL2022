@@ -15,9 +15,10 @@ const handler = async (event) => {
           cache: "no-store",
       });
       const campagne = await leFetch.json()
-      
       const gSheetId = campagne[0].gSheetId
+      const titreColonnes = campagne[0].titreColonnes
       const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
+      const effacer = JSON.parse(event.queryStringParameters.effacer) || []
       const doc = new GoogleSpreadsheet(gSheetId);
       await doc.useServiceAccountAuth({
         client_email: process.env.EMAIL_SERVICE_GOOGLE,
@@ -25,20 +26,39 @@ const handler = async (event) => {
       })
       await doc.loadInfo();
       const firstSheet = doc.sheetsByIndex[0];
+      const rows = await firstSheet.getRows();
       try {
-        await firstSheet.addRows(inscriptions)
+        effacer.forEach(async (efface) => {
+          await rows[efface].delete()
+        })
+        inscriptions.forEach(async (inscription) => {
+          if (inscription.hasOwnProperty('nrow')) {
+            inscription.row.forEach((data, index) => {
+              rows[inscription.nrow][titreColonnes[index].titre] = data
+            })
+            await rows[inscription.nrow].save()
+          } else {
+            await firstSheet.addRow(inscription)
+          }
+        })
+        /*if (estEdition) {  
+          rows.forEach((ligne) => {
+
+          })    
+          inscriptions.forEach(async (inscription) => {
+            inscription.row.forEach((data, index) => {
+              rows[inscription.nrow][titreColonnes[index].titre] = data
+            })
+            await rows[inscription.nrow].save()
+          })
+        } else {
+          await firstSheet.addRows(inscriptions)
+        } */
       } catch(erreur) {console.log('errur', erreur)}
       
-    /*console.log('bob ?', campagne)
-    
-    const firstSheet = doc.sheetsByIndex[0];
-    await firstSheet.addRows(inscriptions) */
     return {
       statusCode: 200,
       body: JSON.stringify({ data: "ok" }),
-      // // more keys you can return:
-      // headers: { "headerName": "headerValue", ... },
-      // isBase64Encoded: true,
     }
   } catch (error) {
     return { statusCode: 500, body: error.toString() }

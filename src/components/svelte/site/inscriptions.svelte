@@ -1,9 +1,10 @@
 <script>
+    import {onMount} from 'svelte'
     import CheckBox from '../ui/checkBox.svelte'
     import Bouton from '../ui/bouton.svelte'
     import functionsCall from '../../utils/functionsCall.js'
 
-    import { slide } from 'svelte/transition';
+    import { slide } from 'svelte/transition'
     import Input from "../ui/input.svelte"
     import InputNumber from "../ui/inputNum.svelte"
     import InputEmail from "../ui/inputEmail.svelte"
@@ -19,12 +20,14 @@
     let adhesion
     const instruments = sections.filter((section) => {return section.type === "instrument"})
     const tarifInstruments = instruments[0].tarifs
+    console.log('tarifs', tarifInstruments)
     const ateliers = sections.filter((section) => {return section.type === "atelier"})
     const fms = sections.filter((section) => {return section.type === "fm"})
+    
     const ems = sections.filter((section) => {return section.type === "em"})
 
     var inscription = {uuid: uuidv4(), referent: "", emailReferent: "", commune: "Le Sappey en Chartreuse", QF:null, facteurQF: 1, adhesion: 0, verif: {referent: false, emailReferent: false}}
-    var prenomsInscription = "Bob"
+    var prenomsInscription = ""
     var uneInscription = {nom:"", prenom:"", email1:"", email2:"", naissance:"", telephone1:"", telephone2:"", FM:{titre: "", tarif: null, duree: null}, instruments:[], profs:[], durees:[], ateliers:[], verif: {prenom: false, telephone: false, email: false}}
     var lesInscriptions = []
     var isOpen = []
@@ -48,6 +51,94 @@
         })
     }
 
+    var urlModifInscription = null
+    var recupEnCours = false
+    var uuidInconnu = false
+    var etatInconnu = true
+    var inscritAEffacer = []
+
+    onMount(async () => {
+        urlModifInscription = window.location.search
+        var extracted = /\?uuid=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?/i.exec(urlModifInscription)
+        if (extracted!==null)
+        {
+            recupEnCours = true
+            etatInconnu = false
+            isOpen = []
+            const uuid = extracted[1]
+            const rows = JSON.parse((await functionsCall("getInscriptions", {uuid: uuid})).data)
+            if (rows.length > 0) {
+                inscription.uuid = uuid,
+                inscription.referent = rows[0]["nom référent"]
+                inscription.emailReferent = rows[0]["email référent"]
+                inscription.commune = rows[0].commune
+                inscription.verif.referent = true
+                inscription.verif.emailReferent = true
+                if (rows[0].QF !== "") inscription.QF = rows[0].QF
+                prenomsInscription = rows[0]["prénom inscrit"]
+                rows.forEach((row, index) => {
+                    var lesInstruments = []
+                    if(row.instruments)
+                    {
+                        const tempInstrument = row.instruments.split('\n')
+                        const tempProfs = row["professeur d'instrument"].split('\n')
+                        const tempDurees = row["durée"].split('\n')
+                    
+                        tempInstrument.forEach((instrument, index) => {
+                            lesInstruments.push({instrument: instrument, prof: tempProfs[index], duree: tempDurees[index], tarif:tarifInstruments.filter((item) => {return item.duree === tempDurees[index]})[0].tarif})
+                        })
+                    }
+                    var lesAteliers = []
+                    if (row.ateliers) {
+                        console.log('bob ?')
+                        const atelierTemp = row.ateliers.split('\n')
+                        atelierTemp.forEach((item) => {
+                            console.log('item', item)
+                            const temp = ateliers.filter((at) => {return at.titre === item})[0]
+                            temp.tarif = temp.tarifs[0].tarif
+                            lesAteliers.push(temp)
+                        })
+                    }
+                    
+                    if (index > 0) {prenomsInscription = prenomsInscription + ", " + row["prénom inscrit"]}
+                    var defFM = {titre: row.FM, tarif: null, duree: null}
+                    if (row.FM.indexOf("FM") >= 0) {
+                        defFM.tarif = fms[0].tarifs[0].tarif
+                        defFM.duree = fms[0].tarifs[0].duree
+                    }
+                    if (row.FM.indexOf("Eveil" >=0 )) {
+                        defFM.tarif = ems[0].tarifs[0].tarif
+                        defFM.duree = ems[0].tarifs[0].duree
+                    }
+                    lesInscriptions.push({
+                        nrow: row.nrow,
+                        nom: inscription.referent,
+                        prenom: row["prénom inscrit"],
+                        email1:row["email 1"],
+                        email2: row["email 2"],
+                        naissance: row.naissance,
+                        telephone1: row["téléphone 1"].length < 10 && row["téléphone 1"].length!==0? "0"+row["téléphone 1"]:row["téléphone 1"],
+                        telephone2:  row["téléphone 2"].length < 10 && row["téléphone 2"].length!==0 ? "0"+row["téléphone 2"]:row["téléphone 2"],
+                        FM: defFM,
+                        instruments:lesInstruments,
+                        ateliers:lesAteliers,
+                        verif: {prenom: true, telephone: true, email: true}
+                    })
+                    isOpen.push(index === 0)
+                })
+                inscription = inscription
+                lesInscriptions = lesInscriptions
+                console.log('lesInscriptions', lesInscriptions)
+                isOpen = isOpen
+                recupEnCours = false
+            } else {
+                uuidInconnu = true
+                recupEnCours = false
+                etatInconnu = false
+            }
+        }
+    })
+
     function PrepareInscriptions () {
         const inscritsPrenoms = lesInscriptions.map(inscrit => inscrit.prenom)
         if (prenomsInscription.split(",").length > 0)
@@ -61,7 +152,9 @@
                 temp.prenom = lesPrenoms.slice(-1)[0]
                 temp.verif.prenom = true
                 temp.email1 = inscription.emailReferent
-                temp.verif.email = inscription.verif.emailReferent
+                temp.verif.email = inscription.verif.emailReferent,
+                temp.telephone1 = lesInscriptions.length>0?lesInscriptions[0].telephone1:"",
+                temp.verif.telephone = lesInscriptions.length>0?lesInscriptions[0].telephone1:false,
                 temp.nom = inscription.referent
                 temp.tarifs = {FM: null, instruments: [], ateliers: []}
                 lesInscriptions.push(temp)
@@ -69,6 +162,11 @@
             } else if (lesPrenoms.length === inscritsPrenoms.length) {
                 lesInscriptions.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
             } else {
+                lesInscriptions.slice(lesPrenoms.length-lesInscriptions.length).forEach((item) => {
+                    if (item.hasOwnProperty('nrow')) {
+                        inscritAEffacer.push(item.nrow)
+                    }
+                })
                 lesInscriptions = JSON.parse(JSON.stringify(lesInscriptions.slice(0,lesPrenoms.length)))
                 lesInscriptions.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
             }
@@ -131,13 +229,13 @@
 
     function choixDuree (event, nbDuree, inscrit, indexInstrument) {
         if (event.detail) {
-                lesInscriptions[inscrit].instruments[indexInstrument].duree = tarifInstruments[nbDuree].duree
-                lesInscriptions[inscrit].instruments[indexInstrument].tarif = tarifInstruments[nbDuree].tarif
-            } else {
-                lesInscriptions[inscrit].instruments[indexInstrument].duree = tarifInstruments[(nbDuree + 1) % 2].duree
-                lesInscriptions[inscrit].instruments[indexInstrument].tarif = tarifInstruments[(nbDuree + 1) % 2].tarif
-            }
-            lesInscriptions = lesInscriptions
+            lesInscriptions[inscrit].instruments[indexInstrument].duree = tarifInstruments[nbDuree].duree
+            lesInscriptions[inscrit].instruments[indexInstrument].tarif = tarifInstruments[nbDuree].tarif
+        } else {
+            lesInscriptions[inscrit].instruments[indexInstrument].duree = tarifInstruments[(nbDuree + 1) % 2].duree
+            lesInscriptions[inscrit].instruments[indexInstrument].tarif = tarifInstruments[(nbDuree + 1) % 2].tarif
+        }
+        lesInscriptions = lesInscriptions
     }
 
     function choixFM(fm, infosFM, index) {
@@ -160,10 +258,10 @@
             total += (inscrit.FM.tarif)
         }
         inscrit.instruments.forEach((instrument) => {
-            total += (instrument.tarif)
+            if (instrument.tarif) total += (instrument.tarif)
         })
         inscrit.ateliers.forEach((atelier) => {
-            total += (atelier.tarif)
+            if (atelier.tarif) total += (atelier.tarif)
         })
         return total
     }
@@ -224,15 +322,20 @@
                     stringProf,
                     stringAteliers,
                     index === 0 ? totalPrix(): "",
-                    inscription.QF,
-                    reduction,
-                    index === 0 ? totalPrix()*inscription.facteurQF+adhesion.tarif: "",
+                    index === 0 ?inscription.QF:"",
+                    index === 0 ? reduction:"",
+                    index === 0 ? (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.tarif)).toFixed(2)+"€": "",
                     index === 0 ? reglement:""
                 ]
-                tableau.push(uneInscription)
+                if (inscrit.hasOwnProperty('nrow')) {
+                    tableau.push({nrow: inscrit.nrow, row: uneInscription})
+                } else {
+                    tableau.push(uneInscription)
+                }
             })
-            functionsCall('saveInscriptions', {inscriptions: JSON.stringify(tableau)})
+            functionsCall('saveInscriptions', {inscriptions: JSON.stringify(tableau), effacer: JSON.stringify(inscritAEffacer)})
                 .then((retour) => {
+                    inscritAEffacer = []
                     if (retour.data === "ok") {
                         messageSaving = "Envoi du mail récapitulatif"
                         var dataEmail = {
@@ -308,12 +411,6 @@
         inscription.verif.referent = el.checkValidity()
     }
 
-    function verifTelephone(index) {
-        const el1 = document.getElementById(index+'-telephone1')
-        const el2 = document.getElementById(index+'-telephone2')
-        lesInscriptions[index].verif.telephone = el1.checkValidity() && el2.checkValidity() && !(lesInscriptions[index].telephone1 === "" && lesInscriptions[index].telephone2 === "")
-    }
-
     function verifEmails(index, num) {
         const regexMail1 = /([a-zA-Z0-9+._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i.exec(lesInscriptions[index].email1)
         const regexMail2 = /([a-zA-Z0-9+._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i.exec(lesInscriptions[index].email2)
@@ -334,13 +431,6 @@
     function verifPrenom(index) {
         lesInscriptions[index].verif.prenom = lesInscriptions[index].prenom !== ""
     }
-
-    async function envoiEmail() {
-        const emailHtml = await functionsCall("sendEmail")
-        console.log('email envoyé ?', emailHtml)
-    }
-
-    PrepareInscriptions()
 
     $: {
         if (inscription.QF === 0 || inscription.QF === null) {
@@ -379,6 +469,16 @@
 
 <div>
     <h1 class="px-2">Inscriptions à l'école de musique</h1>
+    {#if etatInconnu}
+        <div></div>
+    {:else if recupEnCours}
+        <div class="p-2 flex justify-center items-center w-full">
+            <Spinner taille="moyen" couleur="jauneSombre"></Spinner>
+            <div class="text-jaune-800">Récupération des données</div>
+        </div>
+    {:else if uuidInconnu}
+        <div class="p-2 text-jaune-800 text-center">Votre inscription n'a pas été trouvée.</div>
+    {:else}
     <div class="flex flex-wrap justify-between">
         <!-- cadre email general -->
         <div class="m-2 p-1 rounded w-full border border-jaune-700 bg-jaune-400/50">
@@ -459,7 +559,7 @@
                         maxWidth="w-32"
                     />
                     {#if inscription.facteurQF < 1}
-                    <div class="my-1 p-1 w-full text-center whitespace-nowrap text-rouge-800 font-semibold border-2 rounded border-rouge-800">-{parseFloat(1-inscription.facteurQF).toFixed(2)*100}% (hors adhésion)</div>
+                    <div class="my-1 p-1 w-full text-center text-rouge-800 font-semibold border-2 rounded border-rouge-800">Votre quotient vous octroie une réduction de {parseFloat(1-inscription.facteurQF).toFixed(2)*100}% (hors adhésion)</div>
                     {/if}
                 </div>
                 <div class="px-1">
@@ -623,7 +723,7 @@
                                             </div> 
                                                 {#if lesInscriptions[index].FM.tarif}
                                                     <div class={"mx-auto font-semibold text-sm text-center w-full text-fondContenu rounded p-1 " + lesCouleurs[index % 3].bg}>
-                                                        durée : {lesInscriptions[index].FM.duree} - tarif : {lesInscriptions[index].FM.tarif} €
+                                                        durée : {lesInscriptions[index].FM.duree} - tarif : {parseFloat(lesInscriptions[index].FM.tarif*inscription.facteurQF).toFixed(2)} €
                                                     </div>
                                                 {/if}
                                         </div> 
@@ -684,7 +784,7 @@
                                                     </div>
                                                 </div>
                                                 <div class={"mx-auto font-semibold text-sm text-center w-full text-fondContenu rounded p-1 " + lesCouleurs[index % 3].bg}>
-                                                    durée : {lesInscriptions[index].instruments[indexInstrument].duree} - tarif : {lesInscriptions[index].instruments[indexInstrument].tarif} €
+                                                    durée : {lesInscriptions[index].instruments[indexInstrument].duree} - tarif : {parseFloat(lesInscriptions[index].instruments[indexInstrument].tarif*inscription.facteurQF).toFixed(2)} €
                                                 </div>
                                             </div>
                                         {/each}
@@ -706,7 +806,7 @@
                                                         checked={lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre}) != 0}
                                                         on:checkChange={(e)=>choixSection(e, atelier, "atelier", index)}/>
                                                     <div class={"text-sm text-center " + lesCouleurs[index % 3].textSombre}>
-                                                        {atelier.tarifs[0].duree} - {atelier.tarifs[0].creneau}s - {atelier.tarifs[0].tarif}&nbsp;€/an
+                                                        {atelier.tarifs[0].duree} - {atelier.tarifs[0].creneau}s - {parseFloat(atelier.tarifs[0].tarif*inscription.facteurQF).toFixed(2)}&nbsp;€/an
                                                     </div>
                                                 </div>  
                                             {/each}
@@ -794,10 +894,10 @@
                                 on:checkChange={(e)=>{if (reglement !== "3 chèques") {reglement = "3 chèques"}}}/>
                         </div>
                         {#if inscription.facteurQF < 1}
-                            <div class={"mt-2 bg-fondContenu rounded p-1 border border " + lesCouleurs[nRecap % 3].border}>Merci de nous faire parvenir l'attestation de quotient familial avec votre réglement.</div>
+                            <div class={"mt-2 bg-fondContenu rounded-lg p-1 border border " + lesCouleurs[nRecap % 3].border}>Merci de nous faire parvenir l'attestation de quotient familial avec votre réglement.</div>
                         {/if}
                         {#if !noProbleme}
-                            <div class="text-rouge-800 bg-fondContenu border border-rouge-800 rounded-lg p-1">
+                            <div class="text-rouge-800 bg-fondContenu border border-rouge-800 rounded-lg p-1 mt-1">
                                 <div class="font-medium">Merci de corriger les points suivants :</div>
                                 {#if !inscription.verif.referent}
                                     <div class="text-sm text-rouge-800 whitespace-nowrap ml-2">Il manque le nom référent.</div>
@@ -868,7 +968,7 @@
             </div>
         </div>
     </div>
-    
+    {/if}
 </div>
 
 <style>
