@@ -349,6 +349,7 @@
                     if (retour.data === "ok") {
                         messageSaving = "Envoi du mail récapitulatif"
                         var dataEmail = {
+                            adresse: "https://acl-sappey.netlify.app/inscriptions/?uuid="+inscription.uuid,
                             adhesion: {titre: "Adhesion " + adhesion.adhesion, tarif: parseFloat(adhesion.tarif).toFixed(2)+"€"},
                             qf: adhesion.QF,
                             reglement: reglement,

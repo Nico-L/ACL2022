@@ -95,13 +95,13 @@
             {{/if}}
           </mj-raw>
           <mj-text font-size="16px" padding="0px" line-height="20px">
-          Ne jetez pas cet email !! Vous trouverez ci-dessous un lien pour retourner vers la page d'inscription. Il vous permettra de la modifier si besoin.
+          Ne jetez pas cet email ! Vous trouverez ci-dessous un lien pour retourner vers la page d'inscription. Il vous permettra de la modifier si besoin.
           </mj-text>
         </mj-column>
       </mj-section>
       <mj-section padding="0px">
       <mj-column>
-        <mj-button background-color="#116b79" font-size="18px" href="" border-radius="5px">
+        <mj-button background-color="#116b79" font-size="18px" href="{{adresse}}" border-radius="5px">
           Votre page d'inscription
           </mj-button>
         </mj-column>

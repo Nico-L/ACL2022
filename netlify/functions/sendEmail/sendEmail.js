@@ -10,21 +10,6 @@
 
  sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
-/*const variables = {
-    adhesion: {titre: "adhésion sappeyarde familiale", tarif: "30€"},
-    qf: "300",
-    reduction: "-40%",
-    inscrits: [{
-        prenom: "Bob",
-        inscriptions: [
-            {titre: "FM5", tarif: "200 €"},
-            {titre: "Cours guitare", tarif:"300 €"}
-        ]
-    }],
-    reglement: "3 chèques",
-    coutTotal: "500€"
-} */
-
 
 const fileName = "./netlify/functions/sendEmail/template/confirmationEmail.hbs"
 const mjmlTemplateFile = fs.readFileSync(fileName, 'utf8');
