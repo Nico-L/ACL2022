@@ -7,6 +7,8 @@
  //const sendgrid = require('@sendgrid/mail');
  const handlebars = require('handlebars');
  const fs = require('fs');
+ const path = require('path')
+ console.log('path',process.cwd());
  const mailjet = require('node-mailjet').connect(
   process.env.MJ_APIKEY_PUBLIC,
   process.env.MJ_APIKEY_PRIVATE
@@ -14,7 +16,7 @@
 
  //sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
-const fileName = "template/confirmationEmail.hbs"
+const fileName = process.cwd() + "/template/confirmationEmail.hbs"
 const mjmlTemplateFile = fs.readFileSync(fileName, 'utf8');
 const template = handlebars.compile(mjmlTemplateFile);
 
