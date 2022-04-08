@@ -2,7 +2,7 @@
     import {onMount} from 'svelte'
     import CheckBox from '../ui/checkBox.svelte'
     import Bouton from '../ui/bouton.svelte'
-    import functionsCall from '../../utils/functionsCall.js'
+    import functionsCallVercel from '../../utils/functionsCallVercel.js'
     import functionsCall2 from '../../utils/functionsCall2.js'
 
     import { slide } from 'svelte/transition'
@@ -66,7 +66,7 @@
             etatInconnu = false
             isOpen = []
             const uuid = extracted[1]
-            const rows = JSON.parse((await functionsCall("getInscriptions", {uuid: uuid})).data)
+            const rows = JSON.parse((await functionsCallVercel("getInscriptions", {uuid: uuid})).data)
             if (rows.length > 0) {
                 inscription.uuid = uuid,
                 inscription.referent = rows[0]["nom référent"]
