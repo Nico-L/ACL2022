@@ -3,4 +3,4 @@
   external_node_modules = ["vm2"]
  
  [functions.sendEmail]
-  included_files = ["./netlify/functions/sendEmail/template/**"]
+  included_files = ["./netlify/functions/sendEmail/template/**", "./netlify/functions/sendEmail2/template/**"]
