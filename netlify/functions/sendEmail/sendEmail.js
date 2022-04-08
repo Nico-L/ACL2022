@@ -30,10 +30,10 @@ const msg = {
 sendgrid
   .send(msg)
   .then(() => {console.log('hiop !')}, error => {
-    console.error(error);
+    console.log(error);
 
     if (error.response) {
-      console.error(error.response.body)
+      console.log(error.response.body)
     }
   });
     /*const dataEmail = JSON.parse(event.queryStringParameters.dataEmail) || null
