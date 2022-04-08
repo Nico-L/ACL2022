@@ -24,7 +24,7 @@ const sender = mailjet.connect(
   process.env.MJ_APIKEY_PUBLIC,
   process.env.MJ_APIKEY_PRIVATE
 )
-const request = sender.post('send', { version: 'v3.1' }).request({
+const request = await sender.post('send', { version: 'v3.1' }).request({
   Messages: [
     {
       From: {
@@ -44,13 +44,14 @@ const request = sender.post('send', { version: 'v3.1' }).request({
     },
   ],
 })
-request
+console.log('request', request)
+/*request
   .then(result => {
     console.log(result.body)
   })
   .catch(err => {
     console.log(err.statusCode)
-  })
+  }) */
     /*const dataEmail = JSON.parse(event.queryStringParameters.dataEmail) || null
     const email = event.queryStringParameters.email || null
     
