@@ -15,7 +15,7 @@ export default /** @type {import('astro').AstroUserConfig} */ ({
         hmr: process.env.GITPOD_WORKSPACE_URL
           ? {
               // removes the protocol and replaces it with the port we're connecting to
-              host: process.env.GITPOD_WORKSPACE_URL.replace('https://', '8888-'),
+              host: process.env.GITPOD_WORKSPACE_URL.replace('https://', '3001-'),
               protocol: 'wss',
               clientPort: 443
             }
