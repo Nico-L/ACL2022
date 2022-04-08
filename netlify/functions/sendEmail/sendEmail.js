@@ -27,6 +27,7 @@ let hbsHtml;
 
         if(email)
         {
+            console.log('bob ?')
             const msg = {
                 to: email,
                 from: {
