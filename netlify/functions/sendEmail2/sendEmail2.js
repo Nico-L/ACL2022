@@ -7,14 +7,10 @@
  //const sendgrid = require('@sendgrid/mail');
  const handlebars = require('handlebars');
  const fs = require('fs');
- const path = require('path')
- console.log('path',process.cwd());
  const mailjet = require('node-mailjet').connect(
   process.env.MJ_APIKEY_PUBLIC,
   process.env.MJ_APIKEY_PRIVATE
 )
-
- //sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
 const fileName = "./netlify/functions/sendEmail2/template/confirmationEmail.hbs"
 const mjmlTemplateFile = fs.readFileSync(fileName, 'utf8');
@@ -40,8 +36,8 @@ const request = mailjet.post('send', { version: 'v3.1' }).request({
           Name: 'You',
         },
       ],
-      Subject: 'My first Mailjet Email!',
-      TextPart: 'Greetings from Mailjet!',
+      Subject: 'Votre inscription ACL',
+      TextPart: 'Votre inscription ACL',
       HTMLPart: hbsHtml,
     },
   ],
