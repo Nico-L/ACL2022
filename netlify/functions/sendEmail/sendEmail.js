@@ -26,6 +26,7 @@ const msg = {
   text: 'and easy to do anywhere, even with Node.js',
   html: '<strong>and easy to do anywhere, even with Node.js</strong>',
 };
+console.log("message", msg)
 //ES6
 sendgrid
   .send(msg)
