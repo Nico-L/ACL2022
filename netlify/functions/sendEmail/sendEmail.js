@@ -19,11 +19,12 @@ let hbsHtml; */
 
  const handler = async (event) => {
 
-const mailjet = require('node-mailjet').connect(
+const mailjet = require('node-mailjet')
+const sender = mailjet.connect(
   process.env.MJ_APIKEY_PUBLIC,
   process.env.MJ_APIKEY_PRIVATE
 )
-const request = mailjet.post('send', { version: 'v3.1' }).request({
+const request = sender.post('send', { version: 'v3.1' }).request({
   Messages: [
     {
       From: {
