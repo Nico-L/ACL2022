@@ -28,21 +28,25 @@ const handler = async (event) => {
       await doc.loadInfo();
       const firstSheet = doc.sheetsByIndex[0];
       const rows = await firstSheet.getRows();
-      effacer.forEach(async (efface) => {
-        await rows[efface].delete()
+      let promises = []
+      effacer.forEach((efface) => {
+        promises.push(rows[efface].delete())
       })
-        inscriptions.forEach(async (inscription) => {
+      
+        inscriptions.forEach((inscription) => {
           console.log('bob ?')
           if (inscription.hasOwnProperty('nrow')) {
             inscription.row.forEach((data, index) => {
               rows[inscription.nrow][titreColonnes[index].titre] = data
             })
-            await rows[inscription.nrow].save()
+            promises.push(rows[inscription.nrow].save())
           } else {
             console.log('bib ?')
-            await firstSheet.addRow(inscription)
+            promises.push(firstSheet.addRow(inscription))
           }
-        })      
+        })
+    await Promise.all(promises)
+    console.log('all promises ?')
     return {
       statusCode: 200,
       body: JSON.stringify({ data: "ok" }),

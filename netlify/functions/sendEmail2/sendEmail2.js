@@ -21,12 +21,11 @@ const request = mailjet.post('send', { version: 'v3.1' }).request({
     {
       From: {
         Email: 'nicolas@luchier.fr',
-        Name: 'Me',
+        Name: 'ACL',
       },
       To: [
         {
-          Email: 'nicolas@luchier.fr',
-          Name: 'You',
+          Email: 'nicolas@luchier.fr'
         },
       ],
       Subject: 'Votre inscription ACL',
