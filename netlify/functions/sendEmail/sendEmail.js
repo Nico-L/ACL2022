@@ -19,12 +19,11 @@ let hbsHtml; */
 
  const handler = async (event) => {
 
-const mailjet = require('node-mailjet')
-const sender = mailjet.connect(
+const mailjet = require('node-mailjet').connect(
   process.env.MJ_APIKEY_PUBLIC,
   process.env.MJ_APIKEY_PRIVATE
 )
-const request = await sender.post('send', { version: 'v3.1' }).request({
+const request = mailjet.post('send', { version: 'v3.1' }).request({
   Messages: [
     {
       From: {
@@ -44,14 +43,13 @@ const request = await sender.post('send', { version: 'v3.1' }).request({
     },
   ],
 })
-console.log('request', request)
-/*request
+request
   .then(result => {
     console.log(result.body)
   })
   .catch(err => {
     console.log(err.statusCode)
-  }) */
+  })
     /*const dataEmail = JSON.parse(event.queryStringParameters.dataEmail) || null
     const email = event.queryStringParameters.email || null
     
