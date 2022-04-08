@@ -116,7 +116,7 @@
                           <tbody>
                             <tr>
                               <td style="width:160px;">
-                                <img alt="logo acl rond" height="158" src="https://acl-sappey.netlify.app/img/logos/logoACLrond.png" style="border:0;display:block;outline:none;text-decoration:none;height:158px;width:100%;font-size:13px;" width="160" />
+                                <img alt="logo acl rond" height="158" src="https://0p4ng.mjt.lu/tplimg/0p4ng/b/1jmgw/g0nz.png" style="border:0;display:block;outline:none;text-decoration:none;height:158px;width:100%;font-size:13px;" width="160" />
                               </td>
                             </tr>
                           </tbody>
@@ -148,11 +148,19 @@
                       <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
                         <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:586px;" ><![endif]-->
                         <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
                             <tbody>
                               <tr>
-                                <td align="center" style="font-size:0px;padding:0px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:28px;font-weight:600;line-height:0px;text-align:center;color:#116B79;">Association Culture et Loisirs</div>
+                                <td style="vertical-align:top;padding:0px;">
+                                  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%">
+                                    <tbody>
+                                      <tr>
+                                        <td align="center" style="font-size:0px;padding:0px;word-break:break-word;">
+                                          <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:28px;font-weight:600;line-height:30px;text-align:center;color:#116B79;">Association Culture et Loisirs</div>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
                                 </td>
                               </tr>
                             </tbody>
@@ -171,14 +179,14 @@
                 <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
                   <tbody>
                     <tr>
-                      <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+                      <td style="direction:ltr;font-size:0px;padding:0px;text-align:center;">
                         <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:586px;" ><![endif]-->
                         <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
                           <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
                             <tbody>
                               <tr>
                                 <td align="left" style="font-size:0px;padding:0px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:0px;text-align:left;color:#000000;">Votre inscription a bien été enregistrée. Voici un récapitulatif.</div>
+                                  <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Votre inscription a bien été enregistrée. Voici un récapitulatif.</div>
                                 </td>
                               </tr>
                             </tbody>
@@ -218,18 +226,18 @@
                                         <td style="text-align:right">{{qf}}</td>
                                       </tr>
                                     {{/if}}
-                                    {{#if reduction}}
+                                    {{#if reduction }}
                                       <tr>
                                         <td style="width:80%">Réduction</td>
                                         <td style="text-align:right">{{reduction}}</td>
                                       </tr>
-                                    {{/if}} 
+                                    {{/if}}
                                   </table>
                                 </td>
                               </tr>
                               {{#each inscrits as |inscrit|}}
                                 <tr>
-                                  <td align="left" style="font-size:0px;padding:0px;word-break:break-word;">
+                                  <td align="left" style="font-size:0px;padding:0px;padding-top:10px;word-break:break-word;">
                                     <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:1;text-align:left;color:#116B79;">{{inscrit.prenom}}</div>
                                   </td>
                                 </tr>
@@ -246,7 +254,6 @@
                                     <table cellpadding="0" cellspacing="0" width="100%" border="0" style="color:#000000;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;table-layout:auto;width:100%;border:none;">
                                       {{#each inscrit.inscriptions as |inscription|}}
                                         <tr>
-                                          <!-- bob ? -->
                                           <td style="width:80%">{{inscription.titre}}</td>
                                           <td style="text-align:right">{{inscription.tarif}}</td>
                                         </tr>
@@ -255,6 +262,24 @@
                                   </td>
                                 </tr>
                               {{/each}}
+                              <tr>
+                                <td align="center" style="font-size:0px;padding:0px;padding-top:10px;padding-bottom:3px;word-break:break-word;">
+                                  <p style="border-top:solid 2px #116B79;font-size:1px;margin:0px auto;width:100%;">
+                                  </p>
+                                  <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 2px #116B79;font-size:1px;margin:0px auto;width:586px;" role="presentation" width="586px" ><tr><td style="height:0;line-height:0;"> &nbsp;
+</td></tr></table><![endif]-->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td align="left" style="font-size:0px;padding:0px;padding-right:5px;padding-left:5px;word-break:break-word;">
+                                  <table cellpadding="0" cellspacing="0" width="100%" border="0" style="color:#000000;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;table-layout:auto;width:100%;border:none;">
+                                    <tr>
+                                      <td style="width:60%; font-weight:600; font-size: 18px; color:#116B79">Coût total</td>
+                                      <td style="text-align:right; font-weight:600; font-size: 18px; color:#116B79">{{coutTotal}}</td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
                             </tbody>
                           </table>
                         </div>
@@ -278,17 +303,19 @@
                             <tbody>
                               <tr>
                                 <td align="left" style="font-size:0px;padding:0px;padding-bottom:5px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:1;text-align:left;color:#000000;">Vous avez choisi de régler en {{reglement}}, merci de nous les faire parvenir en les déposant dans la boîte aux lettres de l'association situées en façade de la mairie.</div>
+                                  <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Vous avez choisi de régler en {{reglement}}, merci de nous le(s) faire parvenir en le(s) déposant dans la boîte aux lettres de l'association situées en façade de la mairie.</div>
                                 </td>
                               </tr>
-                              <tr>
-                                <td align="left" style="font-size:0px;padding:0px;padding-bottom:5px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:1;text-align:left;color:#000000;">Vous bénéficiez d'une réduction en raison de votre quotient familiale, merci de joindre un justificatif avec votre réglement.</div>
-                                </td>
-                              </tr>
+                              {{#if reduction}}
+                                <tr>
+                                  <td align="left" style="font-size:0px;padding:0px;padding-bottom:5px;word-break:break-word;">
+                                    <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Vous bénéficiez d'une réduction en raison de votre quotient familiale, merci de joindre un justificatif avec votre réglement.</div>
+                                  </td>
+                                </tr>
+                              {{/if}}
                               <tr>
                                 <td align="left" style="font-size:0px;padding:0px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:1;text-align:left;color:#000000;">Ne jetez pas cette email !! Vous trouverez ci-dessous un lien pour retourner vers la page d'inscription. Il vous permettra de la modifier si besoin.</div>
+                                  <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Ne jetez pas cet email ! Vous trouverez ci-dessous un lien pour retourner vers la page d'inscription. Il vous permettra de la modifier si besoin.</div>
                                 </td>
                               </tr>
                             </tbody>
@@ -316,7 +343,7 @@
                                     <tbody>
                                       <tr>
                                         <td align="center" bgcolor="#116b79" role="presentation" style="border:none;border-radius:5px;cursor:auto;mso-padding-alt:10px 25px;background:#116b79;" valign="middle">
-                                          <p href="" style="display:inline-block;background:#116b79;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:18px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:5px;"> Votre page d'inscription </p>
+                                          <a href="{{adresse}}" style="display:inline-block;background:#116b79;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:18px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:5px;" target="_blank"> Votre page d'inscription </a>
                                         </td>
                                       </tr>
                                     </tbody>
@@ -349,13 +376,13 @@
                 <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
                   <tbody>
                     <tr>
-                      <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#000000;">Musicalement,</div>
+                      <td align="left" style="font-size:0px;padding:0px;padding-left:10px;word-break:break-word;">
+                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Musicalement,</div>
                       </td>
                     </tr>
                     <tr>
-                      <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#000000;">Le bureau ACL.</div>
+                      <td align="left" style="font-size:0px;padding:0px;padding-bottom:10px;padding-left:10px;word-break:break-word;">
+                        <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Le Bureau ACL</div>
                       </td>
                     </tr>
                   </tbody>

@@ -14,7 +14,7 @@
 
  //sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
-const fileName = "netlify/functions/sendEmail2/template/confirmationEmail.hbs"
+const fileName = "template/confirmationEmail.hbs"
 const mjmlTemplateFile = fs.readFileSync(fileName, 'utf8');
 const template = handlebars.compile(mjmlTemplateFile);
 
