@@ -4,8 +4,9 @@ import fetch from 'node-fetch';
 const tokenSite = process.env.PUBLIC_TOKEN_SITE
 const adresseFetch = "https://cms.labonnefabrique.fr/acl-inscriptions-campagnes?_sort=id:DESC&_limit=1&token=" + tokenSite
 
-const handler = async (event, context) => {
+const handler = async (event) => {
   try {
+    console.log("c'est parti")
     //const id = event.queryStringParameters.id || ''
       const leFetch = await fetch(adresseFetch, {
           method: "get",
@@ -18,6 +19,7 @@ const handler = async (event, context) => {
       const gSheetId = campagne[0].gSheetId
       const titreColonnes = campagne[0].titreColonnes
       const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
+      console.log('inscriptions', inscriptions)
       const effacer = JSON.parse(event.queryStringParameters.effacer) || []
       const doc = new GoogleSpreadsheet(gSheetId);
       await doc.useServiceAccountAuth({
@@ -27,10 +29,9 @@ const handler = async (event, context) => {
       await doc.loadInfo();
       const firstSheet = doc.sheetsByIndex[0];
       const rows = await firstSheet.getRows();
-      try {
-        effacer.forEach(async (efface) => {
-          await rows[efface].delete()
-        })
+      effacer.forEach(async (efface) => {
+        await rows[efface].delete()
+      })
         inscriptions.forEach(async (inscription) => {
           if (inscription.hasOwnProperty('nrow')) {
             inscription.row.forEach((data, index) => {
@@ -40,9 +41,7 @@ const handler = async (event, context) => {
           } else {
             await firstSheet.addRow(inscription)
           }
-        })
-      } catch(erreur) {console.log('errur', erreur)}
-      
+        })      
     return {
       statusCode: 200,
       body: JSON.stringify({ data: "ok" }),

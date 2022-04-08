@@ -1,10 +1,3 @@
-/**
- *
- * This call sends a message to the given recipient with vars and custom vars.
- *
- */
-
- //const sendgrid = require('@sendgrid/mail');
  const handlebars = require('handlebars');
  const fs = require('fs');
  const mailjet = require('node-mailjet').connect(
@@ -53,34 +46,6 @@ request
   })
 
 }
-
-
-    /*const dataEmail = JSON.parse(event.queryStringParameters.dataEmail) || null
-    const email = event.queryStringParameters.email || null
-    
-    if (dataEmail) {
-        hbsHtml = template(dataEmail);
-
-        if(email)
-        {
-            console.log('bob ?')
-            const msg = {
-                to: email,
-                from: {
-                email: "nicolas@luchier.fr",
-                name: "ACL"
-                },
-                subject: "Votre inscription à l'ACL",
-                html: hbsHtml
-            }
-            
-            sendgrid.send(msg).then(() => {
-                console.log("ça marche ?");
-            }, (error) => {
-                console.log("erreur", error);    
-            });
-        }
-    }*/
     return {
         statusCode: 200,
         body: JSON.stringify({ retour: "ok"}),
