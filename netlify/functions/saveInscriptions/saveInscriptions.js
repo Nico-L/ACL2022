@@ -19,7 +19,6 @@ const handler = async (event) => {
       const gSheetId = campagne[0].gSheetId
       const titreColonnes = campagne[0].titreColonnes
       const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
-      console.log('inscriptions', inscriptions)
       const effacer = JSON.parse(event.queryStringParameters.effacer) || []
       const doc = new GoogleSpreadsheet(gSheetId);
       await doc.useServiceAccountAuth({
@@ -40,6 +39,7 @@ const handler = async (event) => {
             })
             await rows[inscription.nrow].save()
           } else {
+            console.log('bib ?')
             await firstSheet.addRow(inscription)
           }
         })      
