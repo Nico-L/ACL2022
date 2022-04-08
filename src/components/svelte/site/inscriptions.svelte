@@ -344,8 +344,8 @@
                     tableau.push(uneInscription)
                 }
             })
-            //functionsCall('saveInscriptions', {inscriptions: JSON.stringify(tableau), effacer: JSON.stringify(inscritAEffacer)})
-            functionsCall2('saveInscriptions', "inscriptions=" + JSON.stringify(tableau) + "&effacer=" + JSON.stringify(inscritAEffacer))
+            functionsCall('saveInscriptions', {inscriptions: encodeURIComponent(JSON.stringify(tableau)), effacer: encodeURIComponent(JSON.stringify(inscritAEffacer))})
+            //functionsCall2('saveInscriptions', "inscriptions=" + JSON.stringify(tableau) + "&effacer=" + JSON.stringify(inscritAEffacer))
                 .then((retour) => {
                     inscritAEffacer = []
                     if (retour.data === "ok") {
