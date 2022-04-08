@@ -27,12 +27,12 @@ let hbsHtml;
 
         if(email)
         {
-            console.log('bob ?')
+            console.log('bob ?', hbsHtml)
             const msg = {
                 to: email,
                 from: {
                 email: "nicolas@luchier.fr",
-                name: "Nicolas"
+                name: "ACL"
                 },
                 subject: "Votre inscription à l'ACL",
                 html: hbsHtml
