@@ -4,25 +4,27 @@
  *
  */
 
- const sendgrid = require('@sendgrid/mail');
- /*const handlebars = require('handlebars');
- const fs = require('fs');*/
-
- sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
-
-/*
-const fileName = "./netlify/functions/sendEmail/template/confirmationEmail.hbs"
-const mjmlTemplateFile = fs.readFileSync(fileName, 'utf8');
-const template = handlebars.compile(mjmlTemplateFile);
-let hbsHtml; */
-
-
- const handler = async (event) => {
-
-const mailjet = require('node-mailjet').connect(
+ //const sendgrid = require('@sendgrid/mail');
+ const handlebars = require('handlebars');
+ const fs = require('fs');
+ const mailjet = require('node-mailjet').connect(
   process.env.MJ_APIKEY_PUBLIC,
   process.env.MJ_APIKEY_PRIVATE
 )
+
+ //sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
+
+const fileName = "./netlify/functions/sendEmail/template/confirmationEmail.hbs"
+const mjmlTemplateFile = fs.readFileSync(fileName, 'utf8');
+const template = handlebars.compile(mjmlTemplateFile);
+
+const handler = async (event) => {
+
+const dataEmail = JSON.parse(event.queryStringParameters.dataEmail) || null
+const email = event.queryStringParameters.email || null
+
+if (email) {
+const hbsHtml = template(dataEmail);
 const request = mailjet.post('send', { version: 'v3.1' }).request({
   Messages: [
     {
@@ -38,8 +40,7 @@ const request = mailjet.post('send', { version: 'v3.1' }).request({
       ],
       Subject: 'My first Mailjet Email!',
       TextPart: 'Greetings from Mailjet!',
-      HTMLPart:
-        '<h3>Dear passenger 1, welcome to <a href="https://www.mailjet.com/">Mailjet</a>!</h3><br />May the delivery force be with you!',
+      HTMLPart: hbsHtml,
     },
   ],
 })
@@ -52,6 +53,10 @@ request
     console.log('erreur :(')
     console.log(err.statusCode)
   })
+
+}
+
+
     /*const dataEmail = JSON.parse(event.queryStringParameters.dataEmail) || null
     const email = event.queryStringParameters.email || null
     

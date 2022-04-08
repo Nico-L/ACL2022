@@ -383,7 +383,7 @@
                                 dataEmail.inscrits.push(dataInscrit)
                             })
                         }
-                        functionsCall("sendEmail", {email: inscription.emailReferent, dataEmail:encodeURIComponent(JSON.stringify(dataEmail))})
+                        functionsCall("sendEmail2", {email: inscription.emailReferent, dataEmail:encodeURIComponent(JSON.stringify(dataEmail))})
                             .then((retour2) => {busySaving = false; saveOK = true})
                     }
                 })
