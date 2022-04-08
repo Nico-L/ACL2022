@@ -77,7 +77,7 @@
                 creatingFiles = 'start'
                 files.forEach(async (file) => {
                     const fileId = (await functionsCall('createGSheet', {parent: file.parentId, nom: file.nom})).id
-                    const zeHeader = (await functionsCall('prepareSheet', {id: fileId, header: JSON.stringify(header)})).data
+                    const zeHeader = (await functionsCall('prepareSheet', {id: fileId, header: encodeURIComponent(JSON.stringify(header))})).data
                     //await functionsCall('transfertDroits', {id: fileId})
                     file.id = fileId
                     currentFile += 1
