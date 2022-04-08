@@ -13,7 +13,8 @@ const handler = async (event) => {
 
 const dataEmail = JSON.parse(event.queryStringParameters.dataEmail) || null
 const email = event.queryStringParameters.email || null
-
+  try {
+    var promises = []
 if (email) {
 const hbsHtml = template(dataEmail);
 const request = mailjet.post('send', { version: 'v3.1' }).request({
@@ -34,24 +35,18 @@ const request = mailjet.post('send', { version: 'v3.1' }).request({
     },
   ],
 })
-request
-  .then(result => {
-    console.log('success !')
-    console.log(result.body)
-  })
-  .catch(err => {
-    console.log('erreur :(')
-    console.log(err.statusCode)
-  })
-
+promises.push(request)
 }
+await Promise.all(promises)
     return {
-        statusCode: 200,
-        body: JSON.stringify({ retour: "ok"}),
-        // // more keys you can return:
-        // headers: { "headerName": "headerValue", ... },
-        // isBase64Encoded: true,
-      }
+      statusCode: 200,
+      body: JSON.stringify({ data: "ok" }),
     }
+  
+  } catch (error) {
+    console.log('erreur', error.toString())
+    return { statusCode: 500, body: error.toString() }
+  }
+}
     
     module.exports = { handler }

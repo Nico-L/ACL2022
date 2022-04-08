@@ -6,7 +6,6 @@ const adresseFetch = "https://cms.labonnefabrique.fr/acl-inscriptions-campagnes?
 
 const handler = async (event) => {
   try {
-    console.log("c'est parti")
     //const id = event.queryStringParameters.id || ''
       const leFetch = await fetch(adresseFetch, {
           method: "get",
@@ -34,19 +33,16 @@ const handler = async (event) => {
       })
       
         inscriptions.forEach((inscription) => {
-          console.log('bob ?')
           if (inscription.hasOwnProperty('nrow')) {
             inscription.row.forEach((data, index) => {
               rows[inscription.nrow][titreColonnes[index].titre] = data
             })
             promises.push(rows[inscription.nrow].save())
           } else {
-            console.log('bib ?')
             promises.push(firstSheet.addRow(inscription))
           }
         })
     await Promise.all(promises)
-    console.log('all promises ?')
     return {
       statusCode: 200,
       body: JSON.stringify({ data: "ok" }),
