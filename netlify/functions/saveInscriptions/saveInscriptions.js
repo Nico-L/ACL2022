@@ -33,6 +33,7 @@ const handler = async (event) => {
         await rows[efface].delete()
       })
         inscriptions.forEach(async (inscription) => {
+          console.log('bob ?')
           if (inscription.hasOwnProperty('nrow')) {
             inscription.row.forEach((data, index) => {
               rows[inscription.nrow][titreColonnes[index].titre] = data
