@@ -5,21 +5,38 @@
  */
 
  const sendgrid = require('@sendgrid/mail');
- const handlebars = require('handlebars');
- const fs = require('fs');
+ /*const handlebars = require('handlebars');
+ const fs = require('fs');*/
 
  sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
-
+/*
 const fileName = "./netlify/functions/sendEmail/template/confirmationEmail.hbs"
 const mjmlTemplateFile = fs.readFileSync(fileName, 'utf8');
 const template = handlebars.compile(mjmlTemplateFile);
-let hbsHtml;
+let hbsHtml; */
 
 
  const handler = async (event) => {
-    
-    const dataEmail = JSON.parse(event.queryStringParameters.dataEmail) || null
+
+const msg = {
+  to: 'nicolas@luchier.fr',
+  from: 'nicolas@luchier.fr', // Use the email address or domain you verified above
+  subject: 'Sending with Twilio SendGrid is Fun',
+  text: 'and easy to do anywhere, even with Node.js',
+  html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+};
+//ES6
+sendgrid
+  .send(msg)
+  .then(() => {console.log('hiop !')}, error => {
+    console.error(error);
+
+    if (error.response) {
+      console.error(error.response.body)
+    }
+  });
+    /*const dataEmail = JSON.parse(event.queryStringParameters.dataEmail) || null
     const email = event.queryStringParameters.email || null
     
     if (dataEmail) {
@@ -27,7 +44,7 @@ let hbsHtml;
 
         if(email)
         {
-            console.log('bob ?', hbsHtml)
+            console.log('bob ?')
             const msg = {
                 to: email,
                 from: {
@@ -44,7 +61,7 @@ let hbsHtml;
                 console.log("erreur", error);    
             });
         }
-    }
+    }*/
     return {
         statusCode: 200,
         body: JSON.stringify({ retour: "ok"}),
