@@ -6,7 +6,9 @@ const adresseFetch = "https://cms.labonnefabrique.fr/acl-inscriptions-campagnes?
 
 const handler = async (event) => {
   try {
-    const uuid = event.queryStringParameters.uuid || ''
+   // const uuid = event.queryStringParameters.uuid || ''
+    const { uuid } = request.query;
+    console.log('uuid', uuid)
     const leFetch = await fetch(adresseFetch, {
       method: "get",
       headers: {
