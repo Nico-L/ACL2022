@@ -1,5 +1,5 @@
 [functions]
-  node_bundler = "esbuild"
+
   external_node_modules = ["vm2"]
  
  [functions.sendEmail]
