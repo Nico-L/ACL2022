@@ -3,7 +3,6 @@
     import CheckBox from '../ui/checkBox.svelte'
     import Bouton from '../ui/bouton.svelte'
     import functionsCall from '../../utils/functionsCall.js'
-    import functionsCall2 from '../../utils/functionsCall2.js'
 
     import { slide } from 'svelte/transition'
     import Input from "../ui/input.svelte"
@@ -44,6 +43,7 @@
     var busySaving = false
     var messageSaving = "Enregistrement"
     var saveOK = false
+    var inscriptionDone = false
 
     let onClick = (i) => {
         isOpen = isOpen.map((tiroir, index) => {
@@ -55,6 +55,7 @@
     var recupEnCours = false
     var uuidInconnu = false
     var etatInconnu = true
+    var estEdition = false
     var inscritAEffacer = []
 
     onMount(async () => {
@@ -62,6 +63,7 @@
         var extracted = /\?uuid=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?/i.exec(urlModifInscription)
         if (extracted!==null)
         {
+            estEdition = true
             recupEnCours = true
             etatInconnu = false
             isOpen = []
@@ -76,6 +78,7 @@
                 inscription.verif.emailReferent = true
                 if (rows[0].QF !== "") inscription.QF = rows[0].QF
                 prenomsInscription = rows[0]["prénom inscrit"]
+                lesInscriptions = JSON.parse(JSON.stringify([]))
                 rows.forEach((row, index) => {
                     var lesInstruments = []
                     if(row.instruments)
@@ -83,7 +86,6 @@
                         const tempInstrument = row.instruments.split('\n')
                         const tempProfs = row["professeur d'instrument"].split('\n')
                         const tempDurees = row["durée"].split('\n')
-                    
                         tempInstrument.forEach((instrument, index) => {
                             lesInstruments.push({instrument: instrument, prof: tempProfs[index], duree: tempDurees[index], tarif:tarifInstruments.filter((item) => {return item.duree === tempDurees[index]})[0].tarif})
                         })
@@ -97,16 +99,17 @@
                             lesAteliers.push(temp)
                         })
                     }
-                    
                     if (index > 0) {prenomsInscription = prenomsInscription + ", " + row["prénom inscrit"]}
                     var defFM = {titre: row.FM, tarif: null, duree: null}
-                    if (row.FM.indexOf("FM") >= 0) {
-                        defFM.tarif = fms[0].tarifs[0].tarif
-                        defFM.duree = fms[0].tarifs[0].duree
-                    }
-                    if (row.FM.indexOf("Eveil" >=0 )) {
-                        defFM.tarif = ems[0].tarifs[0].tarif
-                        defFM.duree = ems[0].tarifs[0].duree
+                    if (row.FM !== "") {
+                        if (row.FM.indexOf("FM") >= 0) {
+                            defFM.tarif = fms[0].tarifs[0].tarif
+                            defFM.duree = fms[0].tarifs[0].duree
+                        }
+                        if (row.FM.indexOf("Eveil" >=0 )) {
+                            defFM.tarif = ems[0].tarifs[0].tarif
+                            defFM.duree = ems[0].tarifs[0].duree
+                        }  
                     }
                     lesInscriptions.push({
                         nrow: row.nrow,
@@ -345,7 +348,6 @@
                 }
             })
             functionsCall('saveInscriptions', {inscriptions: encodeURIComponent(JSON.stringify(tableau)), effacer: encodeURIComponent(JSON.stringify(inscritAEffacer))})
-            //functionsCall2('saveInscriptions', "inscriptions=" + JSON.stringify(tableau) + "&effacer=" + JSON.stringify(inscritAEffacer))
                 .then((retour) => {
                     inscritAEffacer = []
                     if (retour.data === "ok") {
@@ -384,7 +386,7 @@
                             })
                         }
                         functionsCall("sendEmail2", {email: inscription.emailReferent, dataEmail:encodeURIComponent(JSON.stringify(dataEmail))})
-                            .then((retour2) => {busySaving = false; saveOK = true})
+                            .then((retour2) => {busySaving = false; saveOK = true; inscriptionDone=true})
                     }
                 })
         } else {
@@ -445,6 +447,11 @@
         lesInscriptions[index].verif.prenom = lesInscriptions[index].prenom !== ""
     }
 
+    function redirectEdition() {
+        //console.log("url", window.location.href)
+        window.location.replace(window.location.href + "?uuid=" + inscription.uuid);
+    }
+
     $: {
         if (inscription.QF === 0 || inscription.QF === null) {
             inscription.facteurQF = 1
@@ -491,6 +498,21 @@
         </div>
     {:else if uuidInconnu}
         <div class="p-2 text-jaune-800 text-center">Votre inscription n'a pas été trouvée.</div>
+    {:else if inscriptionDone && !estEdition}
+        <section class="flex flex-wrap flex-col gap-2 justify-center items-center p-2">
+            <div class="text-center">Votre inscription est maintenant terminée. Vous pouvez la modifier en cliquant sur le bouton ci-dessous.</div>
+            <Bouton
+                largeur="w-32"
+                couleur="jauneSombre"
+                active = "active:bg-jaune-900 active:text-gray-100"
+                on:actionBouton={redirectEdition}
+                >
+                <div class="flex justify-center items-center px-3">
+                    Edition
+                </div>
+            </Bouton>
+        </section>
+        
     {:else}
     <div class="flex flex-wrap justify-between">
         <!-- cadre email general -->
@@ -902,7 +924,7 @@
                                 {/each}
                             {/if}
                             <div class="font-medium w-full flex flex-nowrap justify-between">
-                                <div class="ligne overflow-hidden px-1 whitespace-nowrap">Total {inscrit.prenom}</div>
+                                <div class="ligne overflow-hidden px-2 whitespace-nowrap">Total {inscrit.prenom}</div>
                                 <div class="grow-0 px-1 whitespace-nowrap">{parseFloat(totalPrixInscrit(inscrit)*inscription.facteurQF).toFixed(2)} €</div>
                             </div>
                         {/if}
@@ -975,9 +997,9 @@
                                 >
                                 <div class="flex justify-center items-center px-3">
                                     {#if busySaving}
-                                    <Spinner couleur={lesCouleurs[nRecap % 3].sombre} caption={true}>{messageSaving}</Spinner>
+                                        <Spinner couleur={lesCouleurs[nRecap % 3].sombre} caption={true}>{messageSaving}</Spinner>
                                     {:else}
-                                    <div>Enregistrer votre inscription</div>
+                                        <div>Enregistrer votre inscription</div>
                                     {/if}
                                 </div>
                             </Bouton>
@@ -1006,8 +1028,8 @@
 </div>
 
 <style>
-.ligne:after{
-    content: ".....................................................................................................................................................................................................................................................................";
-    @apply pl-1;
-}
+    .ligne:after{
+        content: ".....................................................................................................................................................................................................................................................................";
+        @apply pl-1;
+    }
 </style>
