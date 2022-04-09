@@ -17,7 +17,9 @@ let hbsHtml;
 
 
  const handler = async (event) => {
-      const msg = {
+try {
+  // Message details
+  const msg = {
                 to: "nicolas@luchier.fr",
                 from: {
                 email: "nicolas@luchier.fr",
@@ -26,45 +28,25 @@ let hbsHtml;
                 subject: "Votre inscription à l'ACL",
                 html: "bob ?"
             }
-            
-            sendgrid.send(msg).then(() => {
-                console.log("ça marche ?");
-            }, (error) => {
-                console.log("erreur", error);    
-            });
-    /*const dataEmail = JSON.parse(event.queryStringParameters.dataEmail) || null
-    const email = event.queryStringParameters.email || null
-    
-    if (dataEmail) {
-        hbsHtml = template(dataEmail);
 
-        if(email)
-        {
-            console.log('bob ?')
-            const msg = {
-                to: email,
-                from: {
-                email: "nicolas@luchier.fr",
-                name: "ACL"
-                },
-                subject: "Votre inscription à l'ACL",
-                html: "bob ?"
-            }
-            
-            sendgrid.send(msg).then(() => {
-                console.log("ça marche ?");
-            }, (error) => {
-                console.log("erreur", error);    
-            });
-        }
-    } */
-    return {
-        statusCode: 200,
-        body: JSON.stringify({ retour: "ok"}),
-        // // more keys you can return:
-        // headers: { "headerName": "headerValue", ... },
-        // isBase64Encoded: true,
-      }
-    }
-    
+  // Try sending the message
+  await sendgrid.send(msg);
+
+  // Good, send response
+  return {
+   statusCode: 200,
+   body: JSON.stringify({ message: "Email sent" })
+  }
+}
+catch(err) {
+  // Failed, log error
+  console.log(err);
+
+  // Return response
+  return {
+    statusCode: 500,
+    body: JSON.stringify({ message: "Email not sent" })
+  }
+}
+ }
     module.exports = { handler }
