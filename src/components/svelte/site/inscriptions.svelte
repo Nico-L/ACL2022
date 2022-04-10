@@ -55,7 +55,6 @@
     var recupEnCours = false
     var uuidInconnu = false
     var etatInconnu = true
-    var estEdition = false
     var inscritAEffacer = []
 
     onMount(async () => {
@@ -63,7 +62,6 @@
         var extracted = /\?uuid=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?/i.exec(urlModifInscription)
         if (extracted!==null)
         {
-            estEdition = true
             recupEnCours = true
             etatInconnu = false
             isOpen = []
@@ -498,7 +496,7 @@
         </div>
     {:else if uuidInconnu}
         <div class="p-2 text-jaune-800 text-center">Votre inscription n'a pas été trouvée.</div>
-    {:else if inscriptionDone && !estEdition}
+    {:else if inscriptionDone}
         <section class="flex flex-wrap flex-col gap-2 justify-center items-center p-2">
             <div class="text-center">Votre inscription est maintenant terminée. Vous pouvez la modifier en cliquant sur le bouton ci-dessous.</div>
             <Bouton
@@ -547,7 +545,7 @@
                     {#if inscription.verif.emailReferent} 
                         <div class="text-sm text-vert-800 whitespace-nowrap ml-2">Adresse email valide.</div>
                     {:else}
-                        <div class="text-sm text-rouge-800 whitespace-nowrap ml-2">Merci d'entrer une adresse email valide {inscription.verif.emailReferent}.</div>
+                        <div class="text-sm text-rouge-800 whitespace-nowrap ml-2">Merci d'entrer une adresse email valide.</div>
                     {/if}
                     
                 </div>

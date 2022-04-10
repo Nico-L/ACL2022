@@ -2,5 +2,8 @@
   node_bundler = "esbuild"
   external_node_modules = ["vm2"]
  
- [functions.sendEmail2]
+[functions.sendEmail2]
   included_files = ["./netlify/functions/sendEmail2/template/**"]
+
+[functions.recupInscription]
+  included_files = ["./netlify/functions/recupInscription/template/**"]

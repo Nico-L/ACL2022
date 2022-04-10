@@ -26,7 +26,7 @@ const request = mailjet.post('send', { version: 'v3.1' }).request({
       },
       To: [
         {
-          Email: 'nicolas@luchier.fr'
+          Email: email
         },
       ],
       Subject: 'Votre inscription ACL',
