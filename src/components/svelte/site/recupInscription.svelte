@@ -62,6 +62,6 @@
         <section class="text-vert-700">L'email a été envoyé avec succès. Merci de vérifier vos spams s'il ne vous parvient pas.</section>
     {/if}
     {#if envoiPasOK}
-        <section class="text-rouge-700">Cet email n'a pas été trouvé dans notre liste d'inscription. Merci de bien entrer l'email référent demandé en début d'inscription. Si le problème persiste, merci de contacter le bureau.</section>
+        <section class="text-rouge-700">Cet email n'a pas été trouvé dans notre liste. Merci de bien entrer l'email référent demandé en début d'inscription. Si le problème persiste, merci de contacter le bureau.</section>
     {/if}
 </div>
