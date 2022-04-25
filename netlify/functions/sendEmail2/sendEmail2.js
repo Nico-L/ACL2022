@@ -5,39 +5,71 @@
   process.env.MJ_APIKEY_PRIVATE
 )
 
-const fileName = "./netlify/functions/sendEmail2/template/confirmationEmail.hbs"
-const mjmlTemplateFile = fs.readFileSync(fileName, 'utf8');
-const template = handlebars.compile(mjmlTemplateFile);
+const fileName = {
+  inscriptions: "./netlify/functions/sendEmail2/template/confirmationEmail.hbs",
+  stage:"./netlify/functions/sendEmail2/template/confirmationStage.hbs"
+}
+
 
 const handler = async (event) => {
+  const whichFile = event.queryStringParameters.whichFile || "inscriptions"
+  const mjmlTemplateFile = fs.readFileSync(fileName[whichFile], 'utf8');
+  const template = handlebars.compile(mjmlTemplateFile);
 
 const dataEmail = JSON.parse(event.queryStringParameters.dataEmail) || null
 const email = event.queryStringParameters.email || null
   try {
     var promises = []
-if (email) {
-const hbsHtml = template(dataEmail);
-const request = mailjet.post('send', { version: 'v3.1' }).request({
-  Messages: [
-    {
-      From: {
-        Email: 'nicolas@luchier.fr',
-        Name: 'ACL',
-      },
-      To: [
-        {
-          Email: email
-        },
-      ],
-      Subject: 'Votre inscription ACL',
-      TextPart: 'Votre inscription ACL',
-      HTMLPart: hbsHtml,
-    },
-  ],
-})
-promises.push(request)
-}
-await Promise.all(promises)
+    if (email && dataEmail) {
+      const hbsHtml = template(dataEmail);
+      console.log('dataEmail', dataEmail)
+      let request
+      switch (whichFile) {
+        case "inscriptions":
+          request = mailjet.post('send', { version: 'v3.1' }).request({
+            Messages: [
+              {
+                From: {
+                  Email: 'nicolas@luchier.fr',
+                  Name: 'ACL',
+                },
+                To: [
+                  {
+                    Email: email
+                  },
+                ],
+                Subject: 'Votre inscription ACL',
+                TextPart: 'Votre inscription ACL',
+                HTMLPart: hbsHtml,
+              },
+            ],
+          })
+        case "stage":
+          request = mailjet.post('send', { version: 'v3.1' }).request({
+              Messages: [
+                {
+                  From: {
+                    Email: 'nicolas@luchier.fr',
+                    Name: 'ACL',
+                  },
+                  To: [
+                    {
+                      Email: email
+                    },
+                  ],
+                  Subject: 'Votre inscription ACL',
+                  TextPart: 'Votre inscription ACL',
+                  HTMLPart: hbsHtml,
+                },
+              ],
+            })
+            break;
+        default:
+          console.log('rien')
+      }
+      promises.push(request)
+    }
+    await Promise.all(promises)
     return {
       statusCode: 200,
       body: JSON.stringify({ data: "ok" }),

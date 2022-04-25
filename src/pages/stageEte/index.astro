@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import InscriptionsStage from '../../components/svelte/site/inscriptionsStage.svelte'
+const adhesionsTarifsTemp = await fetch(import.meta.env.PUBLIC_CMS + "acl-adhesions?token=" + import.meta.env.PUBLIC_TOKEN_SITE)
+const adhesionsTarifs = await adhesionsTarifsTemp.json()
+const dernierStageTemp = await fetch(import.meta.env.PUBLIC_CMS + "acl-stage-inscriptions?token=" + import.meta.env.PUBLIC_TOKEN_SITE)
+const dernierStage = await dernierStageTemp.json()
+const tarifStage = dernierStage[0].tarif
+---
+<BaseLayout title="Inscription Stage été">
+  <InscriptionsStage client:load {adhesionsTarifs} {tarifStage}/>
+</BaseLayout>

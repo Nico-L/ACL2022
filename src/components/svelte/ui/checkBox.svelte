@@ -15,8 +15,8 @@
     export let lblClass="";
     export let flexWrap = true;
     export let wordWrap = false;
-    var wrap = ""
-    var wwrap = ""
+    var wrap = flexWrap ? "flex-wrap": "flex-nowrap"
+    var wwrap = wordWrap ? "whitespace-normal":"whitespace-nowrap"
     $: wrap = flexWrap ? "flex-wrap": "flex-nowrap"
     $: wwrap = wordWrap ? "whitespace-normal":"whitespace-nowrap"
 
@@ -29,8 +29,8 @@
     </script>
     
 
-<label class={"flex justify-center items-center gap-1 cursor-pointer " + lblClass + " " + wrap + " " + wwrap}>
-    <span class={"text-base text-center font-medium " + order}>{label}</span>
+<label class={"flex justify-center items-center gap-1 cursor-pointer " + wrap + " " + wwrap}>
+    <span class={"text-base font-medium " + lblClass + " " +order}>{label}</span>
     <input 
         type="checkbox" 
         class={"form-checkbox border-2 h-4 w-4 rounded bg-fondContenu " + cbClass} 

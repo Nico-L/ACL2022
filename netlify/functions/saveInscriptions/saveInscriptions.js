@@ -2,11 +2,17 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 import fetch from 'node-fetch';
 const tokenSite = process.env.PUBLIC_TOKEN_SITE
-const adresseFetch = "https://cms.labonnefabrique.fr/acl-inscriptions-campagnes?_sort=id:DESC&_limit=1&token=" + tokenSite
+const adresseFetch = {
+  inscriptions: "https://cms.labonnefabrique.fr/acl-inscriptions-campagnes?_sort=id:DESC&_limit=1&token=" + tokenSite,
+  stage: "https://cms.labonnefabrique.fr/acl-stage-inscriptions?_sort=id:DESC&_limit=1&token=" + tokenSite
+}
 
 const handler = async (event) => {
+  const place = event.queryStringParameters.place || "inscriptions"
+  const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
+  const effacer = event.queryStringParameters.effacer ? JSON.parse(event.queryStringParameters.effacer):[]
   try {
-    const leFetch = await fetch(adresseFetch, {
+    const leFetch = await fetch(adresseFetch[place], {
         method: "get",
         headers: {
           "Content-Type": "application/json"
@@ -16,8 +22,7 @@ const handler = async (event) => {
     const campagne = await leFetch.json()
     const gSheetId = campagne[0].gSheetId
     const titreColonnes = campagne[0].titreColonnes
-    const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
-    const effacer = JSON.parse(event.queryStringParameters.effacer) || []
+    
     const doc = new GoogleSpreadsheet(gSheetId);
     await doc.useServiceAccountAuth({
       client_email: process.env.EMAIL_SERVICE_GOOGLE,

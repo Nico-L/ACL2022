@@ -11,9 +11,10 @@
     export let leHTML = ""
     export let classes = ""
 
+    export let enterUse = true
 
     function handleKeydown(e) {
-        if (e.keyCode === 13) {
+        if (e.keyCode === 13 && enterUse) {
             e.preventDefault()
             document.activeElement.blur()
         }

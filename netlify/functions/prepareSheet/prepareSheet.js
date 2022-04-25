@@ -5,16 +5,18 @@ const handler = async (event) => {
   try {
     const id = event.queryStringParameters.id || ''
     const header = JSON.parse(event.queryStringParameters.header) || []
+    console.log('header', header)
     const doc = new GoogleSpreadsheet(id);
       await doc.useServiceAccountAuth({
         client_email: process.env.EMAIL_SERVICE_GOOGLE,
         private_key: process.env.KEY_SERVICE_GOOGLE.replace(/\\n/g, "\n"),
       })
+    console.log('ok 1')
     await doc.loadInfo();
     const firstSheet = doc.sheetsByIndex[0];
+    console.log('ok 2')
     await firstSheet.setHeaderRow(header);
-    //console.log('setHeader', setHeader)
-    //await firstSheet.save()
+    console.log('ok 3')
     return {
       statusCode: 200,
       body: JSON.stringify({ data: "ok" }),

@@ -213,32 +213,22 @@
                                   <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:20px;font-weight:600;line-height:20px;text-align:left;color:#116B79;">Récapitulatif</div>
                                 </td>
                               </tr>
-                              <tr>
-                                <td align="left" style="font-size:0px;padding:0px;padding-right:5px;padding-left:5px;word-break:break-word;">
-                                  <table cellpadding="0" cellspacing="0" width="100%" border="0" style="color:#000000;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;table-layout:auto;width:100%;border:none;">
-                                    <tr>
-                                      <td style="width:80%">{{adhesion.titre}}</td>
-                                      <td style="text-align:right">{{adhesion.tarif}}</td>
-                                    </tr>
-                                    {{#if qf}}
+                              {{#if adhesion}}
+                                <tr>
+                                  <td align="left" style="font-size:0px;padding:0px;padding-right:5px;padding-left:5px;word-break:break-word;">
+                                    <table cellpadding="0" cellspacing="0" width="100%" border="0" style="color:#000000;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;table-layout:auto;width:100%;border:none;">
                                       <tr>
-                                        <td style="width:80%">Quotient familiale</td>
-                                        <td style="text-align:right">{{qf}}</td>
+                                        <td style="width:80%">{{adhesion.titre}}</td>
+                                        <td style="text-align:right">{{adhesion.tarif}}</td>
                                       </tr>
-                                    {{/if}}
-                                    {{#if reduction }}
-                                      <tr>
-                                        <td style="width:80%">Réduction</td>
-                                        <td style="text-align:right">{{reduction}}</td>
-                                      </tr>
-                                    {{/if}}
-                                  </table>
-                                </td>
-                              </tr>
-                              {{#each inscrits as |inscrit|}}
+                                    </table>
+                                  </td>
+                                </tr>
+                              {{/if}}
+                              {{#each inscrits}}
                                 <tr>
                                   <td align="left" style="font-size:0px;padding:0px;padding-top:10px;word-break:break-word;">
-                                    <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:1;text-align:left;color:#116B79;">{{inscrit.prenom}}</div>
+                                    <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:1;text-align:left;color:#116B79;">{{this.prenom}}</div>
                                   </td>
                                 </tr>
                                 <tr>
@@ -249,18 +239,26 @@
 </td></tr></table><![endif]-->
                                   </td>
                                 </tr>
+                                <!-- sub text inscrit -->
                                 <tr>
-                                  <td align="left" style="font-size:0px;padding:0px;padding-right:5px;padding-left:5px;word-break:break-word;">
-                                    <table cellpadding="0" cellspacing="0" width="100%" border="0" style="color:#000000;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;table-layout:auto;width:100%;border:none;">
-                                      {{#each inscrit.inscriptions as |inscription|}}
-                                        <tr>
-                                          <td style="width:80%">{{inscription.titre}}</td>
-                                          <td style="text-align:right">{{inscription.tarif}}</td>
-                                        </tr>
-                                      {{/each}}
-                                    </table>
+                                  <td align="left" style="font-size:0px;padding:0px;padding-left:10px;word-break:break-word;">
+                                    <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Joue de : {{this.instrument}} depuis {{this.dureePratique}}.</div>
                                   </td>
                                 </tr>
+                                {{#if this.musiqueChambre}}
+                                  <tr>
+                                    <td align="left" style="font-size:0px;padding:0px;padding-left:10px;word-break:break-word;">
+                                      <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Souhaite participer à l'atelier musique de Chambre</div>
+                                    </td>
+                                  </tr>
+                                {{/if}}
+                                {{#if this.chant}}
+                                  <tr>
+                                    <td align="left" style="font-size:0px;padding:0px;padding-left:10px;word-break:break-word;">
+                                      <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Souhaite participer aux ateliers Chant</div>
+                                    </td>
+                                  </tr>
+                                {{/if}}
                               {{/each}}
                               <tr>
                                 <td align="center" style="font-size:0px;padding:0px;padding-top:10px;padding-bottom:3px;word-break:break-word;">
@@ -303,51 +301,7 @@
                             <tbody>
                               <tr>
                                 <td align="left" style="font-size:0px;padding:0px;padding-bottom:5px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Vous avez choisi de régler en {{reglement}}, merci de nous le(s) faire parvenir en le(s) déposant dans la boîte aux lettres de l'association situées en façade de la mairie.</div>
-                                </td>
-                              </tr>
-                              {{#if reduction}}
-                                <tr>
-                                  <td align="left" style="font-size:0px;padding:0px;padding-bottom:5px;word-break:break-word;">
-                                    <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Vous bénéficiez d'une réduction en raison de votre quotient familiale, merci de joindre un justificatif avec votre réglement.</div>
-                                  </td>
-                                </tr>
-                              {{/if}}
-                              <tr>
-                                <td align="left" style="font-size:0px;padding:0px;word-break:break-word;">
-                                  <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Ne jetez pas cet email ! Vous trouverez ci-dessous un lien pour retourner vers la page d'inscription. Il vous permettra de la modifier si besoin.</div>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                        <!--[if mso | IE]></td></tr></table><![endif]-->
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <!--[if mso | IE]></td></tr></table></td></tr><tr><td class="" width="600px" ><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:586px;" width="586" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-              <div style="margin:0px auto;max-width:586px;">
-                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-                  <tbody>
-                    <tr>
-                      <td style="direction:ltr;font-size:0px;padding:0px;text-align:center;">
-                        <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:586px;" ><![endif]-->
-                        <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
-                          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
-                            <tbody>
-                              <tr>
-                                <td align="center" vertical-align="middle" style="font-size:0px;padding:10px 25px;word-break:break-word;">
-                                  <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;line-height:100%;">
-                                    <tbody>
-                                      <tr>
-                                        <td align="center" bgcolor="#116b79" role="presentation" style="border:none;border-radius:5px;cursor:auto;mso-padding-alt:10px 25px;background:#116b79;" valign="middle">
-                                          <a href="{{adresse}}" style="display:inline-block;background:#116b79;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:18px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:5px;" target="_blank"> Votre page d'inscription </a>
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
+                                  <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Vous trouverez en pièce jointe la fiche concernant, l'autorisation parentale pour les mineurs, le droit à l'image et l'autorisation d'intervention chirurgicale. Merci de nous la faire parvenir signée avec le réglement.</div>
                                 </td>
                               </tr>
                             </tbody>

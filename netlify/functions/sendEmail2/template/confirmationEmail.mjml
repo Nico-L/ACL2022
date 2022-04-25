@@ -39,18 +39,6 @@
             <td style="width:80%">{{adhesion.titre}}</td>
               <td style="text-align:right">{{adhesion.tarif}}</td>
             </tr>
-            {{#if qf}}
-              <tr>
-                <td style="width:80%">Quotient familiale</td>
-                <td style="text-align:right">{{qf}}</td>
-              </tr>
-            {{/if}}
-            {{#if reduction }}
-              <tr>
-                <td style="width:80%">Réduction</td>
-                <td style="text-align:right">{{reduction}}</td>
-              </tr>
-            {{/if}}
           </mj-table>
           <mj-raw>
           {{#each inscrits as |inscrit|}}
@@ -59,15 +47,25 @@
           {{inscrit.prenom}}
           </mj-text>
           <mj-divider border-width="2px" border-style="solid" border-color="#116B79" padding="0px" padding-top="4px" padding-bottom="5px"/>
-          <mj-table padding="0px" padding-left="5px" padding-right="5px" font-size="16px">
-            {{#each inscrit.inscriptions as |inscription|}}
-            <tr>
-                <td style="width:80%">{{inscription.titre}}</td>
-                <td style="text-align:right">{{inscription.tarif}}</td>
-              </tr>
-            {{/each}}
-          </mj-table>
+ <!-- sub text inscrit -->
+          <mj-text font-size="16px" padding="0px" padding-left="10px" line-height="20px">
+            Joue de : {{inscrit.instrument}} depuis {{inscrit.dureePratique}}.
+          </mj-text>
           <mj-raw>
+         		{{#if inscrit.musiqueChambre}} 
+          </mj-raw>
+          <mj-text font-size="16px" padding="0px" padding-left="10px" line-height="20px">
+            Souhaite participer à l'atelier musique de Chambre
+          </mj-text>
+          <mj-raw>
+          	{{/if}}
+         		{{#if inscrit.chant}} 
+          </mj-raw>
+          <mj-text font-size="16px" padding="0px" padding-left="10px" line-height="20px">
+            Souhaite participer aux ateliers Chant
+          </mj-text>
+          <mj-raw>
+          	{{/if}}
           {{/each}}
           </mj-raw>
           <mj-divider border-width="2px" border-style="solid" border-color="#116B79" padding="0px" padding-top="10px" padding-bottom="3px"/>
@@ -81,29 +79,10 @@
     </mj-section>
       <!-- text info !-->
       <mj-section>
-      <mj-column>
-        <mj-text font-size="16px" padding="0px" padding-bottom="5px" line-height="20px">
-          Vous avez choisi de régler en {{reglement}}, merci de nous le(s) faire parvenir en le(s) déposant dans la boîte aux lettres de l'association situées en façade de la mairie.
-          </mj-text>
-          <mj-raw>
-            {{#if reduction}}
-          </mj-raw>
+        <mj-column>
           <mj-text font-size="16px" padding="0px" padding-bottom="5px" line-height="20px">
-              Vous bénéficiez d'une réduction en raison de votre quotient familiale, merci de joindre un justificatif avec votre réglement.
+          Vous trouverez en pièce jointe la fiche concernant, l'autorisation parentale pour les mineurs, le droit à l'image et l'autorisation d'intervention chirurgicale. Merci de nous la faire parvenir avec le réglement.
           </mj-text>
-          <mj-raw>
-            {{/if}}
-          </mj-raw>
-          <mj-text font-size="16px" padding="0px" line-height="20px">
-          Ne jetez pas cet email ! Vous trouverez ci-dessous un lien pour retourner vers la page d'inscription. Il vous permettra de la modifier si besoin.
-          </mj-text>
-        </mj-column>
-      </mj-section>
-      <mj-section padding="0px">
-      <mj-column>
-        <mj-button background-color="#116b79" font-size="18px" href="{{adresse}}" border-radius="5px">
-          Votre page d'inscription
-          </mj-button>
         </mj-column>
       </mj-section>
     </mj-wrapper>
