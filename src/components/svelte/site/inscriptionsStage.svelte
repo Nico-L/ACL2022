@@ -1,12 +1,10 @@
 <script>
-    //import { slide } from 'svelte/transition'
     import {onMount} from 'svelte'
     import Input from "../ui/input.svelte"
     import InputEmail from "../ui/inputEmail.svelte"
     import InputNumber from "../ui/inputNum.svelte"
     import Editable from "../ui/editable.svelte"
     import CheckBox from "../ui/checkBox.svelte"
-    //import Chevron from "../ui/chevron.svelte"
     import Bouton from "../ui/bouton.svelte"
     import Spinner from "../ui/spinner.svelte"
     import functionsCall from '../../utils/functionsCall.js'
@@ -29,7 +27,7 @@
         emailReferent: "", 
         telephone: "", 
         adresse: "",
-        adhesion: "", 
+        adhesion: "Déjà adhérent", 
         inscrits: [], 
         verif: {
             referent: false, 
@@ -61,13 +59,6 @@
         }
     var prenomsInscription = ""
     var nRecap = -1
-    /*var isOpen = []
-    var nRecap = -1
-    let onClick = (i) => {
-        isOpen = isOpen.map((tiroir, index) => {
-            return  index === i ? !tiroir:false
-        })
-    } */
 
     var busySaving = false
     var saveOK = false
@@ -124,7 +115,6 @@
                 temp.nom = inscription.referent
                 temp.verif.nom = inscription.verif.referent
                 inscription.inscrits.push(temp)
-                isOpen.push(isOpen.length === 0)
             } else if (lesPrenoms.length === inscritsPrenoms.length) {
                 inscription.inscrits.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
             } else {
@@ -136,8 +126,7 @@
                 inscription.inscrits = JSON.parse(JSON.stringify(inscription.inscrits.slice(0,lesPrenoms.length)))
                 inscription.inscrits.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
             }
-            inscription = inscription
-            isOpen = isOpen  
+            inscription = inscription 
         } else {
             inscription.inscrits = []
         }
@@ -183,7 +172,6 @@
 
     async function saveInscription() {
         if (inscription.verif.global && !saveOK) {
-            //noSave = false
             busySaving = true
             messageSaving = "Enregistrement en cours"
             var dataInscriptions = []
@@ -241,7 +229,6 @@
 
     $: {
         nRecap = inscription.inscrits.length
-        isOpen[nRecap] = false
         }
 
     $: {
@@ -258,7 +245,7 @@
 </script>
 
 <div class="flex flex-wrap justify-between">
-    <!-- cadre email general -->
+    <h1 class="px-2">Inscriptions au stage été</h1>
     <div class="m-2 p-1 rounded w-full border border-jaune-700 bg-jaune-400/50">
         <div class="font-semibold">Informations générales</div>
         <div class="text-sm mb-1">
@@ -391,9 +378,6 @@
                     >
                     <div class={"w-full flex items-center justify-start rounded p-1"}
                     >
-                        <!-- <Chevron 
-                            open={isOpen[index]} 
-                            /> -->
                         <div class="ml-2">
                             Inscription {inscrit.prenom}
                         </div>
@@ -414,8 +398,7 @@
                         </svg>
                     </div>
                 </header>
-                <!-- {#if isOpen[index]} -->
-                <div transition:slide={{ duration: 200 }} class="mt-1">
+                <div class="mt-1">
                     <div class="flex flex-row flex-wrap gap-1 justify-around">
                         <div class="max-w-460px">
                             <div class="mb-2">
@@ -524,7 +507,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- {/if} -->
             </div>
         {/each}
     </div>
@@ -533,12 +515,8 @@
             <header 
                 class={"py-1 font-semibold flex gap-2 rounded " + lesCouleurs[nRecap % 3].textSombre} 
                 >
-                <!-- <Chevron 
-                    open={isOpen[nRecap]} 
-                    /> -->
                     Récapitulatif et validation
             </header>
-            <!-- {#if isOpen[nRecap]} -->
             <div>Voici le récapitulatif de votre inscription :</div>
                 {#if inscription.adhesion !== "Déjà adhérent"}
                     <div class="font-semibold">Adhésion</div>
