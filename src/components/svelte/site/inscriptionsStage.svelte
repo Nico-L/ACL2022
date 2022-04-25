@@ -1,6 +1,6 @@
 <script>
-    import { slide } from 'svelte/transition'
-
+    //import { slide } from 'svelte/transition'
+    import {onMount} from 'svelte'
     import Input from "../ui/input.svelte"
     import InputEmail from "../ui/inputEmail.svelte"
     import InputNumber from "../ui/inputNum.svelte"
@@ -16,6 +16,8 @@
     export let adhesionsTarifs = []
     export let tarifStage = 0
 
+    var uuid = null
+
     const lesCouleurs = [
         {border: "border-bleu-700", bgCadre:"bg-bleu-400/50", textSombre: "text-bleu-900", hover:"hover:bg-bleu-400/50", bg:"bg-bleu-800", cb:"border-bleu-700 checked:border-bleu-700 text-bleu-700 focus:ring-bleu-700", sombre:"bleuSombre", active:"active:bg-bleu-900 active:text-gray-100"},
         {border:"border-vert-700", bgCadre:"bg-vert-400/50", textSombre: "text-vert-900", hover:"hover:bg-vert-400/50", bg:"bg-vert-800", cb:"border-vert-700 checked:border-vert-700 text-vert-700 focus:ring-vert-700", sombre:"vertSombre",  active:"active:bg-vert-900 active:text-gray-100"},
@@ -23,35 +25,18 @@
     ]
 
     var inscription = {
-        referent: "Luchier", 
-        emailReferent: "nicolas@luchier.fr", 
-        telephone: "0633764562", 
-        adresse: "impasse ",
-        adhesion: "Déjà adhérent", 
-        inscrits: [{
-            nom: "Bob", 
-            prenom:"Bobby", 
-            anneeNaissance:"73", 
-            telephone: "0633764562", 
-            email:"nicolas@luchier.fr", 
-            instrument:"Guitare", 
-            dureePratique: "5", 
-            musiqueChambre: false, 
-            chant: false,
-            verif: {
-            nom: true, 
-            prenom: true, 
-            telephone: true, 
-            email:true, 
-            instrument: true, 
-            global: true}
-        }], 
+        referent: "", 
+        emailReferent: "", 
+        telephone: "", 
+        adresse: "",
+        adhesion: "", 
+        inscrits: [], 
         verif: {
-            referent: true, 
-            emailReferent: true, 
-            telephone: true,
-            adresse: true,
-            global: true}}
+            referent: false, 
+            emailReferent: false, 
+            telephone: false,
+            adresse: false,
+            global: false}}
     const uneInscription = {
         nom: "", 
         prenom:"", 
@@ -75,19 +60,24 @@
             global: false}
         }
     var prenomsInscription = ""
-    var isOpen = []
+    var nRecap = -1
+    /*var isOpen = []
     var nRecap = -1
     let onClick = (i) => {
         isOpen = isOpen.map((tiroir, index) => {
             return  index === i ? !tiroir:false
         })
-    }
+    } */
 
     var busySaving = false
     var saveOK = false
     var messageSaving = ""
     var inscritAEffacer = []
     var coutTotal = 0
+
+    onMount(() => {
+        uuid = uuidv4()
+    })
 
     function verifEmailReferent() {
         const regexMail1 = /([a-zA-Z0-9+._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i.exec(inscription.emailReferent)
@@ -199,7 +189,7 @@
             var dataInscriptions = []
             inscription.inscrits.forEach((inscrit)=> {
                 dataInscriptions.push([
-                    uuidv4(),
+                    uuid,
                     inscription.referent,
                     inscription.emailReferent,
                     inscription.telephone,
