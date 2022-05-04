@@ -4,6 +4,7 @@
   process.env.MJ_APIKEY_PUBLIC,
   process.env.MJ_APIKEY_PRIVATE
 )
+const emailBureau = process.env.EMAIL_BUREAU_ACL
 
 const fileName = {
   inscriptions: "./netlify/functions/sendEmail2/template/confirmationEmail.hbs",
@@ -22,7 +23,6 @@ const email = event.queryStringParameters.email || null
     var promises = []
     if (email && dataEmail) {
       const hbsHtml = template(dataEmail);
-      console.log('dataEmail', dataEmail)
       let request
       switch (whichFile) {
         case "inscriptions":
@@ -30,7 +30,7 @@ const email = event.queryStringParameters.email || null
             Messages: [
               {
                 From: {
-                  Email: 'nicolas@luchier.fr',
+                  Email: emailBureau,
                   Name: 'ACL',
                 },
                 To: [

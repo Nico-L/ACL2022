@@ -4,7 +4,6 @@ const driveId = process.env.DRIVE_FOLDER_ID
 const { google } = require('googleapis');
 
 const handler = async (event) => {
-  console.log('driveId', driveId)
   try {
     const jwtClient = new google.auth.JWT(
             process.env.EMAIL_SERVICE_GOOGLE,
@@ -18,16 +17,13 @@ const handler = async (event) => {
         ({
             pageSize: 2,
             orderBy: 'createdTime desc',
-            //q: `'${driveId}' in parents and trashed=false and mimeType = 'application/vnd.google-apps.folder'`
-            q: `'${driveId}' in parents`
+            q: `'${driveId}' in parents and trashed=false and mimeType = 'application/vnd.google-apps.folder'`
         });
-        console.log('response', response)
     let retour
     var promises = []
     if(response && response.data && response.data.files)
         {
           retour = response.data.files
-          console.log('retour', retour)
           if (retour[0]) {
             promises.push(
               drive.files.list
