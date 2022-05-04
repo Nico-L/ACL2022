@@ -145,11 +145,10 @@
         prenomsInscription = inscritsPrenoms.join(", ")
     }
 
-    function numTel(index = null) {
-        console.log('tel', index)
-        if (index) {
+    function numTel(index = -1) {
+        if (index !== -1) {
             const el = document.getElementById(index+'-telephone')
-            inscription.inscrits[index].verif.telephone = inscription.verif.telephone
+            inscription.inscrits[index].verif.telephone =  el.checkValidity()
         } else {
             const el = document.getElementById("telephone")
             inscription.verif.telephone = el.checkValidity()
