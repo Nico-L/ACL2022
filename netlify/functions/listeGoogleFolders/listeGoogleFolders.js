@@ -1,5 +1,6 @@
 // Docs on event and context https://www.netlify.com/docs/functions/#the-handler-method
 const driveId = process.env.DRIVE_FOLDER_ID
+console.log('driveId', driveId)
 const { google } = require('googleapis');
 
 const handler = async (event) => {
@@ -24,14 +25,16 @@ const handler = async (event) => {
         {
           retour = response.data.files
           console.log('retour', retour)
-          promises.push(
-            drive.files.list
-              ({
-                  pageSize: 150,
-                  orderBy: 'name desc',
-                  q: `'${retour[0].id}' in parents and trashed=false and mimeType = 'application/vnd.google-apps.folder'`
-              })
-          )
+          if (retour[0]) {
+            promises.push(
+              drive.files.list
+                ({
+                    pageSize: 150,
+                    orderBy: 'name desc',
+                    q: `'${retour[0].id}' in parents and trashed=false and mimeType = 'application/vnd.google-apps.folder'`
+                })
+            )
+          }
           if (retour[1]) {
             promises.push(
               drive.files.list
@@ -43,14 +46,17 @@ const handler = async (event) => {
             )
           }
         }
-    const retour2 = await Promise.all(promises)
-    retour2.forEach((subFolders, index) => {
-      if (subFolders && subFolders.data && subFolders.data.files) {
-        retour[index].subfolders = subFolders.data.files
-      } else {
-        retour[index].subfolders = []
-      }
-    })
+    if (promises.length > 0)
+    {
+      const retour2 = await Promise.all(promises)
+      retour2.forEach((subFolders, index) => {
+        if (subFolders && subFolders.data && subFolders.data.files) {
+          retour[index].subfolders = subFolders.data.files
+        } else {
+          retour[index].subfolders = []
+        }
+      })
+    }
     return {
       statusCode: 200,
       body: JSON.stringify({ folders: retour}),
