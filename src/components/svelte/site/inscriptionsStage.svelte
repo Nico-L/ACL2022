@@ -589,7 +589,7 @@
                             {/if}
                             {#if saveOK}
                                 <div class="text-vert-800 text-sm">
-                                    Enregistrement réussi, un mail récapitulatif vous a été envoyé. Vous pouvez quittez la page.
+                                    Enregistrement réussi, un mail récapitulatif vous a été envoyé. MERCI DE VERIFIER VOTRE DOSSIER SPAM. Vous pouvez quittez la page.
                                 </div>
                             {/if}
                         </div>
