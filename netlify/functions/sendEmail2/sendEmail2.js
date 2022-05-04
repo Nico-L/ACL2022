@@ -19,8 +19,6 @@ const handler = async (event) => {
 
 const dataEmail = JSON.parse(event.queryStringParameters.dataEmail) || null
 const email = event.queryStringParameters.email || null
-
-console.log('email', emailBureau)
   try {
     var promises = []
     if (email && dataEmail) {
@@ -51,7 +49,7 @@ console.log('email', emailBureau)
               Messages: [
                 {
                   From: {
-                    Email: 'nicolas@luchier.fr',
+                    Email: emailBureau,
                     Name: 'ACL',
                   },
                   To: [
