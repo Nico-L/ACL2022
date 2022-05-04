@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/Nico-L/ACL2022#readme",
   "dependencies": {
+    "@editorjs/editorjs": "^2.24.2",
+    "@editorjs/header": "^2.6.2",
+    "@editorjs/list": "^1.7.0",
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@sendgrid/mail": "^7.6.2",

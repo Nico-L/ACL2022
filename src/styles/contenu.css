@@ -1,0 +1,7 @@
+/* css editorjs */
+    .cadreEditeur {
+        @apply h-full w-720px mx-auto;
+        @apply border border-bleuClair;
+        @apply p-2;
+        @apply z-30; 
+    }

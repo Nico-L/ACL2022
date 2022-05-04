@@ -146,15 +146,17 @@
     }
 
     function numTel(index = null) {
+        console.log('tel', index)
         if (index) {
             const el = document.getElementById(index+'-telephone')
-            inscription.inscrits[index].verif.telephone = el.checkValidity()
+            inscription.inscrits[index].verif.telephone = inscription.verif.telephone
         } else {
             const el = document.getElementById("telephone")
             inscription.verif.telephone = el.checkValidity()
             if (inscription.inscrits.length>0) {
                 inscription.inscrits.forEach((inscrit) => {
                     inscrit.telephone = inscription.telephone
+                    inscrit.verif.telephone = inscription.verif.telephone
                 })
             }
         }
@@ -190,8 +192,7 @@
                     inscrit.email,
                     inscrit.instrument,
                     inscrit.dureePratique,
-                    inscrit.musiqueChambre ? "Oui":"Non",
-                    inscrit.chant ? "Oui":"Non"
+                    inscrit.musiqueChambre ? "Oui":"Non"
                 ])
             })
             await functionsCall("saveInscriptions", {place: "stage", inscriptions: JSON.stringify(dataInscriptions)})
@@ -491,19 +492,6 @@
                                     on:checkChange={()=>inscrit.musiqueChambre = !inscrit.musiqueChambre}
                                     />
                             </div>
-                            <div class="mb-2 px-2">
-                                <div class="flex justify-start">
-                                    <CheckBox 
-                                        label="Souhaitez-vous participer à des ateliers de chant (tout niveaux)"
-                                        wordWrap={true}
-                                        flexWrap={false}
-                                        lblClass={lesCouleurs[index % 3].textSombre + " m-2"}
-                                        cbClass={lesCouleurs[index % 3].cb}
-                                        checked={inscrit.chant}
-                                        on:checkChange={()=>inscrit.chant = !inscrit.chant}
-                                        />
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -511,7 +499,7 @@
         {/each}
     </div>
     {#if inscription.inscrits.length > 0}
-        <div class={"w-full m-2 p-1 border rounded " + lesCouleurs[nRecap % 3].border + " " + lesCouleurs[nRecap % 3].bgCadre}>
+        <div class={"w-full grow-0 m-2 p-1 border rounded " + lesCouleurs[nRecap % 3].border + " " + lesCouleurs[nRecap % 3].bgCadre}>
             <header 
                 class={"py-1 font-semibold flex gap-2 rounded " + lesCouleurs[nRecap % 3].textSombre} 
                 >
@@ -661,7 +649,7 @@
 <style>
     .ligne::after{
         content: "................................................................................................................";
-        
+    
         @apply pl-1;
     }
 </style>

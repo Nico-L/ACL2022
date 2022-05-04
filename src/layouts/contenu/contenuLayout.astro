@@ -1,0 +1,19 @@
+---
+// src/layouts/BaseLayout.astro
+const {title} = Astro.props;
+---
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <style global>
+      @import "../../styles/global.css";
+      @import "../../styles/contenu.css";
+    </style>
+  </head>
+  <body class="w-full max-w-1024px bg-gray-900 text-gray-400 p-4">
+    <!-- slot: your page content will be injected here. -->
+    <slot />
+  </body>
+</html>

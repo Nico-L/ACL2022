@@ -1,0 +1,8 @@
+---
+// src/pages/index.astro
+import ContenuLayout from '../../layouts/contenu/contenuLayout.astro'
+import Editeur from '../../components/svelte/contenu/editeur.svelte'
+---
+<ContenuLayout title="Edition">
+    <Editeur client:only />
+</ContenuLayout>

@@ -23,6 +23,7 @@ const handler = async (event) => {
     if(response && response.data && response.data.files)
         {
           retour = response.data.files
+          console.log('retour', retour)
           promises.push(
             drive.files.list
               ({
@@ -31,14 +32,16 @@ const handler = async (event) => {
                   q: `'${retour[0].id}' in parents and trashed=false and mimeType = 'application/vnd.google-apps.folder'`
               })
           )
-          promises.push(
-            drive.files.list
-              ({
-                  pageSize: 150,
-                  orderBy: 'name asc',
-                  q: `'${retour[1].id}' in parents and trashed=false and mimeType = 'application/vnd.google-apps.folder'`
-              })
-          )
+          if (retour[1]) {
+            promises.push(
+              drive.files.list
+                ({
+                    pageSize: 150,
+                    orderBy: 'name asc',
+                    q: `'${retour[1].id}' in parents and trashed=false and mimeType = 'application/vnd.google-apps.folder'`
+                })
+            )
+          }
         }
     const retour2 = await Promise.all(promises)
     retour2.forEach((subFolders, index) => {
