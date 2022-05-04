@@ -1,9 +1,10 @@
 // Docs on event and context https://www.netlify.com/docs/functions/#the-handler-method
 const driveId = process.env.DRIVE_FOLDER_ID
-console.log('driveId', driveId)
+
 const { google } = require('googleapis');
 
 const handler = async (event) => {
+  console.log('driveId', driveId)
   try {
     const jwtClient = new google.auth.JWT(
             process.env.EMAIL_SERVICE_GOOGLE,
@@ -19,6 +20,7 @@ const handler = async (event) => {
             orderBy: 'createdTime desc',
             q: `'${driveId}' in parents and trashed=false and mimeType = 'application/vnd.google-apps.folder'`
         });
+        console.log('response', response)
     let retour
     var promises = []
     if(response && response.data && response.data.files)
