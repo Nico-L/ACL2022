@@ -18,7 +18,8 @@ const handler = async (event) => {
         ({
             pageSize: 2,
             orderBy: 'createdTime desc',
-            q: `'${driveId}' in parents and trashed=false and mimeType = 'application/vnd.google-apps.folder'`
+            //q: `'${driveId}' in parents and trashed=false and mimeType = 'application/vnd.google-apps.folder'`
+            q: `'${driveId}' in parents`
         });
         console.log('response', response)
     let retour
