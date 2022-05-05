@@ -13,6 +13,7 @@
 
     export let adhesionsTarifs = []
     export let tarifStage = 0
+    export let acompte = 0
 
     var uuid = null
 
@@ -204,10 +205,10 @@
                         instrument: item.instrument,
                         dureePratique: item.dureePratique + " ans",
                         musiqueChambre: item.musiqueChambre,
-                        chant: item.chant,
-                        acompte: parseFloat(inscription.inscrits.length * 50).toString() +" €"
+                        chant: item.chant
                         }}),
-                coutTotal: coutTotal.toString() + " €"
+                coutTotal: coutTotal.toString() + " €",
+                acompte: parseFloat(inscription.inscrits.length * acompte) +" €"
             }
             await functionsCall("sendEmail2", {whichFile: "stage", email: inscription.emailReferent, dataEmail: JSON.stringify(dataEmail)})
             busySaving = false
