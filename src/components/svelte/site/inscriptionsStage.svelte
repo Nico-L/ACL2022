@@ -204,7 +204,8 @@
                         instrument: item.instrument,
                         dureePratique: item.dureePratique + " ans",
                         musiqueChambre: item.musiqueChambre,
-                        chant: item.chant
+                        chant: item.chant,
+                        acompte: parseFloat(inscription.inscrits.length * 50).toString() +" €"
                         }}),
                 coutTotal: coutTotal.toString() + " €"
             }
