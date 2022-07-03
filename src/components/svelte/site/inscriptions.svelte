@@ -294,7 +294,7 @@
             var tableau = []
             console.log('les inscriptions', lesInscriptions)
             lesInscriptions.forEach((inscrit, index) => {
-                console.log('val index', val)
+                console.log('val index', index)
                 var stringInstrument = ""
                 var instrumTemp = []
                 var stringDurees = ""
