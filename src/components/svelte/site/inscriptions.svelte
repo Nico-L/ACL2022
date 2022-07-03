@@ -75,7 +75,7 @@
                 inscription.verif.referent = true
                 inscription.verif.emailReferent = true
                 reglement = rows[0]["Réglement"]
-                if (rows[0].QF !== "") inscription.QF = rows[0].QF
+                inscription.QF = rows[0].QF
                 prenomsInscription = rows[0]["Prénom"]
                 lesInscriptions = JSON.parse(JSON.stringify([]))
                 rows.forEach((row, index) => {
@@ -467,7 +467,7 @@
     }
 
     $: {
-        if (inscription.QF === 0 || inscription.QF === null) {
+        if (inscription.QF === 0 || inscription.QF === null || inscription.QF === "") {
             inscription.facteurQF = 1
         } else if (inscription.QF < 600) {
             inscription.facteurQF = 0.6

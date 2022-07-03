@@ -38,10 +38,12 @@ const handler = async (event) => {
     var additions = []
     inscriptions.forEach((inscription) => {
       if (inscription.hasOwnProperty('nrow')) {
-        inscription.row.forEach((data, index) => {
+        additions.push(inscription.row)
+        promises.push(rows[inscription.nrow].delete())
+        /*inscription.row.forEach((data, index) => {
           rows[inscription.nrow][titreColonnes[index].titre] = data
         })
-        promises.push(rows[inscription.nrow].save())
+        promises.push(rows[inscription.nrow].save()) */
       } else {
         additions.push(inscription)
       }
