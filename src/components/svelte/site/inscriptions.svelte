@@ -86,7 +86,7 @@
                         const tempProfs = row["Professeurs"].split('\n')
                         const tempDurees = row["Durée"].split('\n')
                         tempInstrument.forEach((instrument, index) => {
-                            lesInstruments.push({instrument: instrument, prof: tempProfs[index], duree: tempDurees[index], tarif:tarifInstruments.filter((item) => {return item.duree === tempDurees[index]})[0].tarif})
+                            lesInstruments.push({instrument: instrument, prof: tempProfs[index] === "indifférent" ?"":tempProfs[index], duree: tempDurees[index], tarif:tarifInstruments.filter((item) => {return item.duree === tempDurees[index]})[0].tarif})
                         })
                     }
                     var lesAteliers = []
@@ -307,7 +307,12 @@
                 inscrit.instruments.forEach((instrument)=>{
                     instrumTemp.push(instrument.instrument)
                     dureesTemp.push(instrument.duree)
-                    profTemp.push(instrument.prof)
+                    if (instrument.prof !== "") {
+                        profTemp.push(instrument.prof)
+                    } else {
+                        profTemp.push("indifférent")
+                    }
+                    
                 })
                 stringInstrument = instrumTemp.join("\n")
                 stringDurees = dureesTemp.join("\n")
@@ -342,6 +347,7 @@
                     index === 0 ? (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.tarif)).toFixed(2)+"€": "",
                     index === 0 ? reglement:""
                 ]
+                console.log('une inscription', uneInscription)
                 if (inscrit.hasOwnProperty('nrow')) {
                     tableau.push({nrow: inscrit.nrow, row: uneInscription})
                 } else {
