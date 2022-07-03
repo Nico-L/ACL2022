@@ -79,10 +79,10 @@
                 lesInscriptions = JSON.parse(JSON.stringify([]))
                 rows.forEach((row, index) => {
                     var lesInstruments = []
-                    if(row.instruments)
+                    if(row.Instruments)
                     {
                         const tempInstrument = row.instruments.split('\n')
-                        const tempProfs = row["Instruments"].split('\n')
+                        const tempProfs = row["Professeurs"].split('\n')
                         const tempDurees = row["Durée"].split('\n')
                         tempInstrument.forEach((instrument, index) => {
                             lesInstruments.push({instrument: instrument, prof: tempProfs[index], duree: tempDurees[index], tarif:tarifInstruments.filter((item) => {return item.duree === tempDurees[index]})[0].tarif})
