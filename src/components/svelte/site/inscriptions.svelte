@@ -383,6 +383,7 @@
                                 dataEmail.inscrits.push(dataInscrit)
                             })
                         }
+                        console.log('passages ?')
                         functionsCall("sendEmail2", {email: inscription.emailReferent, dataEmail:encodeURIComponent(JSON.stringify(dataEmail))})
                             .then((retour2) => {busySaving = false; saveOK = true; inscriptionDone=true})
                     }
