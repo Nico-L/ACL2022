@@ -74,6 +74,7 @@
                 inscription.commune = rows[0]["Commune"]
                 inscription.verif.referent = true
                 inscription.verif.emailReferent = true
+                reglement = rows[0].["Réglement"]
                 if (rows[0].QF !== "") inscription.QF = rows[0].QF
                 prenomsInscription = rows[0]["Prénom"]
                 lesInscriptions = JSON.parse(JSON.stringify([]))
@@ -449,7 +450,8 @@
 
     function redirectEdition() {
         //console.log("url", window.location.href)
-        window.location.replace(window.location.href + "?uuid=" + inscription.uuid);
+        //window.location.replace(window.location.href + "?uuid=" + inscription.uuid);
+        window.location.reload(true)
     }
 
     $: {
