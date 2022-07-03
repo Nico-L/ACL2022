@@ -292,6 +292,7 @@
             busySaving = true
             messageSaving = "Enregistrement en cours"
             var tableau = []
+            console.log('les inscriptions', lesInscriptions)
             lesInscriptions.forEach((inscrit, index) => {
                 var stringInstrument = ""
                 var instrumTemp = []
@@ -383,7 +384,6 @@
                                 dataEmail.inscrits.push(dataInscrit)
                             })
                         }
-                        console.log('passages ?')
                         functionsCall("sendEmail2", {email: inscription.emailReferent, dataEmail:encodeURIComponent(JSON.stringify(dataEmail))})
                             .then((retour2) => {busySaving = false; saveOK = true; inscriptionDone=true})
                     }
