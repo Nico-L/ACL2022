@@ -69,8 +69,8 @@
             const rows = JSON.parse((await functionsCall("getInscriptions", {uuid: uuid})).data)
             if (rows.length > 0) {
                 inscription.uuid = uuid,
-                inscription.referent = rows[0]["nom référent"]
-                inscription.emailReferent = rows[0]["email référent"]
+                inscription.referent = rows[0]["Nom référent"]
+                inscription.emailReferent = rows[0]["Email référent"]
                 inscription.commune = rows[0]["Commune"]
                 inscription.verif.referent = true
                 inscription.verif.emailReferent = true
