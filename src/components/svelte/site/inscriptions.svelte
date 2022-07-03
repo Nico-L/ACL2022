@@ -51,14 +51,14 @@
         })
     }
 
-    var urlModifInscription = null
+    var urlModifInscription = window.location.search
     var recupEnCours = false
     var uuidInconnu = false
     var etatInconnu = true
     var inscritAEffacer = []
 
     onMount(async () => {
-        urlModifInscription = window.location.search
+        
         var extracted = /\?uuid=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?/i.exec(urlModifInscription)
         if (extracted!==null)
         {
@@ -295,7 +295,7 @@
             var tableau = []
             console.log('les inscriptions', lesInscriptions)
             lesInscriptions.forEach((inscrit, index) => {
-                console.log('val index', index, inscription)
+                console.log('val index', index === 0, totalPrix())
                 var stringInstrument = ""
                 var instrumTemp = []
                 var stringDurees = ""
@@ -451,7 +451,13 @@
     function redirectEdition() {
         //console.log("url", window.location.href)
         //window.location.replace(window.location.href + "?uuid=" + inscription.uuid);
-        window.location.reload(true)
+        var extracted = /\?uuid=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?/i.exec(urlModifInscription)
+        if (extracted!==null)
+        {
+            window.location.reload(true) 
+            } else {
+                window.location.replace(window.location.href + "?uuid=" + inscription.uuid);
+            }
     }
 
     $: {
