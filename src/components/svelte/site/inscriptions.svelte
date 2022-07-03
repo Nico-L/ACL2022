@@ -71,7 +71,7 @@
                 inscription.uuid = uuid,
                 inscription.referent = rows[0]["nom référent"]
                 inscription.emailReferent = rows[0]["email référent"]
-                inscription.commune = rows[0].commune
+                inscription.commune = rows[0]["Commune"]
                 inscription.verif.referent = true
                 inscription.verif.emailReferent = true
                 if (rows[0].QF !== "") inscription.QF = rows[0].QF
@@ -79,9 +79,9 @@
                 lesInscriptions = JSON.parse(JSON.stringify([]))
                 rows.forEach((row, index) => {
                     var lesInstruments = []
-                    if(row.Instruments)
+                    if(row["Instruments"])
                     {
-                        const tempInstrument = row.instruments.split('\n')
+                        const tempInstrument = row["Instruments"].split('\n')
                         const tempProfs = row["Professeurs"].split('\n')
                         const tempDurees = row["Durée"].split('\n')
                         tempInstrument.forEach((instrument, index) => {
@@ -115,7 +115,7 @@
                         prenom: row["Prénom"],
                         email1:row["email 1"],
                         email2: row["email 2"],
-                        naissance: row.naissance,
+                        naissance: row["Année de naissance"],
                         telephone1: row["téléphone 1"].length < 10 && row["téléphone 1"].length!==0? "0"+row["téléphone 1"]:row["téléphone 1"],
                         telephone2:  row["téléphone 2"].length < 10 && row["téléphone 2"].length!==0 ? "0"+row["téléphone 2"]:row["téléphone 2"],
                         FM: defFM,
