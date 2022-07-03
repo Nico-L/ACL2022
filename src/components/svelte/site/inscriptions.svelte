@@ -294,6 +294,7 @@
             var tableau = []
             console.log('les inscriptions', lesInscriptions)
             lesInscriptions.forEach((inscrit, index) => {
+                console.log('val index', val)
                 var stringInstrument = ""
                 var instrumTemp = []
                 var stringDurees = ""
@@ -335,7 +336,7 @@
                     stringProf,
                     stringAteliers,
                     index === 0 ? totalPrix(): "",
-                    index === 0 ?inscription.QF:"",
+                    index === 0 ? inscription.QF:"",
                     index === 0 ? reduction:"",
                     index === 0 ? (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.tarif)).toFixed(2)+"€": "",
                     index === 0 ? reglement:""
