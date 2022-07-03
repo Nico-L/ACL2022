@@ -51,14 +51,14 @@
         })
     }
 
-    var urlModifInscription = window.location.search
+    var urlModifInscription = null
     var recupEnCours = false
     var uuidInconnu = false
     var etatInconnu = true
     var inscritAEffacer = []
 
     onMount(async () => {
-        
+        urlModifInscription = window.location.search
         var extracted = /\?uuid=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?/i.exec(urlModifInscription)
         if (extracted!==null)
         {
