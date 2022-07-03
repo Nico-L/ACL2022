@@ -45,6 +45,7 @@ const email = event.queryStringParameters.email || null
               },
             ],
           })
+          break;
         case "stage":
         console.log('stage', promises)
           request = mailjet.post('send', { version: 'v3.1' }).request({
