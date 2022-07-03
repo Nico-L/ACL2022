@@ -26,6 +26,7 @@ const email = event.queryStringParameters.email || null
       let request
       switch (whichFile) {
         case "inscriptions":
+        console.log('inscriptions', promises)
           request = mailjet.post('send', { version: 'v3.1' }).request({
             Messages: [
               {
@@ -45,6 +46,7 @@ const email = event.queryStringParameters.email || null
             ],
           })
         case "stage":
+        console.log('stage', promises)
           request = mailjet.post('send', { version: 'v3.1' }).request({
               Messages: [
                 {
@@ -57,8 +59,8 @@ const email = event.queryStringParameters.email || null
                       Email: email
                     },
                   ],
-                  Subject: 'Votre inscription ACL',
-                  TextPart: 'Votre inscription ACL',
+                  Subject: 'Votre inscription au stage ACL',
+                  TextPart: 'Votre inscription au stage ACL',
                   HTMLPart: hbsHtml,
                 },
               ],
@@ -69,6 +71,7 @@ const email = event.queryStringParameters.email || null
       }
       promises.push(request)
     }
+    console.log('les promises', promises)
     await Promise.all(promises)
     return {
       statusCode: 200,
