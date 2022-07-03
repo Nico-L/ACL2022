@@ -75,15 +75,15 @@
                 inscription.verif.referent = true
                 inscription.verif.emailReferent = true
                 if (rows[0].QF !== "") inscription.QF = rows[0].QF
-                prenomsInscription = rows[0]["prénom inscrit"]
+                prenomsInscription = rows[0]["Prénom"]
                 lesInscriptions = JSON.parse(JSON.stringify([]))
                 rows.forEach((row, index) => {
                     var lesInstruments = []
                     if(row.instruments)
                     {
                         const tempInstrument = row.instruments.split('\n')
-                        const tempProfs = row["professeur d'instrument"].split('\n')
-                        const tempDurees = row["durée"].split('\n')
+                        const tempProfs = row["Instruments"].split('\n')
+                        const tempDurees = row["Durée"].split('\n')
                         tempInstrument.forEach((instrument, index) => {
                             lesInstruments.push({instrument: instrument, prof: tempProfs[index], duree: tempDurees[index], tarif:tarifInstruments.filter((item) => {return item.duree === tempDurees[index]})[0].tarif})
                         })
@@ -97,7 +97,7 @@
                             lesAteliers.push(temp)
                         })
                     }
-                    if (index > 0) {prenomsInscription = prenomsInscription + ", " + row["prénom inscrit"]}
+                    if (index > 0) {prenomsInscription = prenomsInscription + ", " + row["Prénom"]}
                     var defFM = {titre: row.FM, tarif: null, duree: null}
                     if (row.FM !== "") {
                         if (row.FM.indexOf("FM") >= 0) {
@@ -112,7 +112,7 @@
                     lesInscriptions.push({
                         nrow: row.nrow,
                         nom: inscription.referent,
-                        prenom: row["prénom inscrit"],
+                        prenom: row["Prénom"],
                         email1:row["email 1"],
                         email2: row["email 2"],
                         naissance: row.naissance,
