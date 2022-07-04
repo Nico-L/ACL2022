@@ -23,6 +23,7 @@ module.exports = {
         '200px': '200px',
         '380px': '380px',
         '460px': '460px',
+        "720px": "720px",
         '1024px': '1024px',
         '72': '18rem',
         '1/2': '50%',
@@ -32,13 +33,19 @@ module.exports = {
       },
       spacing: {
         "200px": "200px",
-        '460px': '460px',
+        "460px": "460px",
         "720px": "720px",
         '40%': '40%',
         '1/2': '50%'
-      }
-    },
+      },
+      zIndex: {
+        '1': '1',
+          '30': '30',
+          '100': '100'
+        }
+  },
     colors: {
+      current: 'currentColor',
       "fondSite": "#fff5d1",
       "fondContenu": "#fefaeb",
       "bleuClair": "#5DB7C5",

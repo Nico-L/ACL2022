@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import Inscriptions from '../../components/svelte/site/inscriptions.svelte'
+import {Content as Agenda} from './agenda/agenda.md'
+
 var data = await fetch(import.meta.env.PUBLIC_CMS + "acl-sections?_sort=titre:ASC&token=" + import.meta.env.PUBLIC_TOKEN_SITE)
 const sections = await data.json()
 data = await fetch(import.meta.env.PUBLIC_CMS + "acl-professeurs?_sort=nom:ASC&token=" + import.meta.env.PUBLIC_TOKEN_SITE)
@@ -10,5 +12,64 @@ const adhesionsTarifsTemp = await fetch(import.meta.env.PUBLIC_CMS + "acl-adhesi
 const adhesionsTarifs = await adhesionsTarifsTemp.json()
 ---
 <BaseLayout title="Inscriptions">
+  <h1 class="px-2 text-4xl mb-2">Inscriptions à l'école de musique</h1>
+  <Agenda />
   <Inscriptions client:load {professeurs} {sections} {adhesionsTarifs}/>
 </BaseLayout>
+
+<style>
+:global(.FM) {
+  @apply flex flex-wrap gap-2 mb-4;
+}
+
+:global(.FM div) {
+  @apply border border-vert-700 bg-vert-400/50 p-2 rounded;
+}
+
+:global(.FM div h3) {
+  @apply font-semibold;
+  @apply text-base text-vert-800 p-0 m-0;
+}
+
+:global(#formation-musicale) {
+  font-weight: 600;
+  @apply text-xl text-vert-800 p-0 m-0;
+}
+
+:global(.ateliers) {
+  @apply flex flex-wrap gap-2 mb-4;
+}
+
+:global(.ateliers div) {
+  @apply border border-bleu-700 bg-bleu-400/50 p-2 rounded;
+}
+
+:global(.ateliers div h3) {
+  @apply font-semibold;
+  @apply text-base text-bleu-800 p-0 m-0;
+}
+
+:global(#ateliers) {
+  font-weight: 600;
+  @apply text-xl text-bleu-800 p-0 m-0;
+}
+
+
+:global(.instruments) {
+  @apply flex flex-wrap gap-2 mb-4;
+}
+
+:global(.instruments div) {
+  @apply border border-jaune-700 bg-jaune-400/50 p-2 rounded;
+}
+
+:global(.instruments div h3) {
+  @apply font-semibold;
+  @apply text-base text-jaune-800 p-0 m-0;
+}
+
+:global(#instruments) {
+  font-weight: 600;
+  @apply text-xl text-jaune-800 p-0 m-0;
+}
+</style>

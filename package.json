@@ -20,13 +20,14 @@
   },
   "homepage": "https://github.com/Nico-L/ACL2022#readme",
   "dependencies": {
+    "@astrojs/tailwind": "^0.2.2",
     "@editorjs/editorjs": "^2.24.2",
     "@editorjs/header": "^2.6.2",
     "@editorjs/list": "^1.7.0",
-    "@fortawesome/free-regular-svg-icons": "^5.15.4",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/free-regular-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@sendgrid/mail": "^7.6.2",
-    "astro": "^0.23.7",
+    "astro": "^1.0.0-beta.63",
     "blueimp-load-image": "^5.16.0",
     "dropzone": "^6.0.0-beta.2",
     "file-selector": "^0.2.4",
@@ -41,7 +42,8 @@
   },
   "devDependencies": {
     "@astrojs/renderer-svelte": "^0.3.1",
-    "@nhost/nhost-js": "^0.3.4",
+    "@astrojs/svelte": "^0.2.0",
+    "@nhost/nhost-js": "^0.3.13",
     "@tailwindcss/forms": "^0.4.0",
     "tailwindcss": "^3.0.12"
   }

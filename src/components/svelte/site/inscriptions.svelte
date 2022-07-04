@@ -57,6 +57,8 @@
     var etatInconnu = true
     var inscritAEffacer = []
 
+    var flagTotalPrix = false
+
     onMount(async () => {
         urlModifInscription = window.location.search
         var extracted = /\?uuid=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?/i.exec(urlModifInscription)
@@ -293,9 +295,7 @@
             busySaving = true
             messageSaving = "Enregistrement en cours"
             var tableau = []
-            console.log('les inscriptions', lesInscriptions)
             lesInscriptions.forEach((inscrit, index) => {
-                console.log('val index', index === 0, totalPrix())
                 var stringInstrument = ""
                 var instrumTemp = []
                 var stringDurees = ""
@@ -347,11 +347,10 @@
                     index === 0 ? (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.tarif)).toFixed(2)+"€": "",
                     index === 0 ? reglement:""
                 ]
-                console.log('une inscription', uneInscription)
                 if (inscrit.hasOwnProperty('nrow')) {
-                    tableau.push({nrow: inscrit.nrow, row: uneInscription})
+                    tableau.push({nrow: inscrit.nrow, row: uneInscription, garder: !inscritAEffacer.includes(inscrit.nrow)})
                 } else {
-                    tableau.push(uneInscription)
+                    tableau.push({nrow: null, row: uneInscription, garder: true})
                 }
             })
             functionsCall('saveInscriptions', {inscriptions: encodeURIComponent(JSON.stringify(tableau)), effacer: encodeURIComponent(JSON.stringify(inscritAEffacer))})
@@ -455,8 +454,6 @@
     }
 
     function redirectEdition() {
-        //console.log("url", window.location.href)
-        //window.location.replace(window.location.href + "?uuid=" + inscription.uuid);
         var extracted = /\?uuid=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?/i.exec(urlModifInscription)
         if (extracted!==null)
         {
@@ -499,10 +496,14 @@
         })
         noProbleme = noProb
     }
+
+    $: {
+        lesInscriptions = lesInscriptions
+        flagTotalPrix = totalPrix() > 0
+    }
 </script>
 
 <div>
-    <h1 class="px-2">Inscriptions à l'école de musique</h1>
     {#if etatInconnu}
         <div></div>
     {:else if recupEnCours}
@@ -634,12 +635,8 @@
                     <header 
                         class={"py-1 font-semibold flex gap-2 justify-between items-center w-full " + lesCouleurs[index % 3].textSombre} 
                         >
-                        <div class={"w-full flex items-center justify-start rounded cursor-pointer p-1 " + lesCouleurs[index % 3].hover}
-                            on:click={() => onClick(index)}
+                        <div class={"w-full flex items-center justify-start rounded p-1 "}
                         >
-                            <Chevron 
-                                open={isOpen[index]} 
-                                />
                             <div class="ml-2">
                                 Inscription {inscrit.prenom}
                             </div>
@@ -660,7 +657,6 @@
                             </svg>
                         </div>
                     </header>
-                    {#if isOpen[index]}
                         <div transition:slide={{ duration: 200 }} class="mt-1">
                             <div class="flex flex-row flex-wrap justify-around">
                             <div class="max-w-460px">
@@ -886,21 +882,17 @@
                             </div>
                         </div>
                     </div>
-                    {/if}
                 </div>
             {:else}
                 <div>{prenomsInscription}</div>
             {/each}
-            <div class={"m-2 p-1 border rounded " + lesCouleurs[nRecap % 3].border + " " + lesCouleurs[nRecap % 3].bgCadre}>
-                <header 
-                    class={"py-1 font-semibold flex gap-2 rounded cursor-pointer " + lesCouleurs[nRecap % 3].textSombre + " " + lesCouleurs[nRecap % 3].hover} 
-                    on:click={() => onClick(nRecap)}>
-                    <Chevron 
-                        open={isOpen[nRecap]} 
-                        />
-                        Récapitulatif et validation
-                </header>
-                {#if isOpen[nRecap]}
+            {#if flagTotalPrix}
+                <div class={"m-2 p-1 border rounded " + lesCouleurs[nRecap % 3].border + " " + lesCouleurs[nRecap % 3].bgCadre}>
+                    <header 
+                        class={"py-1 font-semibold flex gap-2 rounded cursor-pointer " + lesCouleurs[nRecap % 3].textSombre + " " + lesCouleurs[nRecap % 3].hover} 
+                        >
+                            Récapitulatif et validation
+                    </header>
                     <div class="font-semibold">Adhésion</div>
                     <div class="w-full flex flex-nowrap justify-between items-end">
                         <div class="ligne whitespace-nowrap overflow-hidden px-1 ">{adhesion.adhesion}</div>
@@ -943,7 +935,7 @@
                             </div>
                         {/if}
                     {/each}
-                    {#if totalPrix() > 0}
+                    {#if flagTotalPrix}
                         <div class={"font-medium text-lg mt-5 w-full flex flex-nowrap justify-between border-t-2 " + lesCouleurs[nRecap % 3].border}>
                             <div class="ligne overflow-hidden px-1 whitespace-nowrap">Coût total </div>
                             <div class="grow-0 px-1 whitespace-nowrap">{(parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.tarif)).toFixed(2)} €</div>
@@ -1019,7 +1011,7 @@
                             </Bouton>
                             {#if noSave}
                                 <div class="text-rouge-800 text-sm">
-                                    Merci de corriger votre formulaire avant d'enregister.
+                                    Merci de corriger votre formulaire avant d'enregistrer.
                                 </div>
                             {/if}
                             {#if busySaving}
@@ -1034,8 +1026,8 @@
                             {/if}
                         </div>
                     {/if}
-                {/if}
-            </div>
+                </div>
+            {/if}
         </div>
     </div>
     {/if}

@@ -1,15 +1,18 @@
+import svelte from '@astrojs/svelte';
+import tailwind from '@astrojs/tailwind';
+
 export default /** @type {import('astro').AstroUserConfig} */ ({
     // all options are optional; these values are the defaults
-    projectRoot: './',
-    public: './public/',
-    dist: './dist/',
-    src: './src/',
-    buildOptions: {
-      site: 'https://acl-sappey.netlify.app/',
-    },
-    renderers: [
+    root: './',
+    publicDir: './public/',
+    outDir: './dist/',
+    srcDir: './src/',
+    site: 'https://acl-sappey.netlify.app/',
+    integrations: [svelte(), tailwind()],
+    /*renderers: [
       '@astrojs/renderer-svelte'
-    ], vite: {
+    ], */
+    vite: {
       server: {
         // configure vite for HMR with Gitpod
         hmr: process.env.GITPOD_WORKSPACE_URL

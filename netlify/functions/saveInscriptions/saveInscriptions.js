@@ -10,7 +10,8 @@ const adresseFetch = {
 const handler = async (event) => {
   const place = event.queryStringParameters.place || "inscriptions"
   const inscriptions = JSON.parse(event.queryStringParameters.inscriptions) || []
-  const effacer = event.queryStringParameters.effacer ? JSON.parse(event.queryStringParameters.effacer):[]
+  //const effacer = event.queryStringParameters.effacer ? JSON.parse(event.queryStringParameters.effacer):[]
+  const uuid = inscriptions[0].row[0]
   try {
     const leFetch = await fetch(adresseFetch[place], {
         method: "get",
@@ -21,7 +22,7 @@ const handler = async (event) => {
     });
     const campagne = await leFetch.json()
     const gSheetId = campagne[0].gSheetId
-    const titreColonnes = campagne[0].titreColonnes
+    //const titreColonnes = campagne[0].titreColonnes
     
     const doc = new GoogleSpreadsheet(gSheetId);
     await doc.useServiceAccountAuth({
@@ -29,29 +30,28 @@ const handler = async (event) => {
       private_key: process.env.KEY_SERVICE_GOOGLE.replace(/\\n/g, "\n"),
     })
     await doc.loadInfo();
-    const firstSheet = doc.sheetsByIndex[0];
-    const rows = await firstSheet.getRows();
+    var firstSheet = doc.sheetsByIndex[0];
+    var rows = await firstSheet.getRows();
     let promises = []
-    effacer.forEach((efface) => {
-      promises.push(rows[efface].delete())
-    })
+    var n = 999
+    while(n>0) {
+      const rowsUuid = rows.filter((row) => row.uuid = uuid)
+      n = rowsUuid.length
+      if (n>0) {
+        await rowsUuid[0].delete()
+      }
+      rows = await firstSheet.getRows();
+    }
+
     var additions = []
     inscriptions.forEach((inscription) => {
-      if (inscription.hasOwnProperty('nrow')) {
+      if (inscription.garder) {
         additions.push(inscription.row)
-        promises.push(rows[inscription.nrow].delete())
-        /*inscription.row.forEach((data, index) => {
-          rows[inscription.nrow][titreColonnes[index].titre] = data
-        })
-        promises.push(rows[inscription.nrow].save()) */
-      } else {
-        additions.push(inscription)
       }
     })
     if (additions.length > 0) {
-      promises.push(firstSheet.addRows(additions))
+      await firstSheet.addRows(additions)
     }
-    await Promise.all(promises)
     return {
       statusCode: 200,
       body: JSON.stringify({ data: "ok" }),
