@@ -604,7 +604,7 @@
                 <div class="flex flex-wrap w-full items-center">
                     <InputNumber 
                         label="Quotient familial"
-                        id={inscription.QF}
+                        id="QF"
                         bind:value={inscription.QF}
                         maxWidth="w-32"
                     />
