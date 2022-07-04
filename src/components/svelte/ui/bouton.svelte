@@ -2,7 +2,7 @@
     import { createEventDispatcher } from "svelte";
     import { get_current_component } from "svelte/internal"
     import Fa from 'svelte-fa'
-    import { faCheck } from '@fortawesome/free-solid-svg-icons'
+    import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck'
     const component = get_current_component()
     const svelteDispatch = createEventDispatcher()
     const dispatch = (name, detail) => {

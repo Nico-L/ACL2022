@@ -9,9 +9,6 @@ export default /** @type {import('astro').AstroUserConfig} */ ({
     srcDir: './src/',
     site: 'https://acl-sappey.netlify.app/',
     integrations: [svelte(), tailwind()],
-    /*renderers: [
-      '@astrojs/renderer-svelte'
-    ], */
     vite: {
       server: {
         // configure vite for HMR with Gitpod
@@ -24,14 +21,5 @@ export default /** @type {import('astro').AstroUserConfig} */ ({
             }
           : true
       }
-    },
- /*   vite: {
-      server: {
-        host: true,
-        hmr: {
-          host: '24678-rose-deer-7ksxq7g7.ws-eu34.gitpod.io',
-          clientPort: 443
-        }
-      }
-    }, */
+    }
   });
