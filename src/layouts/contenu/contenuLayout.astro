@@ -2,7 +2,7 @@
 // src/layouts/BaseLayout.astro
 const {title} = Astro.props;
 ---
-<html>
+<html lang="fr">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,7 @@ const {title} = Astro.props;
       @import "../../styles/contenu.css";
     </style>
   </head>
-  <body class="w-full max-w-1024px bg-gray-900 text-gray-400 p-4">
+  <body class="w-full h-full max-w-1024px bg-gray-900 text-gray-400 p-0 m-0 mx-auto">
     <!-- slot: your page content will be injected here. -->
     <slot />
   </body>

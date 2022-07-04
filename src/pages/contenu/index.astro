@@ -1,0 +1,8 @@
+---
+// src/pages/index.astro
+import ContenuLayout from '../../layouts/contenu/contenuLayout.astro'
+import Contenu from '../../components/svelte/contenu/index.svelte'
+---
+<ContenuLayout title="Contenu du site">
+    <Contenu client:only />
+</ContenuLayout>
