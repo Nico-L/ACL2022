@@ -41,10 +41,10 @@
   "devDependencies": {
     "@astrojs/renderer-svelte": "^0.3.1",
     "@astrojs/svelte": "^0.2.0",
+    "@fortawesome/free-regular-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@nhost/nhost-js": "^0.3.13",
     "@tailwindcss/forms": "^0.5.2",
-    "tailwindcss": "^3.0.12",
-    "@fortawesome/free-regular-svg-icons": "^6.1.1",
-    "@fortawesome/free-solid-svg-icons": "^6.1.1"
+    "tailwindcss": "^3.1.4"
   }
 }
