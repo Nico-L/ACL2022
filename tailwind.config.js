@@ -5,14 +5,14 @@ module.exports = {
     './src/**/*.{astro,js,jsx,svelte,ts,tsx,vue}',
   ],
   theme: {
-    extend: {
-      screens: {
+    screens: {
       'sm': '640px',
       // => @media (min-width: 640px) { ... }
 
       'md': '768px',
       // => @media (min-width: 768px) { ... }
     },
+    extend: {
       borderWidth: {
         '6': '6px',
         '10': '10px',
