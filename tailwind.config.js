@@ -6,6 +6,7 @@ module.exports = {
   ],
   theme: {
     extend: {
+      
       borderWidth: {
         '6': '6px',
         '10': '10px',
@@ -106,7 +107,24 @@ module.exports = {
         700: "#4a5568",
         800: "#2d3748",
         900: "#1a202c"
-      }
+      },
+        theme: {
+    screens: {
+      'sm': '640px',
+      // => @media (min-width: 640px) { ... }
+
+      'md': '768px',
+      // => @media (min-width: 768px) { ... }
+
+      'lg': '1024px',
+      // => @media (min-width: 1024px) { ... }
+
+      'xl': '1280px',
+      // => @media (min-width: 1280px) { ... }
+
+      '2xl': '1536px',
+      // => @media (min-width: 1536px) { ... }
+    }
     }
   },
   plugins: [
