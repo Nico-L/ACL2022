@@ -735,6 +735,7 @@
                                     <div class="font-semibold flex flex-wrap justify-between items-center ">
                                         Formation musicale
                                     </div>
+                                    <div class="text-sm px-1">FM adulte sous réserve d'un nombre de participants suffisant</div>
                                     <div class="mb-2 px-2 pl-1 ">
                                         <div class="flex flex-wrap gap-2 justify-start w-full rounded bg-fondContenu border border-bleu-900 p-2">
                                             <div class="w-full flex flex-wrap">
@@ -792,7 +793,7 @@
                                                         checked={lesInscriptions[index].FM.titre === "Adulte"}
                                                         on:checkChange={()=>choixFM("Adulte", fms[0].tarifs, index)}
                                                         />
-                                                </div>  
+                                                </div>
                                             </div> 
                                                 {#if lesInscriptions[index].FM.tarif}
                                                     <div class={"mx-auto font-semibold text-sm text-center w-full text-fondContenu rounded p-1 " + lesCouleurs[index % 3].bg}>
