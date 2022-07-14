@@ -785,6 +785,13 @@
                                                         checked={lesInscriptions[index].FM.titre === "FM5"}
                                                         on:checkChange={()=>choixFM("FM5", fms[0].tarifs, index)}
                                                         />
+                                                    <CheckBox 
+                                                        label={"Adulte"} 
+                                                        lblClass={lesCouleurs[index % 3].textSombre}
+                                                        cbClass={lesCouleurs[index % 3].cb}
+                                                        checked={lesInscriptions[index].FM.titre === "Adulte"}
+                                                        on:checkChange={()=>choixFM("Adulte", fms[0].tarifs, index)}
+                                                        />
                                                 </div>  
                                             </div> 
                                                 {#if lesInscriptions[index].FM.tarif}
