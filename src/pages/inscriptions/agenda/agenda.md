@@ -1,4 +1,6 @@
-Cette page vous permet de vous inscrire aux cours et ateliers de l'Association Culture et Loisir du Sappey en Chartreuse. Vous trouverez ci-dessous les jours où auront les différentes activités, puis le formulaire d'inscription.
+Cette page vous permet de vous inscrire aux cours et ateliers de l'Association Culture et Loisir du Sappey en Chartreuse. Vous trouverez ci-dessous les jours où auront les différentes activités, puis le formulaire d'inscription. Les cours commenceront la semaine du 19 septembre, pour 30 cours à l'année.
+
+Il est également possible de vous inscrire au CRC Meylan dans les ensembles, les collectifs dans la limite des places disponibles.
 
 <div class="agenda">
 
@@ -7,7 +9,7 @@ Cette page vous permet de vous inscrire aux cours et ateliers de l'Association C
 <div>
 ### Eveil musical
 
-à confirmer
+lundi soir à 17h45
 </div>
 <div>
 ### FM 1-3
@@ -70,15 +72,23 @@ Tatiana Solnichkin : le samedi de 9h00 à 14h00
 
 Claire Scalisi : horaire à confirmer
 
-Sarah Prévost : horaires à confirmer
+Sarah Prévost : mercredi matin
 </div>
 <div>
 ### Violon
-à confirmer
+Marie Hélène Munch
+
+lundi ou mardi soir
 </div>
 <div>
 ### Violoncelle
 Emilie Koang
+</div>
+<div>
+### Flûte traversière
+Loïc Faucher
+
+lundi soir
 </div>
 </div>
 
@@ -110,13 +120,7 @@ Quentin Richaud
 un mardi sur deux
 </div>
 <div>
-### Musique actuelle
-Franck Argentier
-
-mardi
-</div>
-<div>
-### Musique assistée par Ordinateur
+### Musique actuelle ados
 Franck Argentier
 
 mardi
