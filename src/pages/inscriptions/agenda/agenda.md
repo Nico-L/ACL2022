@@ -8,6 +8,7 @@ Il est également possible de vous inscrire au CRC Meylan dans les ensembles, le
 <div class="FM">
 <div>
 ### Eveil musical
+William Clugnet
 
 lundi soir à 17h45
 </div>
