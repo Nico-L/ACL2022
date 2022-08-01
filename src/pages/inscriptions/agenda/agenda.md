@@ -71,8 +71,6 @@ mercredi
 ### Piano
 Tatiana Solnichkin : le samedi de 9h00 à 14h00
 
-Claire Scalisi : horaire à confirmer
-
 Sarah Prévost : mercredi matin
 </div>
 <div>
