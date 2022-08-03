@@ -1,4 +1,4 @@
-Cette page vous permet de vous inscrire aux cours et ateliers de l'Association Culture et Loisir du Sappey en Chartreuse. Vous trouverez ci-dessous les jours où auront les différentes activités, puis le formulaire d'inscription. Les cours commenceront la semaine du 19 septembre, pour 30 cours à l'année.
+Vous trouverez ci-dessous la liste de nos différentes activités. Les cours commenceront la semaine du 19 septembre, pour 30 cours à l'année.
 
 Il est également possible de vous inscrire au CRC Meylan dans les ensembles, les collectifs dans la limite des places disponibles.
 
