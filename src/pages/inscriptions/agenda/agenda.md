@@ -71,7 +71,7 @@ mercredi
 ### Piano
 Tatiana Solnichkin : le samedi de 9h00 à 14h00
 
-Sarah Prévost : mercredi matin
+Sarah Prévost : le mercredi matin
 
 Claire Chambon : le mercredi
 </div>
