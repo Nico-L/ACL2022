@@ -8,7 +8,7 @@
     import Input from "../ui/input.svelte"
     import InputNumber from "../ui/inputNum.svelte"
     import InputEmail from "../ui/inputEmail.svelte"
-    import Chevron from "../ui/chevron.svelte"
+    //import Chevron from "../ui/chevron.svelte"
     import Spinner from '../ui/spinner.svelte'
 
     import { v4 as uuidv4 } from 'uuid';
@@ -92,14 +92,16 @@
                         })
                     }
                     var lesAteliers = []
-                    if (row.ateliers) {
-                        const atelierTemp = row.ateliers.split('\n')
+                    console.log('les ateliers', row["Atelier"])
+                    if (row["Atelier"]) {
+                        const atelierTemp = row["Atelier"].split('\n')
                         atelierTemp.forEach((item) => {
                             const temp = ateliers.filter((at) => {return at.titre === item})[0]
                             temp.tarif = temp.tarifs[0].tarif
                             lesAteliers.push(temp)
                         })
                     }
+                    
                     if (index > 0) {prenomsInscription = prenomsInscription + ", " + row["Prénom"]}
                     var defFM = {titre: row.FM, tarif: null, duree: null}
                     if (row.FM !== "") {

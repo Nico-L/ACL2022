@@ -73,7 +73,7 @@ Tatiana Solnichkin : le samedi de 9h00 à 14h00
 
 Sarah Prévost : mercredi matin
 
-Dernier créneau à confirmer.
+Claire Chambon : le mercredi
 </div>
 <div>
 ### Violon
