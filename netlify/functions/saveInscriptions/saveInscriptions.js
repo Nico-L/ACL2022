@@ -35,7 +35,7 @@ const handler = async (event) => {
     let promises = []
     var n = 999
     while(n>0) {
-      const rowsUuid = rows.filter((row) => row.uuid = uuid)
+      const rowsUuid = rows.filter((row) => row.uuid === uuid)
       n = rowsUuid.length
       if (n>0) {
         await rowsUuid[0].delete()
