@@ -4,6 +4,16 @@ auto_deploy: false
 admin_path: 
 webhook_url: 
 sections:
+- type: heading
+  label: Data
+- type: directory
+  path: src/data/professeurs
+  label: professeurs
+  create: documents
+  match: "**/*"
+  new_doc_ext: json
+  templates:
+  - professeur
 - type: directory
   path: src/data/sections
   label: sections
@@ -13,13 +23,15 @@ sections:
   templates:
   - section
 - type: directory
-  path: src/data/professeurs
-  label: professeurs
-  create: documents
+  path: ''
+  label: tarifs
+  create: all
   match: "**/*"
-  new_doc_ext: json
+  new_doc_ext: ".json"
   templates:
-  - professeur
+  - tarifs
+- type: heading
+  label: Site
 upload_dir: public/img/uploads
 public_path: img/uploads
 front_matter_path: ''
