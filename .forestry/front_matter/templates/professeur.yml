@@ -32,6 +32,6 @@ fields:
     maxSize: 64
   label: photo
 pages:
-- src/data/professeurs/ClaireChambon.json
+- src/data/professeurs/claireChambon.json
 - src/data/professeurs/franckArgentier.json
 - src/data/professeurs/williamClugnet.json
