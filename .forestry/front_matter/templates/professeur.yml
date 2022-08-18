@@ -34,3 +34,4 @@ fields:
 pages:
 - src/data/professeurs/ClaireChambon.json
 - src/data/professeurs/franckArgentier.json
+- src/data/professeurs/williamClugnet.json
