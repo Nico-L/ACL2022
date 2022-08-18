@@ -16,8 +16,8 @@ fields:
     required: false
     options:
     - atelier
-    - instrumen
     - formation musicale
+    - instrument
     source:
       type: simple
       section: 
