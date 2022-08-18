@@ -17,6 +17,13 @@ fields:
   config:
     required: false
   label: email
+- name: creneaux
+  type: list
+  config:
+    use_select: false
+    min: 
+    max: 
+  label: créneaux
 - name: bio
   type: textarea
   default: ''
