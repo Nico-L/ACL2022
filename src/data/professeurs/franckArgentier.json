@@ -3,5 +3,8 @@
   "prenom": "Franck",
   "email": "",
   "bio": "",
-  "photo": ""
+  "photo": "",
+  "creneaux": [
+    "mardi soir"
+  ]
 }
