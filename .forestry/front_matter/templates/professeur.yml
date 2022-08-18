@@ -33,7 +33,12 @@ fields:
   label: photo
 pages:
 - src/data/professeurs/claireChambon.json
+- src/data/professeurs/claireChambon.json
+- src/data/professeurs/franckArgentier.json
 - src/data/professeurs/franckArgentier.json
 - src/data/professeurs/loicFaucher.json
+- src/data/professeurs/loicFaucher.json
 - src/data/professeurs/sarahPrevost.json
+- src/data/professeurs/sarahPrevost.json
+- src/data/professeurs/williamClugnet.json
 - src/data/professeurs/williamClugnet.json
