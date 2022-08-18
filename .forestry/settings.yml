@@ -14,6 +14,8 @@ sections:
   label: professeurs
   create: documents
   match: "**/*"
+  templates:
+  - professeur
 upload_dir: public/img/uploads
 public_path: img/uploads
 front_matter_path: ''
