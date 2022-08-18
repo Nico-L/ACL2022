@@ -37,6 +37,13 @@ fields:
   config:
     required: false
   label: horaires
+- name: tarifs
+  type: list
+  config:
+    use_select: false
+    min: 
+    max: 
+  label: tarifs
 pages:
 - src/data/sections/batterie.json
 - src/data/sections/piano.json
