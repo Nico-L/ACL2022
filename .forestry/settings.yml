@@ -5,9 +5,14 @@ admin_path:
 webhook_url: 
 sections:
 - type: directory
-  path: src/professeurs
+  path: src/data/sections
+  label: sections
+  create: documents
+  match: "**/*"
+- type: directory
+  path: src/data/professeurs
   label: professeurs
-  create: all
+  create: documents
   match: "**/*"
 upload_dir: uploads
 public_path: "/uploads"
