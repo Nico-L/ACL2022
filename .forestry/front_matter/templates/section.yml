@@ -32,11 +32,6 @@ fields:
       file: 
       path: 
   label: type
-- name: creneaux
-  type: text
-  config:
-    required: false
-  label: créneaux
 - name: horaires
   type: text
   config:
