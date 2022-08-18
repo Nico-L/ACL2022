@@ -9,6 +9,8 @@ sections:
   label: sections
   create: documents
   match: "**/*"
+  templates:
+  - section
 - type: directory
   path: src/data/professeurs
   label: professeurs
