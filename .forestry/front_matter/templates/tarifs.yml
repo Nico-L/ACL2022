@@ -24,3 +24,5 @@ fields:
       file: 
       path: 
   label: type
+pages:
+- tarifsInstrument.json
