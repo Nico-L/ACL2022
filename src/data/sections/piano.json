@@ -1,0 +1,12 @@
+{
+  "type": "instrument",
+  "titre": "piano",
+  "professeur": [
+    "src/data/professeurs/claireChambon.json"
+  ],
+  "creneaux": "mercredi",
+  "horaires": "",
+  "tarifs": [
+
+  ]
+}

@@ -1,0 +1,26 @@
+---
+label: tarifs
+hide_body: true
+fields:
+- name: tarif
+  type: list
+  config:
+    use_select: false
+    min: 
+    max: 
+  label: tarif
+- name: type
+  type: select
+  default: []
+  config:
+    required: false
+    options:
+    - atelier
+    - instrumen
+    - formation musicale
+    source:
+      type: simple
+      section: 
+      file: 
+      path: 
+  label: type

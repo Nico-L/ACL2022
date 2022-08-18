@@ -51,3 +51,4 @@ fields:
   label: tarifs
 pages:
 - src/data/sections/batterie.json
+- src/data/sections/piano.json
