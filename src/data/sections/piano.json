@@ -2,7 +2,9 @@
   "type": "instrument",
   "titre": "piano",
   "professeur": [
-    "src/data/professeurs/claireChambon.json"
+    "src/data/professeurs/claireChambon.json",
+    "src/data/professeurs/sarahPrevost.json",
+    "src/data/professeurs/tatianaSolnichkina.json"
   ],
   "creneaux": "mercredi",
   "horaires": "",

@@ -36,4 +36,5 @@ pages:
 - src/data/professeurs/franckArgentier.json
 - src/data/professeurs/loicFaucher.json
 - src/data/professeurs/sarahPrevost.json
+- src/data/professeurs/tatianaSolnichkina.json
 - src/data/professeurs/williamClugnet.json
