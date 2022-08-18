@@ -17,5 +17,37 @@ fields:
       type: pages
       section: data
   label: professeur
+- name: type
+  type: select
+  default: []
+  config:
+    required: false
+    options:
+    - instrument
+    - atelier
+    - formation musicale
+    source:
+      type: simple
+      section: 
+      file: 
+      path: 
+  label: type
+- name: creneaux
+  type: text
+  config:
+    required: false
+  label: créneaux
+- name: horaires
+  type: text
+  config:
+    required: false
+  label: horaires
+- name: tarifs
+  type: list
+  config:
+    use_select: false
+    min: 
+    max: 
+  label: tarifs
 pages:
 - src/data/sections/batterie.md
