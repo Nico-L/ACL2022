@@ -17,3 +17,5 @@ fields:
       type: pages
       section: data
   label: professeur
+pages:
+- src/data/sections/batterie.md
