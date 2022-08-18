@@ -26,7 +26,7 @@ sections:
   path: ''
   label: tarifs
   create: all
-  match: src/data/tarifs
+  match: src/data/tarifs/**/*
   new_doc_ext: json
   templates:
   - tarifs
