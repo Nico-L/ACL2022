@@ -1,4 +1,33 @@
 ---
 label: professeur
 hide_body: true
-fields: []
+fields:
+- name: nom
+  type: text
+  config:
+    required: false
+  label: nom
+- name: prenom
+  type: text
+  config:
+    required: false
+  label: prenom
+- name: email
+  type: text
+  config:
+    required: false
+  label: email
+- name: bio
+  type: textarea
+  default: ''
+  config:
+    required: false
+    wysiwyg: false
+    schema:
+      format: markdown
+  label: bio
+- name: photo
+  type: file
+  config:
+    maxSize: 64
+  label: photo
