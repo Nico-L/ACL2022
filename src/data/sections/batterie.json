@@ -1,0 +1,12 @@
+{
+  "type": "instrument",
+  "titre": "Batterie",
+  "professeur": [
+    "src/data/professeurs/franckArgentier.json"
+  ],
+  "creneaux": "mardi soir",
+  "horaires": "",
+  "tarifs": [
+
+  ]
+}

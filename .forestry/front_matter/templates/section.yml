@@ -49,3 +49,5 @@ fields:
     min: 
     max: 
   label: tarifs
+pages:
+- src/data/sections/batterie.json
