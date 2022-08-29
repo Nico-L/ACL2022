@@ -45,7 +45,7 @@ Franck Argentier
 </div>
 <div>
 ### Basse et contrebasse
-Quention Richaud
+Quentin Richaud
 
 mardi après-midi 
 </div>
@@ -63,13 +63,13 @@ William Clugnet : horaire à définir
 </div>
 <div>
 ### Harpe
-Joanna Turron
+Joanna Tourron
 
 mercredi
 </div>
 <div>
 ### Piano
-Tatiana Solnichkin : le samedi de 9h00 à 14h00
+Tatiana Solnychkina : le samedi de 9h00 à 14h00
 
 Sarah Prévost : le mercredi matin
 
