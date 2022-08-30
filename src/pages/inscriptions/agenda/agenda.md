@@ -79,7 +79,7 @@ Claire Chambon : le mercredi
 ### Violon
 Marie Hélène Munch
 
-lundi ou mardi soir
+lundi soir
 </div>
 <div>
 ### Violoncelle
