@@ -16,14 +16,24 @@
     export let sections = ""
     export let professeurs = ""
     export let adhesionsTarifs = ""
+    export let lesTarifs = ""
+
+console.log('les sections', sections)
+// console.log('les tarifs', lesTarifs)
+// console.log('les profs', professeurs)
+// console.log('adhesion', adhesionsTarifs)
+
 
     let adhesion
-    const instruments = sections.filter((section) => {return section.type === "instrument"})
-    const tarifInstruments = instruments[0].tarifs
-    const ateliers = sections.filter((section) => {return section.type === "atelier"})
-    const fms = sections.filter((section) => {return section.type === "fm"})
-    
-    const ems = sections.filter((section) => {return section.type === "em"})
+    const instruments = sections.filter((section) => section.type.value === "instrument")
+    const tarifInstruments = lesTarifs.filter(item => item.type.includes("instrument")&&!item.type.includes("instrument-15mn")).map((item) => {return {duree: item.duree, tarif: item.tarif}})
+    const tarifFM = lesTarifs.filter(item => item.type.includes("fm")).map((item) => {return item.tarif})
+    const tarifEm = lesTarifs.filter(item => item.type.includes("em")).map((item) => {return item.tarif})
+    const ateliers = sections.filter((section) => {return section.type.value === "atelier"})
+    console.log('ateliers', ateliers)
+    /*const fms = sections.filter((section) => {return section.type === "fm"})
+    console.log('fms', fms)
+    const ems = sections.filter((section) => {return section.type === "em"}) */
 
     var inscription = {uuid: uuidv4(), referent: "", emailReferent: "", commune: "Le Sappey en Chartreuse", QF:null, facteurQF: 1, adhesion: 0, verif: {referent: false, emailReferent: false}}
     var prenomsInscription = ""
@@ -45,12 +55,6 @@
     var saveOK = false
     var inscriptionDone = false
 
-    let onClick = (i) => {
-        isOpen = isOpen.map((tiroir, index) => {
-            return  index === i ? !tiroir:false
-        })
-    }
-
     var urlModifInscription = null
     var recupEnCours = false
     var uuidInconnu = false
@@ -62,7 +66,8 @@
     onMount(async () => {
         urlModifInscription = window.location.search
         var extracted = /\?uuid=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?/i.exec(urlModifInscription)
-        if (extracted!==null)
+        etatInconnu = false
+        /* if (extracted!==null)
         {
             recupEnCours = true
             etatInconnu = false
@@ -141,7 +146,7 @@
             }
         } else {
             etatInconnu = false
-        }
+        } */
     })
 
     function effacerInscrit(index) {
@@ -195,7 +200,7 @@
     }
 
     function listeProfs(instrument) {
-        const listeProfs = professeurs.filter((prof) => {return prof.acl_sections.filter((section) => section.titre === instrument).length > 0 })
+        const listeProfs = professeurs.filter((prof) => prof.acl_sections.filter((section) => section.value === instrument).length > 0 )
         return listeProfs
     }
 
@@ -221,13 +226,16 @@
             }
             //} 
         } else {
-            var atelier = {titre: section.titre, tarif: section.tarifs[0].tarif}
-            const dejaInscrit = lesInscriptions[inscrit].ateliers.filter((item) => item.titre === section.titre).length > 0 
+            var atelier = {titre: section.titre, tarif: section.tarif}
+            console.log('atelier', atelier)
+            const dejaInscrit = lesInscriptions[inscrit].ateliers.filter((item) => item.titre === section.titre).length > 0
+            console.log('dejaInscrit', dejaInscrit)
             if (!dejaInscrit) {
                     lesInscriptions[inscrit].ateliers.push(atelier)
             } else {
                 lesInscriptions[inscrit].ateliers = lesInscriptions[inscrit].ateliers.filter((item) => item.titre !== section.titre)
             }
+            console.log('lesIncriptions', lesInscriptions[inscrit].ateliers)
         }
         lesInscriptions = lesInscriptions
     }
@@ -278,8 +286,10 @@
             if (instrument.tarif) total += (instrument.tarif)
         })
         inscrit.ateliers.forEach((atelier) => {
-            if (atelier.tarif) total += (atelier.tarif)
+            console.log('tarif', parseFloat(atelier.tarif))
+            if (atelier.tarif) total += parseFloat(atelier.tarif)
         })
+
         return total
     }
 
@@ -297,6 +307,7 @@
             busySaving = true
             messageSaving = "Enregistrement en cours"
             var tableau = []
+            console.log('les inscriptions', lesInscriptions)
             lesInscriptions.forEach((inscrit, index) => {
                 var stringInstrument = ""
                 var instrumTemp = []
@@ -337,7 +348,7 @@
                     inscrit.telephone1,
                     inscrit.telephone2,
                     adhesion.adhesion,
-                    index === 0 ? adhesion.tarif: "",
+                    index === 0 ? adhesion.valeur: "",
                     inscrit.FM.titre,
                     stringInstrument,
                     stringDurees,
@@ -346,7 +357,7 @@
                     index === 0 ? totalPrix(): "",
                     index === 0 ? inscription.QF:"",
                     index === 0 ? reduction:"",
-                    index === 0 ? (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.tarif)).toFixed(2)+"€": "",
+                    index === 0 ? (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.valeur)).toFixed(2)+"€": "",
                     index === 0 ? reglement:""
                 ]
                 if (inscrit.hasOwnProperty('nrow')) {
@@ -355,17 +366,17 @@
                     tableau.push({nrow: null, row: uneInscription, garder: true})
                 }
             })
-            functionsCall('saveInscriptions', {inscriptions: encodeURIComponent(JSON.stringify(tableau)), effacer: encodeURIComponent(JSON.stringify(inscritAEffacer))})
+            /*functionsCall('saveInscriptions', {inscriptions: encodeURIComponent(JSON.stringify(tableau)), effacer: encodeURIComponent(JSON.stringify(inscritAEffacer))})
                 .then((retour) => {
                     inscritAEffacer = []
                     if (retour.data === "ok") {
                         messageSaving = "Envoi du mail récapitulatif"
                         var dataEmail = {
                             adresse: "https://acl-sappey.netlify.app/inscriptions/?uuid="+inscription.uuid,
-                            adhesion: {titre: "Adhesion " + adhesion.adhesion, tarif: parseFloat(adhesion.tarif).toFixed(2)+"€"},
+                            adhesion: {titre: "Adhesion " + adhesion.adhesion, tarif: parseFloat(adhesion.valeur).toFixed(2)+"€"},
                             qf: adhesion.QF,
                             reglement: reglement,
-                            coutTotal: (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.tarif)).toFixed(2)+"€",
+                            coutTotal: (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.valeur)).toFixed(2)+"€",
                             inscrits: []
                         }
                         if (inscription.facteurQF < 1) {
@@ -396,7 +407,7 @@
                         functionsCall("sendEmail2", {email: inscription.emailReferent, dataEmail:encodeURIComponent(JSON.stringify(dataEmail))})
                             .then((retour2) => {busySaving = false; saveOK = true; inscriptionDone=true})
                     }
-                })
+                }) */
         } else {
             noSave = true
         }
@@ -643,7 +654,7 @@
                                 Inscription {inscrit.prenom}
                             </div>
                         </div>
-                        <div class={"rounded cursor-pointer p-1 " + lesCouleurs[index % 3].hover}
+                        <button class={"rounded cursor-pointer p-1 " + lesCouleurs[index % 3].hover}
                             on:click={() => effacerInscrit(index)}
                             >
                             <svg 
@@ -657,7 +668,7 @@
                                 <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
                                 <path fill ="currentColor" stroke="currentColor" d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"/>
                             </svg>
-                        </div>
+                        </button>
                     </header>
                         <div transition:slide={{ duration: 200 }} class="mt-1">
                             <div class="flex flex-row flex-wrap justify-around">
@@ -747,7 +758,7 @@
                                                     lblClass={lesCouleurs[index % 3].textSombre}
                                                     cbClass={lesCouleurs[index % 3].cb}
                                                     checked={lesInscriptions[index].FM.titre === "Eveil musical"}
-                                                    on:checkChange={()=>choixFM("Eveil musical", ems[0].tarifs, index)}
+                                                    on:checkChange={()=>choixFM("Eveil musical", tarifEM[0], index)}
                                                     />
                                             </div>
                                             <div class="w-full flex">
@@ -758,43 +769,43 @@
                                                         lblClass={lesCouleurs[index % 3].textSombre}
                                                         cbClass={lesCouleurs[index % 3].cb}
                                                         checked={lesInscriptions[index].FM.titre === "FM1"}
-                                                        on:checkChange={()=>choixFM("FM1", fms[0].tarifs, index)}
+                                                        on:checkChange={()=>choixFM("FM1", tarifFM[0], index)}
                                                         />
                                                     <CheckBox 
                                                         label={"FM2"} 
                                                         lblClass={lesCouleurs[index % 3].textSombre}
                                                         cbClass={lesCouleurs[index % 3].cb}
                                                         checked={lesInscriptions[index].FM.titre === "FM2"}
-                                                        on:checkChange={()=>choixFM("FM2", fms[0].tarifs, index)}
+                                                        on:checkChange={()=>choixFM("FM2", tarifFM[0], index)}
                                                         />
                                                     <CheckBox 
                                                         label={"FM3"} 
                                                         lblClass={lesCouleurs[index % 3].textSombre}
                                                         cbClass={lesCouleurs[index % 3].cb}
                                                         checked={lesInscriptions[index].FM.titre === "FM3"}
-                                                        on:checkChange={()=>choixFM("FM3", fms[0].tarifs, index)}
+                                                        on:checkChange={()=>choixFM("FM3", tarifFM[0], index)}
                                                         />
                                                     <CheckBox 
                                                         label={"FM4"} 
                                                         lblClass={lesCouleurs[index % 3].textSombre}
                                                         cbClass={lesCouleurs[index % 3].cb}
                                                         checked={lesInscriptions[index].FM.titre === "FM4"}
-                                                        on:checkChange={()=>choixFM("FM4", fms[0].tarifs, index)}
+                                                        on:checkChange={()=>choixFM("FM4", tarifFM[0], index)}
                                                         />
                                                     <CheckBox 
                                                         label={"FM5"} 
                                                         lblClass={lesCouleurs[index % 3].textSombre}
                                                         cbClass={lesCouleurs[index % 3].cb}
                                                         checked={lesInscriptions[index].FM.titre === "FM5"}
-                                                        on:checkChange={()=>choixFM("FM5", fms[0].tarifs, index)}
+                                                        on:checkChange={()=>choixFM("FM5", tarifFM[0], index)}
                                                         />
-                                                    <CheckBox 
+                                                    <!-- <CheckBox 
                                                         label={"Adulte"} 
                                                         lblClass={lesCouleurs[index % 3].textSombre}
                                                         cbClass={lesCouleurs[index % 3].cb}
                                                         checked={lesInscriptions[index].FM.titre === "Adulte"}
                                                         on:checkChange={()=>choixFM("Adulte", fms[0].tarifs, index)}
-                                                        />
+                                                        /> -->
                                                 </div>
                                             </div> 
                                                 {#if lesInscriptions[index].FM.tarif}
@@ -882,7 +893,7 @@
                                                         checked={lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre}) != 0}
                                                         on:checkChange={(e)=>choixSection(e, atelier, "atelier", index)}/>
                                                     <div class={"text-sm text-center " + lesCouleurs[index % 3].textSombre}>
-                                                        {atelier.tarifs[0].duree} - {atelier.tarifs[0].creneau}s - {parseFloat(atelier.tarifs[0].tarif*inscription.facteurQF).toFixed(2)}&nbsp;€/an
+                                                        {atelier.duree} - {atelier.creneaux}s - {parseFloat(atelier.tarif*inscription.facteurQF).toFixed(2)}&nbsp;€/an 
                                                     </div>
                                                 </div>  
                                             {/each}
@@ -905,8 +916,8 @@
                     </header>
                     <div class="font-semibold">Adhésion</div>
                     <div class="w-full flex flex-nowrap justify-between items-end">
-                        <div class="ligne whitespace-nowrap overflow-hidden px-1 ">{adhesion.adhesion}</div>
-                        <div class="grow-0  whitespace-nowrap px-1">{adhesion.tarif} €</div>
+                        <div class="ligne whitespace-nowrap overflow-hidden px-1 ">{adhesion.type}</div>
+                        <div class="grow-0  whitespace-nowrap px-1">{adhesion.valeur} €</div>
                     </div>
                     {#if inscription.facteurQF < 1}
                         <div class="w-full flex flex-nowrap justify-between">
@@ -926,7 +937,7 @@
                             {#if inscrit.instruments.length > 0}
                                 {#each inscrit.instruments as instrument}
                                     <div class="w-full flex flex-nowrap justify-between">
-                                        <div class="ligne overflow-hidden px-1 whitespace-nowrap">{instrument.instrument} - {instrument.duree}</div>
+                                        <div class="ligne overflow-hidden px-1 whitespace-nowrap">{instrument.instrument} - {instrument.duree} min</div>
                                         <div class="grow-0 px-1 whitespace-nowrap">{parseFloat(inscription.facteurQF*instrument.tarif).toFixed(2)} €</div>
                                     </div>
                                 {/each}
@@ -948,7 +959,7 @@
                     {#if flagTotalPrix}
                         <div class={"font-medium text-lg mt-5 w-full flex flex-nowrap justify-between border-t-2 " + lesCouleurs[nRecap % 3].border}>
                             <div class="ligne overflow-hidden px-1 whitespace-nowrap">Coût total </div>
-                            <div class="grow-0 px-1 whitespace-nowrap">{(parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.tarif)).toFixed(2)} €</div>
+                            <div class="grow-0 px-1 whitespace-nowrap">{(parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.valeur)).toFixed(2)} €</div>
                         </div>
                         <div class="flex gap-2 text-lg mt-2">
                             <div class="font-medium">Réglement</div>              

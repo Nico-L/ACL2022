@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+
+const dataTemp = await fetch("https://n8n.luchier.fr/webhook/ce4c7363-ad44-4df2-baa2-ecd15794b6b9")
+const data = await dataTemp.json()
+const profs = data.profs
+const sections = data.sections
+---
+<BaseLayout title="test">
+  {JSON.stringify(profs)}
+</BaseLayout>
