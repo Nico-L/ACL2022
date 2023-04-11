@@ -177,25 +177,26 @@
             busySaving = true
             messageSaving = "Enregistrement en cours"
             var dataInscriptions = []
-            inscription.inscrits.forEach((inscrit)=> {
-                dataInscriptions.push([
-                    uuid,
-                    inscription.referent,
-                    inscription.emailReferent,
-                    inscription.telephone,
-                    inscription.adresse,
-                    inscription.adhesion,
-                    inscrit.nom,
-                    inscrit.prenom,
-                    inscrit.anneeNaissance,
-                    inscrit.telephone,
-                    inscrit.email,
-                    inscrit.instrument,
-                    inscrit.dureePratique,
-                    inscrit.musiqueChambre ? "Oui":"Non"
-                ])
+            for(const inscrit of inscription.inscrits) {
+                dataInscriptions.push({
+                    "uuid": uuid,
+                    "nom referent": inscription.referent,
+                    "email referent": inscription.emailReferent,
+                    "telephone referent": inscription.telephone,
+                    "adresse": inscription.adresse,
+                    "adhesion": inscription.adhesion,
+                    "nom": inscrit.nom,
+                    "prenom": inscrit.prenom,
+                    "annee naissance": inscrit.anneeNaissance,
+                    "telephone": inscrit.telephone,
+                    "email": inscrit.email,
+                    "instrument": inscrit.instrument,
+                    "duree pratique": inscrit.dureePratique,
+                    "musique chambre": inscrit.musiqueChambre,
+                    "prix total": coutTotal
             })
-            await functionsCall("saveInscriptions", {place: "stage", inscriptions: JSON.stringify(dataInscriptions)})
+            }
+            await functionsCall("baserowAPI", {type: "POST", finURL:"665/batch/?user_field_names=true", body: JSON.stringify({items: dataInscriptions})})
             messageSaving = "Envoi email"
             var dataEmail = {
                 adhesion: inscription.adhesion === "Déjà adhérent"?null:{titre: "Adhésion " + inscription.adhesion, tarif: findTarif(inscription.adhesion) +" €"},
@@ -217,8 +218,8 @@
     }
 
     function findTarif(adhesion) {
-        const temp = adhesionsTarifs.filter((adh) => {return adh.adhesion === adhesion})
-        return temp[0].tarif
+        const temp = adhesionsTarifs.filter((adh) => {return adh.type === adhesion})
+        return temp[0].valeur
     }
 
     $: {
@@ -343,15 +344,15 @@
                         label="Extérieure individuelle" 
                         lblClass={lesCouleurs[2].textSombre}
                         cbClass={lesCouleurs[2].cb}
-                        checked={inscription.adhesion === "individuelle non sappeyarde"}
-                        on:checkChange={()=>{inscription.adhesion = "individuelle non sappeyarde"}}
+                        checked={inscription.adhesion === "individuelle exterieur"}
+                        on:checkChange={()=>{inscription.adhesion = "individuelle exterieure"}}
                         />
                     <CheckBox 
                         label="Extérieure familiale" 
                         lblClass={lesCouleurs[2].textSombre}
                         cbClass={lesCouleurs[2].cb}
-                        checked={inscription.adhesion === "familiale non sappeyarde"}
-                        on:checkChange={()=>{inscription.adhesion = "familiale non sappeyarde"}}
+                        checked={inscription.adhesion === "familiale exterieure"}
+                        on:checkChange={()=>{inscription.adhesion = "familiale exterieure"}}
                         />
                 </div>
             </div>
@@ -484,7 +485,7 @@
                             </div>
                             <div class="mb-2 px-2">
                                 <CheckBox 
-                                    label="Souhaitez-vous participer à des ateliers de musique de chambre (à partir du cycle 2)"
+                                    label="Je participe aux ateliers de musique de chambre (à partir du cycle 2)"
                                     wordWrap={true}
                                     flexWrap={false}
                                     lblClass={lesCouleurs[index % 3].textSombre+ " m-2"}
@@ -649,7 +650,7 @@
 
 <style>
     .ligne::after{
-        content: "................................................................................................................";
+        content: "....................................................................................................................................................................................................................................................";
     
         @apply pl-1;
     }

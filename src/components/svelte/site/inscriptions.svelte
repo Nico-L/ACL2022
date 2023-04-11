@@ -8,7 +8,6 @@
     import Input from "../ui/input.svelte"
     import InputNumber from "../ui/inputNum.svelte"
     import InputEmail from "../ui/inputEmail.svelte"
-    //import Chevron from "../ui/chevron.svelte"
     import Spinner from '../ui/spinner.svelte'
 
     import { v4 as uuidv4 } from 'uuid';
@@ -18,26 +17,23 @@
     export let adhesionsTarifs = ""
     export let lesTarifs = ""
 
-console.log('les sections', sections)
-// console.log('les tarifs', lesTarifs)
-// console.log('les profs', professeurs)
+//console.log('les sections', sections)
+//console.log('les tarifs', lesTarifs.filter(item => item.type.includes("instrument") && !item.type.includes("instrument-15mn")).map((item) => {return {duree: item.duree, tarif: item.tarif}}))
+//console.log('les profs', professeurs)
 // console.log('adhesion', adhesionsTarifs)
 
 
     let adhesion
-    const instruments = sections.filter((section) => section.type.value === "instrument")
-    const tarifInstruments = lesTarifs.filter(item => item.type.includes("instrument")&&!item.type.includes("instrument-15mn")).map((item) => {return {duree: item.duree, tarif: item.tarif}})
-    const tarifFM = lesTarifs.filter(item => item.type.includes("fm")).map((item) => {return item.tarif})
-    const tarifEm = lesTarifs.filter(item => item.type.includes("em")).map((item) => {return item.tarif})
-    const ateliers = sections.filter((section) => {return section.type.value === "atelier"})
-    console.log('ateliers', ateliers)
-    /*const fms = sections.filter((section) => {return section.type === "fm"})
-    console.log('fms', fms)
-    const ems = sections.filter((section) => {return section.type === "em"}) */
+    const instruments = sections.filter((section) => section && section.type && section.type.value === "instrument")
+    const fms = sections.filter((section) => section && section.type && section.type.value === "fm")
+    const ems = sections.filter((section) => section && section.type && section.type.value === "em")
+
+    const tarifInstruments = lesTarifs.filter(item => item.type.includes("instrument") && !item.type.includes("instrument-15mn")).map((item) => {return {duree: parseFloat(item.duree), tarif: parseFloat(item.tarif)}})
+    const ateliers = sections.filter((section) => {return section && section.type && section.type.value === "atelier"})
 
     var inscription = {uuid: uuidv4(), referent: "", emailReferent: "", commune: "Le Sappey en Chartreuse", QF:null, facteurQF: 1, adhesion: 0, verif: {referent: false, emailReferent: false}}
     var prenomsInscription = ""
-    var uneInscription = {nom:"", prenom:"", email1:"", email2:"", naissance:"", telephone1:"", telephone2:"", FM:{titre: "", tarif: null, duree: null}, instruments:[], profs:[], durees:[], ateliers:[], verif: {prenom: false, telephone: false, email: false}}
+    var uneInscription = {nom:"", prenom:"", email1:"", email2:"", naissance:"", telephone1:"", telephone2:"", FM:null, instruments:[], profs:[], durees:[], ateliers:[], verif: {prenom: false, telephone: false, email: false}}
     var lesInscriptions = []
     var isOpen = []
     var lesCouleurs = [
@@ -47,6 +43,7 @@ console.log('les sections', sections)
     ]
     var nRecap = -1
     var reglement = "1 chèque"
+    var besoinFacture = false
     var noProbleme = true
     var noSave = false
 
@@ -59,7 +56,8 @@ console.log('les sections', sections)
     var recupEnCours = false
     var uuidInconnu = false
     var etatInconnu = true
-    var inscritAEffacer = []
+    var adherentAEffacer = []
+    var inscriptionsAEffacer = []
 
     var flagTotalPrix = false
 
@@ -67,9 +65,108 @@ console.log('les sections', sections)
         urlModifInscription = window.location.search
         var extracted = /\?uuid=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?/i.exec(urlModifInscription)
         etatInconnu = false
-        /* if (extracted!==null)
+        if (extracted!==null)
         {
             recupEnCours = true
+            etatInconnu = false
+            const uuid = extracted[1]
+            const temp = (await functionsCall("baserowAPI", {type: "get", finURL:"652/?user_field_names=true&search="+uuid})).data.results
+            const recupInscriptions = temp
+            if(recupInscriptions.length > 0)
+            {
+                inscription.uuid = uuid
+                inscription.referent = recupInscriptions[0]["nom referent"]
+                inscription.emailReferent = recupInscriptions[0]["email referent"]
+                inscription.commune = recupInscriptions[0]["commune"]
+                inscription.verif.referent = true
+                inscription.verif.emailReferent = true
+                reglement = recupInscriptions[0]["reglement"]
+                inscription.QF = recupInscriptions[0]["qf"]
+                prenomsInscription = recupInscriptions[0]["prenom"]
+                lesInscriptions = JSON.parse(JSON.stringify([]))
+                besoinFacture=recupInscriptions[0]["facture"]
+                recupInscriptions.forEach(async (row, index) => {
+                    if (index > 0) {prenomsInscription = prenomsInscription + ", " + row["prenom"]}
+                    var inscrits = []
+                    for (const inscription of row.inscriptions) {
+                        const inscrit = (await functionsCall("baserowAPI", {type: "get", finURL:"653/" + inscription.id + "/?user_field_names=true"})).data
+                        inscrits.push(inscrit)
+                    }
+                    var instruments = []
+                    var ateliers = []
+                    var inscriptionsId = []
+                    let FM
+                    inscrits.forEach((inscrit) => {
+                        const type = inscrit.type[0].value.value
+                        inscriptionsId.push(inscrit.id)
+                        switch (type) {
+                            case "instrument":
+                                var leNomProf = ""
+                                if (inscrit.prenomProf[0] && inscrit.nomProf[0]) {
+                                    leNomProf = inscrit.prenomProf[0].value + " " + inscrit.nomProf[0].value
+                                }  
+                                var inst = {
+                                    instrument: inscrit.section[0].value, 
+                                    id: inscrit.section[0].id, 
+                                    prof:leNomProf, 
+                                    profId: inscrit.nomProf[0] && inscrit.nomProf[0].id ?inscrit.nomProf[0].id:0, 
+                                    duree: parseFloat(inscrit.duree), 
+                                    tarif: tarifInstruments.filter((tarif) => tarif.duree === parseFloat(inscrit.duree))[0].tarif
+                                }
+                                instruments.push(inst)
+                                break;
+                            case "atelier":
+                                var ate = {
+                                    titre: inscrit.section[0].value, 
+                                    id: inscrit.section[0].id, 
+                                    profId: inscrit.nomProf[0].id, 
+                                    tarif: parseFloat(inscrit.tarif)/inscription.facteurQF
+                                }
+                                ateliers.push(ate)
+                                break;
+                            case "em":
+                            FM = {
+                                    ...ems.filter((item) => item.id === inscrit.section[0].id)[0]
+                                }
+                                break;
+                            case "fm":
+                                FM = {
+                                    ...fms.filter((item) => item.id === inscrit.section[0].id)[0]
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    })
+                    lesInscriptions = [
+                        ...lesInscriptions, 
+                        {
+                        id: row.id,
+                        nom: inscription.referent,
+                        prenom: row["prenom"],
+                        email1:row["email1"],
+                        email2: row["email2"],
+                        naissance: row["naissance"],
+                        telephone1: row["telephone1"],
+                        telephone2:  row["telephone2"],
+                        verif: {prenom: true, telephone: true, email: true},
+                        FM: FM,
+                        instruments:instruments,
+                        ateliers:ateliers,
+                        inscriptionsId: inscriptionsId,
+                        reglement: reglement
+                    }
+                    ]
+                    console.log('les i', lesInscriptions)
+                    recupEnCours = false
+                })
+
+            } else {
+                uuidInconnu = true
+                recupEnCours = false
+                etatInconnu = false
+            }
+           /* recupEnCours = true
             etatInconnu = false
             isOpen = []
             const uuid = extracted[1]
@@ -143,19 +240,26 @@ console.log('les sections', sections)
                 uuidInconnu = true
                 recupEnCours = false
                 etatInconnu = false
-            }
+            } */
         } else {
             etatInconnu = false
-        } */
+        }
     })
 
     function effacerInscrit(index) {
         const retirer = lesInscriptions.splice(index, 1)
+        console.log('retirer', retirer)
         retirer.forEach((item) => {
-                    if (item.hasOwnProperty('nrow')) {
-                        inscritAEffacer.push(item.nrow)
+                    //if (item.hasOwnProperty('nrow')) {
+                    if (item.id) {
+                        adherentAEffacer.push(item.id)
                     }
+                    inscriptionsAEffacer = [
+                        ... item.inscriptionsId, 
+                        ... inscriptionsAEffacer
+                    ] 
                 })
+        console.log('a effacer', inscriptionsAEffacer)
         lesInscriptions = lesInscriptions
         const inscritsPrenoms = lesInscriptions.map(inscrit => inscrit.prenom)
         prenomsInscription = inscritsPrenoms.join(", ")
@@ -186,7 +290,7 @@ console.log('les sections', sections)
             } else {
                 lesInscriptions.slice(lesPrenoms.length-lesInscriptions.length).forEach((item) => {
                     if (item.hasOwnProperty('nrow')) {
-                        inscritAEffacer.push(item.nrow)
+                        adherentAEffacer.push(item.nrow)
                     }
                 })
                 lesInscriptions = JSON.parse(JSON.stringify(lesInscriptions.slice(0,lesPrenoms.length)))
@@ -204,17 +308,18 @@ console.log('les sections', sections)
         return listeProfs
     }
 
-    function choixSection(event, section, type, inscrit) { 
+    function choixSection(event, section, type, inscrit) {
         if (type==="instrument")
         {
-            var instrument = {instrument: section.titre, prof:"", duree: tarifInstruments[0].duree, tarif: tarifInstruments[0].tarif}
+            var instrument = {instrument: section.titre, id: section.id, prof:"", profId: "", duree: tarifInstruments[0].duree, tarif: tarifInstruments[0].tarif}
             const dejaInscrit = lesInscriptions[inscrit].instruments.filter((item) => {return item.instrument === section.titre}).length > 0
             //if (event.detail) {
             if (!dejaInscrit) {
                 const lesProfs = listeProfs(section.titre)
-                if ( lesProfs.length === 1) {
+                if (lesProfs.length === 1) {
                     instrument.prof = lesProfs[0].prenom + " " + lesProfs[0].nom
-                } else if ( lesProfs.length > 1)
+                    instrument.profId = lesProfs[0].id
+                } else if (lesProfs.length > 1)
                 {
                     instrument.prof = ""
                 }
@@ -226,27 +331,27 @@ console.log('les sections', sections)
             }
             //} 
         } else {
-            var atelier = {titre: section.titre, tarif: section.tarif}
-            console.log('atelier', atelier)
+            var atelier = {titre: section.titre, id: section.id, profId: section.profs[0].id, tarif: section.tarif}
             const dejaInscrit = lesInscriptions[inscrit].ateliers.filter((item) => item.titre === section.titre).length > 0
-            console.log('dejaInscrit', dejaInscrit)
             if (!dejaInscrit) {
                     lesInscriptions[inscrit].ateliers.push(atelier)
             } else {
                 lesInscriptions[inscrit].ateliers = lesInscriptions[inscrit].ateliers.filter((item) => item.titre !== section.titre)
             }
-            console.log('lesIncriptions', lesInscriptions[inscrit].ateliers)
         }
         lesInscriptions = lesInscriptions
     }
 
-    function choixProf (event, prof, indexInstrument, inscrit, nbProfs) {
+    function choixProf (event, profId, nomProf, indexInstrument, inscrit, nbProfs) {
+        console.log('prof', nomProf, profId)
         if (nbProfs > 1)
         {
             if (event.detail) {
-                lesInscriptions[inscrit].instruments[indexInstrument].prof = prof
+                lesInscriptions[inscrit].instruments[indexInstrument].prof = nomProf
+                lesInscriptions[inscrit].instruments[indexInstrument].profId = profId
             } else {
                 lesInscriptions[inscrit].instruments[indexInstrument].prof = ""
+                lesInscriptions[inscrit].instruments[indexInstrument].profId = 0
             }
             lesInscriptions = lesInscriptions
         }
@@ -263,12 +368,13 @@ console.log('les sections', sections)
         lesInscriptions = lesInscriptions
     }
 
-    function choixFM(fm, infosFM, index) {
-        if (lesInscriptions[index].FM.titre !== fm) {
-            lesInscriptions[index].FM = {titre: fm, tarif: infosFM[0].tarif, duree: infosFM[0].duree}
+    function choixFM(fm, index) {
+        if (!lesInscriptions[index].FM || lesInscriptions[index].FM.titre !== fm.titre) {
+            lesInscriptions[index].FM = fm
         } else {
-            lesInscriptions[index].FM = {titre: "", tarif: null, duree: null}
+            lesInscriptions[index].FM = null
         }
+
         lesInscriptions = lesInscriptions
     }
 
@@ -279,15 +385,17 @@ console.log('les sections', sections)
 
     function totalPrixInscrit(inscrit) {
         var total = 0
-        if (inscrit.FM.tarif !== null) {
-            total += (inscrit.FM.tarif)
+        if (inscrit.FM && inscrit.FM.tarif !== null) {
+            total = parseFloat(total) + inscrit.FM.tarif
         }
         inscrit.instruments.forEach((instrument) => {
-            if (instrument.tarif) total += (instrument.tarif)
+            if (instrument.tarif) total = parseFloat(total) + parseFloat(instrument.tarif)
         })
         inscrit.ateliers.forEach((atelier) => {
-            console.log('tarif', parseFloat(atelier.tarif))
-            if (atelier.tarif) total += parseFloat(atelier.tarif)
+            
+            if (atelier.tarif) {
+                total = parseFloat(total) + parseFloat(atelier.tarif)
+            }
         })
 
         return total
@@ -306,10 +414,74 @@ console.log('les sections', sections)
             noSave = false
             busySaving = true
             messageSaving = "Enregistrement en cours"
-            var tableau = []
-            console.log('les inscriptions', lesInscriptions)
-            lesInscriptions.forEach((inscrit, index) => {
-                var stringInstrument = ""
+            if (adherentAEffacer.length > 0) {
+                for (const adhe of adherentAEffacer) {
+                    await functionsCall("baserowAPI", {type: "delete", finURL:"652/" + adhe + "/"})
+                }
+            }
+            if (inscriptionsAEffacer.length > 0) {
+                for (const ins of inscriptionsAEffacer) {
+                    await functionsCall("baserowAPI", {type: "delete", finURL:"653/" + ins + "/"})
+                }
+            }
+            var cout = 0.00
+            for (const inscrit of lesInscriptions) {
+                if (inscrit.inscriptionsId && inscrit.inscriptionsId.length > 0) {
+                    for (const id of inscrit.inscriptionsId) {
+                        await functionsCall("baserowAPI", {type: "delete", finURL:"653/" + id + "/"})
+                    }
+                }
+                if (inscrit.id) {
+                    await functionsCall("baserowAPI", {type: "delete", finURL:"652/" + inscrit.id + "/"})
+                }
+                var items = []
+                inscrit.ateliers.forEach((item) => {
+                    cout = cout + parseFloat(item.tarif)
+                    var profId = 0
+                    if (item.profId && item.profId !== '') {profId = item.profId}
+                    items.push({section: [item.id], nomProf: [profId], tarif: item.tarif*inscription.facteurQF})
+                })
+                inscrit.instruments.forEach((item) => {
+                    var profId = 0
+                    if (item.profId && item.profId !== '') {profId = item.profId}
+                    items.push({section: [item.id], nomProf: [profId], duree: item.duree, tarif: item.tarif*inscription.facteurQF})
+                    cout = cout + parseFloat(item.tarif)
+                })
+                if (inscrit.FM) {
+                    cout = cout + parseFloat(inscrit.FM.tarif)
+                    var profId = 0
+                    if (inscrit.FM.profs[0] && inscrit.FM.profs[0].id !== '') {profId = inscrit.FM.profs[0].id}
+                    items.push({section : [inscrit.FM.id], nomProf: [profId], dure: inscrit.FM.duree, tarif: inscrit.FM.tarif*inscription.facteurQF})
+                }
+                const retourInscriptions = (await functionsCall("baserowAPI", {type: "POST", finURL:"653/batch/?user_field_names=true", body: JSON.stringify({items: items})})).data
+                const sectionsIds = retourInscriptions.items.map((item) => item.id)
+                var adherent = {
+                    "uuid": inscription.uuid,
+                    "email referent": inscription.emailReferent,
+                    "nom referent": inscription.referent,
+                    "commune": inscription.commune,
+                    "qf": inscription.QF,
+                    "type adhesion": adhesion.type,
+                    "notes_ACL": "",
+                    "prenom": inscrit.prenom,
+                    "nom": inscrit.nom === ""?inscription.referent:inscrit.nom,
+                    "inscriptions": sectionsIds,
+                    "telephone1": inscrit.telephone1,
+                    "telephone2": inscrit.telephone2,
+                    "email1": inscrit.email1,
+                    "email2": inscrit.email2,
+                    "naissance": inscrit.naissance,
+                    "reglement": reglement,
+                    "facture": besoinFacture,
+                    "cout": parseFloat(cout*inscription.facteurQF).toFixed(2)
+                }
+                const adherentTemp = await fetch(
+                    "https://baserow.luchier.fr/api/database/rows/table/652/?user_field_names=true", 
+                    {method: "post", headers: {Authorization: "Token 9ZsbcnsY0Jve191qI8V50YY5NAc2Y743", 'Content-Type': 'application/json'}, body: JSON.stringify(adherent)}
+                    )
+                const retourAdherent = await adherentTemp.json()
+                console.log('adherent', retourAdherent)
+                /* var stringInstrument = ""
                 var instrumTemp = []
                 var stringDurees = ""
                 var dureesTemp = []
@@ -361,14 +533,53 @@ console.log('les sections', sections)
                     index === 0 ? reglement:""
                 ]
                 if (inscrit.hasOwnProperty('nrow')) {
-                    tableau.push({nrow: inscrit.nrow, row: uneInscription, garder: !inscritAEffacer.includes(inscrit.nrow)})
+                    tableau.push({nrow: inscrit.nrow, row: uneInscription, garder: !adherentAEffacer.includes(inscrit.nrow)})
                 } else {
                     tableau.push({nrow: null, row: uneInscription, garder: true})
+                } */
+            }
+            adherentAEffacer = []
+            //if (retour.data === "ok") {
+                messageSaving = "Envoi du mail récapitulatif"
+                var dataEmail = {
+                    adresse: "https://acl-sappey.netlify.app/inscriptions/?uuid="+inscription.uuid,
+                    adhesion: {titre: "Adhésion " + adhesion.type, tarif: parseFloat(adhesion.valeur).toFixed(2)+"€"},
+                    qf: adhesion.QF,
+                    reglement: reglement,
+                    coutTotal: (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.valeur)).toFixed(2)+"€",
+                    inscrits: []
                 }
-            })
-            /*functionsCall('saveInscriptions', {inscriptions: encodeURIComponent(JSON.stringify(tableau)), effacer: encodeURIComponent(JSON.stringify(inscritAEffacer))})
+                if (inscription.facteurQF < 1) {
+                    dataEmail.reduction = "-" + parseFloat(1-inscription.facteurQF).toFixed(2)*100 + "%"
+                }
+                if (lesInscriptions.length > 0) {
+                    lesInscriptions.forEach((inscrit) => {
+                        var dataInscrit = {
+                            prenom: inscrit.prenom,
+                            inscriptions: []
+                        }
+                        if (inscrit.FM && inscrit.FM.tarif) {
+                            dataInscrit.inscriptions.push({titre: inscrit.FM.titre, tarif: parseFloat(inscription.facteurQF*inscrit.FM.tarif).toFixed(2)+"€"})
+                        }
+                        if (inscrit.instruments.length > 0) {
+                            inscrit.instruments.forEach((instrument) => {
+                                dataInscrit.inscriptions.push({titre: instrument.instrument, tarif: parseFloat(inscription.facteurQF*instrument.tarif).toFixed(2)+"€", prof: instrument.prof, duree:instrument.duree})
+                            })
+                        }
+                        if (inscrit.ateliers.length > 0) {
+                            inscrit.ateliers.forEach((atelier) => {
+                                dataInscrit.inscriptions.push({titre: atelier.titre, tarif: parseFloat(inscription.facteurQF*atelier.tarif).toFixed(2)+"€"})
+                            })
+                        }
+                        dataEmail.inscrits.push(dataInscrit)
+                    })
+                }
+                functionsCall("sendEmail2", {email: inscription.emailReferent, dataEmail:encodeURIComponent(JSON.stringify(dataEmail))})
+                    .then((retour2) => {console.log('fini !'); busySaving = false; saveOK = true; inscriptionDone=true})
+            //} 
+            /*functionsCall('saveInscriptions', {inscriptions: encodeURIComponent(JSON.stringify(tableau)), effacer: encodeURIComponent(JSON.stringify(adherentAEffacer))})
                 .then((retour) => {
-                    inscritAEffacer = []
+                    adherentAEffacer = []
                     if (retour.data === "ok") {
                         messageSaving = "Envoi du mail récapitulatif"
                         var dataEmail = {
@@ -406,7 +617,7 @@ console.log('les sections', sections)
                         }
                         functionsCall("sendEmail2", {email: inscription.emailReferent, dataEmail:encodeURIComponent(JSON.stringify(dataEmail))})
                             .then((retour2) => {busySaving = false; saveOK = true; inscriptionDone=true})
-                    }
+                    } 
                 }) */
         } else {
             noSave = true
@@ -505,7 +716,7 @@ console.log('les sections', sections)
         let noProb = inscription.verif.referent && inscription.verif.emailReferent
         lesInscriptions.forEach((inscrit)=>{
             noProb = noProb && inscrit.verif.email && inscrit.verif.telephone && inscrit.verif.prenom
-            noProb = noProb && !(inscrit.FM.tarif === null && inscrit.instruments.length === 0 && inscrit.ateliers.length === 0)
+            noProb = noProb && !(inscrit.FM && inscrit.FM.tarif === null && inscrit.instruments.length === 0 && inscrit.ateliers.length === 0)
         })
         noProbleme = noProb
     }
@@ -748,7 +959,7 @@ console.log('les sections', sections)
                                     <div class="font-semibold flex flex-wrap justify-between items-center ">
                                         Formation musicale
                                     </div>
-                                    <div class="text-sm px-1">FM adulte sous réserve d'un nombre de participants suffisant</div>
+                                    <!--<div class="text-sm px-1">FM adulte sous réserve d'un nombre de participants suffisant</div>-->
                                     <div class="mb-2 px-2 pl-1 ">
                                         <div class="flex flex-wrap gap-2 justify-start w-full rounded bg-fondContenu border border-bleu-900 p-2">
                                             <div class="w-full flex flex-wrap">
@@ -757,49 +968,51 @@ console.log('les sections', sections)
                                                     label={"Eveil Musical"} 
                                                     lblClass={lesCouleurs[index % 3].textSombre}
                                                     cbClass={lesCouleurs[index % 3].cb}
-                                                    checked={lesInscriptions[index].FM.titre === "Eveil musical"}
-                                                    on:checkChange={()=>choixFM("Eveil musical", tarifEM[0], index)}
+                                                    checked={lesInscriptions[index].FM && lesInscriptions[index].FM.titre === ems[0].titre}
+                                                    on:checkChange={()=>choixFM(ems[0], index)}
                                                     />
                                             </div>
                                             <div class="w-full flex">
                                                 <div class={"w-fit whitespace-nowrap mr-2 font-semibold " + lesCouleurs[index % 3].textSombre}>A partir de CP :</div>
                                                 <div class="flex flex-wrap gap-2">
+                                                    {#each fms as item}
                                                     <CheckBox 
-                                                        label={"FM1"} 
-                                                        lblClass={lesCouleurs[index % 3].textSombre}
-                                                        cbClass={lesCouleurs[index % 3].cb}
-                                                        checked={lesInscriptions[index].FM.titre === "FM1"}
-                                                        on:checkChange={()=>choixFM("FM1", tarifFM[0], index)}
-                                                        />
-                                                    <CheckBox 
+                                                    label={item.titre} 
+                                                    lblClass={lesCouleurs[index % 3].textSombre}
+                                                    cbClass={lesCouleurs[index % 3].cb}
+                                                    checked={lesInscriptions[index].FM && lesInscriptions[index].FM.titre === item.titre}
+                                                    on:checkChange={()=>choixFM(item, index)}
+                                                    />
+                                                    {/each}
+                                                    <!--<CheckBox 
                                                         label={"FM2"} 
                                                         lblClass={lesCouleurs[index % 3].textSombre}
                                                         cbClass={lesCouleurs[index % 3].cb}
                                                         checked={lesInscriptions[index].FM.titre === "FM2"}
-                                                        on:checkChange={()=>choixFM("FM2", tarifFM[0], index)}
+                                                        on:checkChange={()=>choixFM("FM2", tarifFM, index)}
                                                         />
                                                     <CheckBox 
                                                         label={"FM3"} 
                                                         lblClass={lesCouleurs[index % 3].textSombre}
                                                         cbClass={lesCouleurs[index % 3].cb}
                                                         checked={lesInscriptions[index].FM.titre === "FM3"}
-                                                        on:checkChange={()=>choixFM("FM3", tarifFM[0], index)}
+                                                        on:checkChange={()=>choixFM("FM3", tarifFM, index)}
                                                         />
                                                     <CheckBox 
                                                         label={"FM4"} 
                                                         lblClass={lesCouleurs[index % 3].textSombre}
                                                         cbClass={lesCouleurs[index % 3].cb}
                                                         checked={lesInscriptions[index].FM.titre === "FM4"}
-                                                        on:checkChange={()=>choixFM("FM4", tarifFM[0], index)}
+                                                        on:checkChange={()=>choixFM("FM4", tarifFM, index)}
                                                         />
                                                     <CheckBox 
                                                         label={"FM5"} 
                                                         lblClass={lesCouleurs[index % 3].textSombre}
                                                         cbClass={lesCouleurs[index % 3].cb}
                                                         checked={lesInscriptions[index].FM.titre === "FM5"}
-                                                        on:checkChange={()=>choixFM("FM5", tarifFM[0], index)}
+                                                        on:checkChange={()=>choixFM("FM5", tarifFM, index)}
                                                         />
-                                                    <!-- <CheckBox 
+                                                     <CheckBox 
                                                         label={"Adulte"} 
                                                         lblClass={lesCouleurs[index % 3].textSombre}
                                                         cbClass={lesCouleurs[index % 3].cb}
@@ -808,7 +1021,7 @@ console.log('les sections', sections)
                                                         /> -->
                                                 </div>
                                             </div> 
-                                                {#if lesInscriptions[index].FM.tarif}
+                                                {#if lesInscriptions[index].FM && lesInscriptions[index].FM.tarif}
                                                     <div class={"mx-auto font-semibold text-sm text-center w-full text-fondContenu rounded p-1 " + lesCouleurs[index % 3].bg}>
                                                         durée : {lesInscriptions[index].FM.duree} - tarif : {parseFloat(lesInscriptions[index].FM.tarif*inscription.facteurQF).toFixed(2)} €
                                                     </div>
@@ -864,7 +1077,7 @@ console.log('les sections', sections)
                                                                     lblClass={lesCouleurs[index % 3].textSombre}
                                                                     cbClass={lesCouleurs[index % 3].cb}
                                                                     checked={inscrit.instruments[indexInstrument].prof === prof.prenom + " " + prof.nom}
-                                                                    on:checkChange = {(e)=> choixProf(e, prof.prenom + " " + prof.nom, indexInstrument, index, listeProfs(instrument.instrument).length)} 
+                                                                    on:checkChange = {(e)=> choixProf(e, prof.id, prof.prenom + " " + prof.nom, indexInstrument, index, listeProfs(instrument.instrument).length)} 
                                                                     />
                                                             </div>
                                                         {/each}
@@ -905,7 +1118,14 @@ console.log('les sections', sections)
                     </div>
                 </div>
             {:else}
-                <div>{prenomsInscription}</div>
+                {#if recupEnCours}
+                <div class="p-2 flex justify-center items-center w-full">
+                    <Spinner taille="moyen" couleur="jauneSombre"></Spinner>
+                    <div class="text-jaune-800">Récupération des données</div>
+                </div>
+                {:else}
+                    <div></div>
+                {/if}
             {/each}
             {#if flagTotalPrix}
                 <div class={"m-2 p-1 border rounded " + lesCouleurs[nRecap % 3].border + " " + lesCouleurs[nRecap % 3].bgCadre}>
@@ -928,7 +1148,7 @@ console.log('les sections', sections)
                     {#each lesInscriptions as inscrit}
                         {#if totalPrixInscrit(inscrit) > 0}
                             <div class={"w-full mt-2 font-semibold border-b-2 " + lesCouleurs[nRecap % 3].border}>{inscrit.prenom} est inscrit(e) à</div>
-                            {#if inscrit.FM.tarif !== null}
+                            {#if inscrit.FM && inscrit.FM.tarif !== null}
                                 <div class="w-full flex flex-nowrap justify-between">
                                     <div class="ligne overflow-hidden px-1 whitespace-nowrap">{inscrit.FM.titre}</div>
                                     <div class="grow-0 px-1 whitespace-nowrap">{parseFloat(inscription.facteurQF*inscrit.FM.tarif).toFixed(2)} €</div>
@@ -976,6 +1196,15 @@ console.log('les sections', sections)
                                 checked={reglement === "3 chèques"}
                                 on:checkChange={(e)=>{if (reglement !== "3 chèques") {reglement = "3 chèques"}}}/>
                         </div>
+                        <div class="flex gap-2 text-lg mt-2">
+                            <div class="font-medium">Cocher si besoin d'une facture</div>              
+                            <CheckBox 
+                                label="" 
+                                lblClass={lesCouleurs[nRecap % 3].textSombre}
+                                cbClass={lesCouleurs[nRecap % 3].cb}
+                                checked={besoinFacture === true}
+                                on:checkChange={(e)=>{besoinFacture = !besoinFacture }}/>
+                        </div>
                         {#if inscription.facteurQF < 1}
                             <div class={"mt-2 bg-fondContenu rounded-lg p-1 border border " + lesCouleurs[nRecap % 3].border}>Merci de nous faire parvenir l'attestation de quotient familial avec votre réglement.</div>
                         {/if}
@@ -989,7 +1218,7 @@ console.log('les sections', sections)
                                     <div class="text-sm text-rouge-800 whitespace-nowrap ml-2">Il manque l'adresse email référente ou l'adresse n'est pas valide.</div>
                                 {/if}
                                 {#each lesInscriptions as inscrit, index}
-                                    {#if (inscrit.FM.tarif === null && inscrit.instruments.length === 0 && inscrit.ateliers.length === 0) || !inscrit.verif.prenom || !inscrit.verif.telephone || !inscrit.verif.email}
+                                    {#if (inscrit.FM && inscrit.FM.tarif === null && inscrit.instruments.length === 0 && inscrit.ateliers.length === 0) || !inscrit.verif.prenom || !inscrit.verif.telephone || !inscrit.verif.email}
                                         <div class="font-medium">
                                             Inscription 
                                             {#if inscrit.prenom !== ""}
@@ -998,7 +1227,7 @@ console.log('les sections', sections)
                                                 n°{index + 1 } :
                                             {/if}
                                         </div>
-                                        {#if inscrit.FM.tarif === null && inscrit.instruments.length === 0 && inscrit.ateliers.length === 0}
+                                        {#if inscrit.FM && inscrit.FM.tarif === null && inscrit.instruments.length === 0 && inscrit.ateliers.length === 0}
                                             <div class="text-sm text-rouge-800 whitespace-nowrap ml-2">Aucune inscription enregistrée.</div>
                                         {/if}
                                         {#if !inscrit.verif.prenom}

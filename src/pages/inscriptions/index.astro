@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import Inscriptions from '../../components/svelte/site/inscriptions.svelte'
-import {Content as Agenda} from './agenda/agenda.md'
+//import {Content as Agenda} from './agenda/agenda.md'
 
 //var data = await fetch(import.meta.env.PUBLIC_CMS + "acl-sections?_sort=titre:ASC&token=" + import.meta.env.PUBLIC_TOKEN_SITE)
 var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/651/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
@@ -10,17 +10,16 @@ const sections = sectionsTemp.results
 //data = await fetch(import.meta.env.PUBLIC_CMS + "acl-professeurs?_sort=nom:ASC&token=" + import.meta.env.PUBLIC_TOKEN_SITE)
 data = await fetch(import.meta.env.BASEROW_URL + "rows/table/650/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const professeursTemp = await data.json()
-const professeurs = professeursTemp.results.map(prof => {return {prenom: prof.prenom, nom: prof.nom, acl_sections: prof.sections}})
+const professeurs = professeursTemp.results.map(prof => {return {id: prof.id, prenom: prof.prenom, nom: prof.nom, acl_sections: prof.sections}})
 data = await fetch(import.meta.env.BASEROW_URL + "rows/table/654/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const lesTarifsTemp = await data.json()
 const lesTarifs = lesTarifsTemp.results.map((tarif) => {return {duree: tarif.duree_seance, tarif: tarif.tarif_acl, type: tarif.type}})
 data = await fetch(import.meta.env.BASEROW_URL + "rows/table/655/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const adhesionsTarifsTemp = await data.json()
-const adhesionsTarifs = adhesionsTarifsTemp.results.map((item) => {return {type: item.type, valeur: item.valeur, isSappey: item.isSappey, isFamiliale: item.isFamiliale}})
+const adhesionsTarifs = adhesionsTarifsTemp.results.map((item) => {return {id: item.id, type: item.type, valeur: item.valeur, isSappey: item.isSappey, isFamiliale: item.isFamiliale}})
 ---
 <BaseLayout title="Inscriptions">
   <h1 class="px-2 text-4xl mb-2">Inscriptions à l'école de musique</h1>
-  <Agenda />
   <Inscriptions client:load {professeurs} {sections} {adhesionsTarifs} {lesTarifs}/>
 </BaseLayout>
 
