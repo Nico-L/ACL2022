@@ -248,7 +248,6 @@
 </script>
 
 <div class="flex flex-wrap justify-between">
-    <h1 class="px-2">Inscriptions au stage été</h1>
     <div class="m-2 p-1 rounded w-full border border-jaune-700 bg-jaune-400/50">
         <div class="font-semibold">Informations générales</div>
         <div class="text-sm mb-1">
