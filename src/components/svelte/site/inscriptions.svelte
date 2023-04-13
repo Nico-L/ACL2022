@@ -455,6 +455,11 @@
                 }
                 const retourInscriptions = (await functionsCall("baserowAPI", {type: "POST", finURL:"653/batch/?user_field_names=true", body: JSON.stringify({items: items})})).data
                 const sectionsIds = retourInscriptions.items.map((item) => item.id)
+                //gestion des factures
+                if (besoinFacture) {
+
+                }
+                
                 var adherent = {
                     "uuid": inscription.uuid,
                     "email referent": inscription.emailReferent,
@@ -475,68 +480,9 @@
                     "facture": besoinFacture,
                     "cout": parseFloat(cout*inscription.facteurQF).toFixed(2)
                 }
-                const adherentTemp = await fetch(
-                    "https://baserow.luchier.fr/api/database/rows/table/652/?user_field_names=true", 
-                    {method: "post", headers: {Authorization: "Token 9ZsbcnsY0Jve191qI8V50YY5NAc2Y743", 'Content-Type': 'application/json'}, body: JSON.stringify(adherent)}
-                    )
+                const adherentTemp = (await functionsCall("baserowAPI", {type: "POST", finURL:"652/?user_field_names=true", body: JSON.stringify(adherent)})).data
                 const retourAdherent = await adherentTemp.json()
                 console.log('adherent', retourAdherent)
-                /* var stringInstrument = ""
-                var instrumTemp = []
-                var stringDurees = ""
-                var dureesTemp = []
-                var stringProf = ""
-                var profTemp=[]
-                var stringAteliers = ""
-                var ateliersTemp = []
-                inscrit.instruments.forEach((instrument)=>{
-                    instrumTemp.push(instrument.instrument)
-                    dureesTemp.push(instrument.duree)
-                    if (instrument.prof !== "") {
-                        profTemp.push(instrument.prof)
-                    } else {
-                        profTemp.push("indifférent")
-                    }
-                    
-                })
-                stringInstrument = instrumTemp.join("\n")
-                stringDurees = dureesTemp.join("\n")
-                stringProf = profTemp.join("\n")
-                inscrit.ateliers.forEach((atelier) => {
-                    ateliersTemp.push(atelier.titre)
-                })
-                stringAteliers = ateliersTemp.join("\n")
-                const reduction = inscription.facteurQF < 1 ? (100*(1-inscription.facteurQF)).toString() + "%":""
-                var uneInscription = [
-                    inscription.uuid,
-                    inscription.emailReferent,
-                    inscription.referent,
-                    inscription.commune,
-                    inscrit.prenom,
-                    inscrit.nom === ""?inscription.referent:inscrit.nom,
-                    inscrit.naissance,
-                    inscrit.email1,
-                    inscrit.email2,
-                    inscrit.telephone1,
-                    inscrit.telephone2,
-                    adhesion.adhesion,
-                    index === 0 ? adhesion.valeur: "",
-                    inscrit.FM.titre,
-                    stringInstrument,
-                    stringDurees,
-                    stringProf,
-                    stringAteliers,
-                    index === 0 ? totalPrix(): "",
-                    index === 0 ? inscription.QF:"",
-                    index === 0 ? reduction:"",
-                    index === 0 ? (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.valeur)).toFixed(2)+"€": "",
-                    index === 0 ? reglement:""
-                ]
-                if (inscrit.hasOwnProperty('nrow')) {
-                    tableau.push({nrow: inscrit.nrow, row: uneInscription, garder: !adherentAEffacer.includes(inscrit.nrow)})
-                } else {
-                    tableau.push({nrow: null, row: uneInscription, garder: true})
-                } */
             }
             adherentAEffacer = []
             //if (retour.data === "ok") {
