@@ -7,7 +7,7 @@ const adhesionsTarifs = adhesionsTarifsTemp.results.map((item) => {return {id: i
 
 data = await fetch(import.meta.env.BASEROW_URL + "rows/table/666/?user_field_names=true&filter__field_5949__not_empty&order_by=-année", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const detailsStage = (await data.json()).results[0]
-const tarif = detailsStage.tarif
+const tarifStage = detailsStage.tarif
 const debut = detailsStage["date debut"]
 const fin = detailsStage["date fin"]
 const annee = detailsStage["année"]
@@ -16,6 +16,6 @@ const titre = "Inscription Stage été "+annee
 ---
 <BaseLayout title={titre}>
   <h1 class="px-2">Inscriptions au stage été {annee}</h1>
-  <p class="px-3">Le stage de {annee} aura lieu du <strong class="text-bleu-700">{debut} au {fin} {annee}</strong>. Le prix du stage est de <strong class="text-bleu-700">{tarif} €</strong></p>
-  <InscriptionsStage client:load {adhesionsTarifs} {tarif} {acompte}/>
+  <p class="px-3">Le stage de {annee} aura lieu du <strong class="text-bleu-700">{debut} au {fin} {annee}</strong>. Le prix du stage est de <strong class="text-bleu-700">{tarifStage} €</strong></p>
+  <InscriptionsStage client:load {adhesionsTarifs} {tarifStage} {acompte}/>
 </BaseLayout>
