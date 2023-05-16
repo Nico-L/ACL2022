@@ -7,7 +7,7 @@ const handler = async function (event) {
   const finURL = event.queryStringParameters.finURL || null
   const body = event.queryStringParameters.body || null
   var jsonFetch = { method: type, headers: { 'Content-Type': 'application/json', Accept: 'application/json', Authorization:"Token "+token }}
-  if (type === "POST") {
+  if (type === "POST" || type === "PATCH") {
     jsonFetch.body = body
   }
 

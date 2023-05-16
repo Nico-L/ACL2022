@@ -313,6 +313,19 @@
                                   </td>
                                 </tr>
                               {{/if}}
+                              {{#if factures}}
+                                <tr>
+                                  <td align="left" style="font-size:0px;padding:0px;padding-bottom:5px;word-break:break-word;">
+                                    <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">
+                                      <p>Vous avez demandé une facture. Vous pouvez les télécharger ci-dessous : 
+                                        {{#each factures as |facture|}}
+                                          <br /><a href={{facture.lien}}>Facture {{facture.prenom}}</a> 
+                                        {{/each}} 
+                                      </p>
+                                    </div>
+                                  </td>
+                                </tr>
+                              {{/if}}
                               <tr>
                                 <td align="left" style="font-size:0px;padding:0px;word-break:break-word;">
                                   <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:20px;text-align:left;color:#000000;">Ne jetez pas cet email ! Vous trouverez ci-dessous un lien pour retourner vers la page d'inscription. Il vous permettra de la modifier si besoin.</div>

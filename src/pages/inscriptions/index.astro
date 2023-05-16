@@ -17,10 +17,18 @@ const lesTarifs = lesTarifsTemp.results.map((tarif) => {return {duree: tarif.dur
 data = await fetch(import.meta.env.BASEROW_URL + "rows/table/655/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const adhesionsTarifsTemp = await data.json()
 const adhesionsTarifs = adhesionsTarifsTemp.results.map((item) => {return {id: item.id, type: item.type, valeur: item.valeur, isSappey: item.isSappey, isFamiliale: item.isFamiliale}})
+data = await fetch(import.meta.env.BASEROW_URL + "rows/table/667/?user_field_names=true&filter__field_5959__not_empty", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+const saisonTemp = (await data.json()).results.pop()
+const saison = saisonTemp.titre
+data = await fetch(import.meta.env.BASEROW_URL + "rows/table/669/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+const sectionProfTemp = (await data.json()).results
+const sectionProf = sectionProfTemp.map((sp) => {return {id: sp.id, profId: sp.professeur[0].id, sectionId: sp.section[0].id}})
+console.log('eprfo sectio', sectionProf)
+
 ---
 <BaseLayout title="Inscriptions">
   <h1 class="px-2 text-4xl mb-2">Inscriptions à l'école de musique</h1>
-  <Inscriptions client:load {professeurs} {sections} {adhesionsTarifs} {lesTarifs}/>
+  <Inscriptions client:load {professeurs} {sections} {sectionProf} {adhesionsTarifs} {lesTarifs} {saison}/>
 </BaseLayout>
 
 <style>

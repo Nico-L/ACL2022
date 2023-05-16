@@ -26,7 +26,7 @@
   $: hidden = label === ""
 </script>
 
-<div class="flex flex-wrap gap-2 justify-start items-center w-full">
+<div class="flex flex-wrap gap-2 justify-start items-center">
    <label for={id} class="whitespace-nowrap" class:hidden>
         {#if label !== ""}
         {label}

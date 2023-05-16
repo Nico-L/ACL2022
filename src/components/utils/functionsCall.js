@@ -1,6 +1,6 @@
 export default async function leFetch(nom, variables={}) {
     var url = "/.netlify/functions/" + nom
-    if (Object.keys(variables).length !== 0) {
+    if (variables && Object.keys(variables).length !== 0) {
         url = url + "?"
         const clefs = Object.keys(variables)
         clefs.forEach((clef, index) => {

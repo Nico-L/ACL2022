@@ -21,6 +21,7 @@
     export let maxWidth = ""
     export let pattern = ""
     export let inputmode = ""
+    export let required = null
 
     let hidden
 
@@ -41,6 +42,7 @@
             pattern={pattern}
             bind:value={value}
             {placeHolder}
+            {required}
             class="mx-auto focus:outline-none bg-fondContenu placeholder:text-gray-700 w-full"
             on:input={change}
             />

@@ -9,6 +9,7 @@
     import InputNumber from "../ui/inputNum.svelte"
     import InputEmail from "../ui/inputEmail.svelte"
     import Spinner from '../ui/spinner.svelte'
+    import Editable from "../ui/editable.svelte"
 
     import { v4 as uuidv4 } from 'uuid';
 
@@ -16,6 +17,8 @@
     export let professeurs = ""
     export let adhesionsTarifs = ""
     export let lesTarifs = ""
+    export let saison = ""
+    export let sectionProf = []
 
 //console.log('les sections', sections)
 //console.log('les tarifs', lesTarifs.filter(item => item.type.includes("instrument") && !item.type.includes("instrument-15mn")).map((item) => {return {duree: item.duree, tarif: item.tarif}}))
@@ -33,7 +36,7 @@
 
     var inscription = {uuid: uuidv4(), referent: "", emailReferent: "", commune: "Le Sappey en Chartreuse", QF:null, facteurQF: 1, adhesion: 0, verif: {referent: false, emailReferent: false}}
     var prenomsInscription = ""
-    var uneInscription = {nom:"", prenom:"", email1:"", email2:"", naissance:"", telephone1:"", telephone2:"", FM:null, instruments:[], profs:[], durees:[], ateliers:[], verif: {prenom: false, telephone: false, email: false}}
+    var uneInscription = {nom:"", prenom:"", email1:"", email2:"", age:null, telephone1:"", telephone2:"", FM:null, instruments:[], profs:[], durees:[], ateliers:[], verif: {prenom: false, telephone: false, email: false}}
     var lesInscriptions = []
     var isOpen = []
     var lesCouleurs = [
@@ -70,22 +73,21 @@
             recupEnCours = true
             etatInconnu = false
             const uuid = extracted[1]
-            const temp = (await functionsCall("baserowAPI", {type: "get", finURL:"652/?user_field_names=true&search="+uuid})).data.results
-            const recupInscriptions = temp
-            if(recupInscriptions.length > 0)
+            const recupAdherents = (await functionsCall("baserowAPI", {type: "get", finURL:"652/?user_field_names=true&search="+uuid})).data.results
+            if(recupAdherents.length > 0)
             {
                 inscription.uuid = uuid
-                inscription.referent = recupInscriptions[0]["nom referent"]
-                inscription.emailReferent = recupInscriptions[0]["email referent"]
-                inscription.commune = recupInscriptions[0]["commune"]
+                inscription.referent = recupAdherents[0]["nom referent"]
+                inscription.emailReferent = recupAdherents[0]["email referent"]
+                inscription.commune = recupAdherents[0]["commune"]
                 inscription.verif.referent = true
                 inscription.verif.emailReferent = true
-                reglement = recupInscriptions[0]["reglement"]
-                inscription.QF = recupInscriptions[0]["qf"]
-                prenomsInscription = recupInscriptions[0]["prenom"]
+                reglement = recupAdherents[0]["reglement"]
+                inscription.QF = recupAdherents[0]["qf"]
+                prenomsInscription = recupAdherents[0]["prenom"]
                 lesInscriptions = JSON.parse(JSON.stringify([]))
-                besoinFacture=recupInscriptions[0]["facture"]
-                recupInscriptions.forEach(async (row, index) => {
+                besoinFacture=recupAdherents[0]["facture"]
+                recupAdherents.forEach(async (row, index) => {
                     if (index > 0) {prenomsInscription = prenomsInscription + ", " + row["prenom"]}
                     var inscrits = []
                     for (const inscription of row.inscriptions) {
@@ -97,19 +99,25 @@
                     var inscriptionsId = []
                     let FM
                     inscrits.forEach((inscrit) => {
-                        const type = inscrit.type[0].value.value
+                        console.log('einsc', inscrit)
+                        const sectionProfId = inscrit.professeur_section[0].id
+                        const dataProfSection = sectionProf.filter((item) => item.id === sectionProfId)[0]
+                        const zeProfId = dataProfSection.profId
+                        const zeSectionId = dataProfSection.sectionId
+                        const dataSection = sections.filter((section) => section.id === zeSectionId)[0]
+                        const type = sections.filter((sec) => sec.id === zeSectionId).map((item) => item.type.value)[0]
                         inscriptionsId.push(inscrit.id)
                         switch (type) {
                             case "instrument":
                                 var leNomProf = ""
-                                if (inscrit.prenomProf[0] && inscrit.nomProf[0]) {
-                                    leNomProf = inscrit.prenomProf[0].value + " " + inscrit.nomProf[0].value
-                                }  
+                                const dataProf = professeurs.filter((prof) => prof.id === zeProfId)[0]
+                                leNomProf = dataProf.prenom + " " + dataProf.nom
                                 var inst = {
-                                    instrument: inscrit.section[0].value, 
-                                    id: inscrit.section[0].id, 
+                                    saveId: inscrit.id,
+                                    instrument: dataSection.titre, //inscrit.section[0].value, 
+                                    id: zeSectionId, //inscrit.section[0].id, 
                                     prof:leNomProf, 
-                                    profId: inscrit.nomProf[0] && inscrit.nomProf[0].id ?inscrit.nomProf[0].id:0, 
+                                    profId: zeProfId,//inscrit.nomProf[0] && inscrit.nomProf[0].id ?inscrit.nomProf[0].id:0, 
                                     duree: parseFloat(inscrit.duree), 
                                     tarif: tarifInstruments.filter((tarif) => tarif.duree === parseFloat(inscrit.duree))[0].tarif
                                 }
@@ -117,21 +125,26 @@
                                 break;
                             case "atelier":
                                 var ate = {
-                                    titre: inscrit.section[0].value, 
-                                    id: inscrit.section[0].id, 
-                                    profId: inscrit.nomProf[0].id, 
+                                    saveId: inscrit.id,
+                                    titre: dataSection.titre, //inscrit.section[0].value, 
+                                    id: zeSectionId, //inscrit.section[0].id, 
+                                    profId: zeProfId,//inscrit.nomProf[0].id, 
                                     tarif: parseFloat(inscrit.tarif)/inscription.facteurQF
                                 }
                                 ateliers.push(ate)
                                 break;
                             case "em":
                             FM = {
-                                    ...ems.filter((item) => item.id === inscrit.section[0].id)[0]
+                                    //...ems.filter((item) => item.id === inscrit.section[0].id)[0]
+                                    saveId: inscrit.id,
+                                    ...ems.filter((item) => item.id === zeSectionId)[0]
                                 }
                                 break;
                             case "fm":
                                 FM = {
-                                    ...fms.filter((item) => item.id === inscrit.section[0].id)[0]
+                                    saveId: inscrit.id,
+                                    ///...fms.filter((item) => item.id === inscrit.section[0].id)[0]
+                                    ...fms.filter((item) => item.id === zeSectionId)[0]
                                 }
                                 break;
                             default:
@@ -146,10 +159,10 @@
                         prenom: row["prenom"],
                         email1:row["email1"],
                         email2: row["email2"],
-                        naissance: row["naissance"],
+                        age: row["age"],
                         telephone1: row["telephone1"],
                         telephone2:  row["telephone2"],
-                        verif: {prenom: true, telephone: true, email: true},
+                        verif: {prenom: true, telephone: true, email: true, age: true},
                         FM: FM,
                         instruments:instruments,
                         ateliers:ateliers,
@@ -166,81 +179,6 @@
                 recupEnCours = false
                 etatInconnu = false
             }
-           /* recupEnCours = true
-            etatInconnu = false
-            isOpen = []
-            const uuid = extracted[1]
-            const rows = JSON.parse((await functionsCall("getInscriptions", {uuid: uuid})).data)
-            if (rows.length > 0) {
-                inscription.uuid = uuid,
-                inscription.referent = rows[0]["Nom référent"]
-                inscription.emailReferent = rows[0]["Email référent"]
-                inscription.commune = rows[0]["Commune"]
-                inscription.verif.referent = true
-                inscription.verif.emailReferent = true
-                reglement = rows[0]["Réglement"]
-                inscription.QF = rows[0].QF
-                prenomsInscription = rows[0]["Prénom"]
-                lesInscriptions = JSON.parse(JSON.stringify([]))
-                rows.forEach((row, index) => {
-                    var lesInstruments = []
-                    if(row["Instruments"])
-                    {
-                        const tempInstrument = row["Instruments"].split('\n')
-                        const tempProfs = row["Professeurs"].split('\n')
-                        const tempDurees = row["Durée"].split('\n')
-                        tempInstrument.forEach((instrument, index) => {
-                            lesInstruments.push({instrument: instrument, prof: tempProfs[index] === "indifférent" ?"":tempProfs[index], duree: tempDurees[index], tarif:tarifInstruments.filter((item) => {return item.duree === tempDurees[index]})[0].tarif})
-                        })
-                    }
-                    var lesAteliers = []
-                    console.log('les ateliers', row["Atelier"])
-                    if (row["Atelier"]) {
-                        const atelierTemp = row["Atelier"].split('\n')
-                        atelierTemp.forEach((item) => {
-                            const temp = ateliers.filter((at) => {return at.titre === item})[0]
-                            temp.tarif = temp.tarifs[0].tarif
-                            lesAteliers.push(temp)
-                        })
-                    }
-                    
-                    if (index > 0) {prenomsInscription = prenomsInscription + ", " + row["Prénom"]}
-                    var defFM = {titre: row.FM, tarif: null, duree: null}
-                    if (row.FM !== "") {
-                        if (row.FM.indexOf("FM") >= 0) {
-                            defFM.tarif = fms[0].tarifs[0].tarif
-                            defFM.duree = fms[0].tarifs[0].duree
-                        }
-                        if (row.FM.indexOf("Eveil" >=0 )) {
-                            defFM.tarif = ems[0].tarifs[0].tarif
-                            defFM.duree = ems[0].tarifs[0].duree
-                        }  
-                    }
-                    lesInscriptions.push({
-                        nrow: row.nrow,
-                        nom: inscription.referent,
-                        prenom: row["Prénom"],
-                        email1:row["email 1"],
-                        email2: row["email 2"],
-                        naissance: row["Année de naissance"],
-                        telephone1: row["téléphone 1"].length < 10 && row["téléphone 1"].length!==0? "0"+row["téléphone 1"]:row["téléphone 1"],
-                        telephone2:  row["téléphone 2"].length < 10 && row["téléphone 2"].length!==0 ? "0"+row["téléphone 2"]:row["téléphone 2"],
-                        FM: defFM,
-                        instruments:lesInstruments,
-                        ateliers:lesAteliers,
-                        verif: {prenom: true, telephone: true, email: true}
-                    })
-                    isOpen.push(index === 0)
-                })
-                inscription = inscription
-                lesInscriptions = lesInscriptions
-                isOpen = isOpen
-                recupEnCours = false
-            } else {
-                uuidInconnu = true
-                recupEnCours = false
-                etatInconnu = false
-            } */
         } else {
             etatInconnu = false
         }
@@ -248,7 +186,6 @@
 
     function effacerInscrit(index) {
         const retirer = lesInscriptions.splice(index, 1)
-        console.log('retirer', retirer)
         retirer.forEach((item) => {
                     //if (item.hasOwnProperty('nrow')) {
                     if (item.id) {
@@ -259,7 +196,6 @@
                         ... inscriptionsAEffacer
                     ] 
                 })
-        console.log('a effacer', inscriptionsAEffacer)
         lesInscriptions = lesInscriptions
         const inscritsPrenoms = lesInscriptions.map(inscrit => inscrit.prenom)
         prenomsInscription = inscritsPrenoms.join(", ")
@@ -308,34 +244,33 @@
         return listeProfs
     }
 
-    function choixSection(event, section, type, inscrit) {
+    function choixSection(event, section, type, inscrit, dejaInscrit) {
+        let saveId = null
+        if (dejaInscrit && dejaInscrit.saveId) {
+            saveId = dejaInscrit.saveId
+        }
         if (type==="instrument")
         {
             var instrument = {instrument: section.titre, id: section.id, prof:"", profId: "", duree: tarifInstruments[0].duree, tarif: tarifInstruments[0].tarif}
             const dejaInscrit = lesInscriptions[inscrit].instruments.filter((item) => {return item.instrument === section.titre}).length > 0
-            //if (event.detail) {
             if (!dejaInscrit) {
                 const lesProfs = listeProfs(section.titre)
-                if (lesProfs.length === 1) {
-                    instrument.prof = lesProfs[0].prenom + " " + lesProfs[0].nom
+                instrument.prof = lesProfs[0].prenom + " " + lesProfs[0].nom
                     instrument.profId = lesProfs[0].id
-                } else if (lesProfs.length > 1)
-                {
-                    instrument.prof = ""
-                }
                 lesInscriptions[inscrit].instruments.push(instrument)
             } else {
+                if (saveId) inscriptionsAEffacer.push(saveId)
                 lesInscriptions[inscrit].instruments = lesInscriptions[inscrit].instruments.filter((item) => {
                     return item.instrument !== section.titre
                 })
             }
-            //} 
         } else {
             var atelier = {titre: section.titre, id: section.id, profId: section.profs[0].id, tarif: section.tarif}
             const dejaInscrit = lesInscriptions[inscrit].ateliers.filter((item) => item.titre === section.titre).length > 0
             if (!dejaInscrit) {
                     lesInscriptions[inscrit].ateliers.push(atelier)
             } else {
+                if (saveId) inscriptionsAEffacer.push(saveId)
                 lesInscriptions[inscrit].ateliers = lesInscriptions[inscrit].ateliers.filter((item) => item.titre !== section.titre)
             }
         }
@@ -343,7 +278,6 @@
     }
 
     function choixProf (event, profId, nomProf, indexInstrument, inscrit, nbProfs) {
-        console.log('prof', nomProf, profId)
         if (nbProfs > 1)
         {
             if (event.detail) {
@@ -368,7 +302,11 @@
         lesInscriptions = lesInscriptions
     }
 
-    function choixFM(fm, index) {
+    function choixFM(fm, index, former) {
+        let saveId = null
+        if (former && former.saveId) {
+            inscriptionsAEffacer.push(former.saveId)
+        }
         if (!lesInscriptions[index].FM || lesInscriptions[index].FM.titre !== fm.titre) {
             lesInscriptions[index].FM = fm
         } else {
@@ -424,46 +362,84 @@
                     await functionsCall("baserowAPI", {type: "delete", finURL:"653/" + ins + "/"})
                 }
             }
-            var cout = 0.00
+
+            var dataFactureEmail = []
             for (const inscrit of lesInscriptions) {
-                if (inscrit.inscriptionsId && inscrit.inscriptionsId.length > 0) {
+                let coutParInscrit = 0.00
+                /*if (inscrit.inscriptionsId && inscrit.inscriptionsId.length > 0) {
                     for (const id of inscrit.inscriptionsId) {
                         await functionsCall("baserowAPI", {type: "delete", finURL:"653/" + id + "/"})
                     }
                 }
                 if (inscrit.id) {
                     await functionsCall("baserowAPI", {type: "delete", finURL:"652/" + inscrit.id + "/"})
-                }
-                var items = []
+                } */
+                var sectionsFacture = []
+                //var items = []
+                var posts = []
+                var patchs = []
                 inscrit.ateliers.forEach((item) => {
-                    cout = cout + parseFloat(item.tarif)
+                    coutParInscrit = coutParInscrit + parseFloat(item.tarif)
                     var profId = 0
                     if (item.profId && item.profId !== '') {profId = item.profId}
-                    items.push({section: [item.id], nomProf: [profId], tarif: item.tarif*inscription.facteurQF})
+                    const zeSectionProf = sectionProf.filter((sp) => sp.profId === profId && sp.sectionId === item.id).map((item) => {return item.id})
+                    //items.push({tarif: item.tarif*inscription.facteurQF, professeur_section: zeSectionProf})
+                    const ins = {tarif: item.tarif*inscription.facteurQF, professeur_section: zeSectionProf}
+                    if (item.saveId) {
+                        ins.id = item.saveId
+                        patchs.push(ins)
+                    } else {
+                        posts.push(ins)
+                    }
+                    sectionsFacture.push({"titre": item.titre, "prix": parseFloat(item.tarif*inscription.facteurQF).toFixed(2).toString()})
                 })
                 inscrit.instruments.forEach((item) => {
                     var profId = 0
                     if (item.profId && item.profId !== '') {profId = item.profId}
-                    items.push({section: [item.id], nomProf: [profId], duree: item.duree, tarif: item.tarif*inscription.facteurQF})
-                    cout = cout + parseFloat(item.tarif)
+                    const zeSectionProf = sectionProf.filter((sp) => sp.profId === profId && sp.sectionId === item.id).map((item) => {return item.id})
+                    //items.push({duree: item.duree, tarif: item.tarif*inscription.facteurQF, professeur_section: zeSectionProf})
+                    const ins = {duree: item.duree, tarif: item.tarif*inscription.facteurQF, professeur_section: zeSectionProf}
+                    if (item.saveId) {
+                        ins.id = item.saveId
+                        patchs.push(ins)
+                    } else {
+                        posts.push(ins)
+                    }
+                    coutParInscrit = coutParInscrit + parseFloat(item.tarif)
+                    sectionsFacture.push({"titre": item.instrument, "prix": parseFloat(item.tarif*inscription.facteurQF).toFixed(2).toString()})
                 })
                 if (inscrit.FM) {
-                    cout = cout + parseFloat(inscrit.FM.tarif)
-                    var profId = 0
-                    if (inscrit.FM.profs[0] && inscrit.FM.profs[0].id !== '') {profId = inscrit.FM.profs[0].id}
-                    items.push({section : [inscrit.FM.id], nomProf: [profId], dure: inscrit.FM.duree, tarif: inscrit.FM.tarif*inscription.facteurQF})
+                    coutParInscrit = coutParInscrit + parseFloat(inscrit.FM.tarif)
+                    //if (inscrit.FM.profs[0] && inscrit.FM.profs[0].id !== '') {profId = inscrit.FM.profs[0].id}
+                    const zeSectionProf = inscrit.FM.professeur_section.map((item) => {return item.id})
+                    //items.push({tarif: inscrit.FM.tarif*inscription.facteurQF, professeur_section: zeSectionProf})
+                    const ins = {tarif: inscrit.FM.tarif*inscription.facteurQF, professeur_section: zeSectionProf}
+                    if (inscrit.FM.saveId) {
+                        ins.id = inscrit.FM.saveId
+                        patchs.push(ins)
+                    } else {
+                        posts.push(ins)
+                    }
+                    sectionsFacture.push({"titre": inscrit.FM.titre, "prix": parseFloat(inscrit.FM.tarif*inscription.facteurQF).toFixed(2).toString()})
                 }
-                const retourInscriptions = (await functionsCall("baserowAPI", {type: "POST", finURL:"653/batch/?user_field_names=true", body: JSON.stringify({items: items})})).data
-                const sectionsIds = retourInscriptions.items.map((item) => item.id)
                 //gestion des factures
-                if (besoinFacture) {
-
+                var sectionsIds=[]
+                //const retourInscriptions = (await functionsCall("baserowAPI", {type: "POST", finURL:"653/batch/?user_field_names=true", body: JSON.stringify({items: items})})).data
+                if (posts.length > 0) {
+                    const retourInscriptions = (await functionsCall("baserowAPI", {type: "POST", finURL:"653/batch/?user_field_names=true", body: JSON.stringify({items: posts})})).data
+                    sectionsIds = [...sectionsIds, ...retourInscriptions.items.map((item) => item.id)]
                 }
-                
+                if (patchs.length > 0) {
+                    const retourInscriptions = (await functionsCall("baserowAPI", {type: "PATCH", finURL:"653/batch/?user_field_names=true", body: JSON.stringify({items: patchs})})).data
+                    sectionsIds = [...sectionsIds, ...retourInscriptions.items.map((item) => item.id)]
+                }
+                //const sectionsIds = retourInscriptions.items.map((item) => item.id)
+                console.log('retour ids', sectionsIds)
                 var adherent = {
                     "uuid": inscription.uuid,
                     "email referent": inscription.emailReferent,
                     "nom referent": inscription.referent,
+                    "adresse": inscription.adresse,
                     "commune": inscription.commune,
                     "qf": inscription.QF,
                     "type adhesion": adhesion.type,
@@ -475,96 +451,78 @@
                     "telephone2": inscrit.telephone2,
                     "email1": inscrit.email1,
                     "email2": inscrit.email2,
-                    "naissance": inscrit.naissance,
+                    "age": parseInt(inscrit.age),
                     "reglement": reglement,
                     "facture": besoinFacture,
-                    "cout": parseFloat(cout*inscription.facteurQF).toFixed(2)
+                    "cout": parseFloat(coutParInscrit*inscription.facteurQF).toFixed(2)
                 }
-                const adherentTemp = (await functionsCall("baserowAPI", {type: "POST", finURL:"652/?user_field_names=true", body: JSON.stringify(adherent)})).data
-                const retourAdherent = await adherentTemp.json()
-                console.log('adherent', retourAdherent)
+                var typeSave = "POST"
+                var finURL = "652/?user_field_names=true"
+                if (inscrit.id) {
+                    //adherent.id = inscrit.id
+                    finURL = "652/" + inscrit.id + "/?user_field_names=true"
+                    typeSave = "PATCH"
+                }
+                const retourAdherent = (await functionsCall("baserowAPI", {type: typeSave, finURL: finURL, body: JSON.stringify(adherent)})).data
+                const adherentId = retourAdherent.id
+                let fichiersFactures = []
+                if (besoinFacture) {
+                    var prenomNom = inscrit.nom === ""?inscription.referent:inscrit.nom
+                    prenomNom = inscrit.prenom + " " + prenomNom
+                    const dataFacture = {
+                        "numFacture": "ACL_" + prenomNom.replaceAll(" ", "") + "_" + saison,
+                        "somme": parseFloat(coutParInscrit*inscription.facteurQF).toFixed(2).toString(),
+                        "saison": saison,
+                        "prenomNom": prenomNom,
+                        "sections": sectionsFacture
+                    }
+                    const nomFichier = "ACL_"+prenomNom.replaceAll(" ", "")
+                    const retourFacture = (await functionsCall("factures", {dataFacture: JSON.stringify(dataFacture), nomFichier: nomFichier})).data
+                    const uploadPdf = (await functionsCall("uploadViaUrl", {downloadUrl: retourFacture.download_url})).data
+                    fichiersFactures.push(uploadPdf)
+                    dataFactureEmail.push({lien: uploadPdf.url, prenom: inscrit.prenom})
+                }
+                const updateDataAdherent= {"fichiers_factures": fichiersFactures }
+                const updateAdherent = (await functionsCall("baserowAPI", {type: "PATCH", finURL:"652/"+adherentId+"/?user_field_names=true", body: JSON.stringify(updateDataAdherent)}))
             }
             adherentAEffacer = []
-            //if (retour.data === "ok") {
-                messageSaving = "Envoi du mail récapitulatif"
-                var dataEmail = {
-                    adresse: "https://acl-sappey.netlify.app/inscriptions/?uuid="+inscription.uuid,
-                    adhesion: {titre: "Adhésion " + adhesion.type, tarif: parseFloat(adhesion.valeur).toFixed(2)+"€"},
-                    qf: adhesion.QF,
-                    reglement: reglement,
-                    coutTotal: (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.valeur)).toFixed(2)+"€",
-                    inscrits: []
-                }
-                if (inscription.facteurQF < 1) {
-                    dataEmail.reduction = "-" + parseFloat(1-inscription.facteurQF).toFixed(2)*100 + "%"
-                }
-                if (lesInscriptions.length > 0) {
-                    lesInscriptions.forEach((inscrit) => {
-                        var dataInscrit = {
-                            prenom: inscrit.prenom,
-                            inscriptions: []
-                        }
-                        if (inscrit.FM && inscrit.FM.tarif) {
-                            dataInscrit.inscriptions.push({titre: inscrit.FM.titre, tarif: parseFloat(inscription.facteurQF*inscrit.FM.tarif).toFixed(2)+"€"})
-                        }
-                        if (inscrit.instruments.length > 0) {
-                            inscrit.instruments.forEach((instrument) => {
-                                dataInscrit.inscriptions.push({titre: instrument.instrument, tarif: parseFloat(inscription.facteurQF*instrument.tarif).toFixed(2)+"€", prof: instrument.prof, duree:instrument.duree})
-                            })
-                        }
-                        if (inscrit.ateliers.length > 0) {
-                            inscrit.ateliers.forEach((atelier) => {
-                                dataInscrit.inscriptions.push({titre: atelier.titre, tarif: parseFloat(inscription.facteurQF*atelier.tarif).toFixed(2)+"€"})
-                            })
-                        }
-                        dataEmail.inscrits.push(dataInscrit)
-                    })
-                }
-                functionsCall("sendEmail2", {email: inscription.emailReferent, dataEmail:encodeURIComponent(JSON.stringify(dataEmail))})
+            messageSaving = "Envoi du mail récapitulatif"
+            var dataEmail = {
+                adresse: "https://acl-sappey.netlify.app/inscriptions/?uuid="+inscription.uuid,
+                adhesion: {titre: "Adhésion " + adhesion.type, tarif: parseFloat(adhesion.valeur).toFixed(2)+"€"},
+                qf: adhesion.QF,
+                reglement: reglement,
+                coutTotal: (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.valeur)).toFixed(2)+"€",
+                inscrits: [],
+                factures: besoinFacture ? dataFactureEmail:null
+            }
+            if (inscription.facteurQF < 1) {
+                dataEmail.reduction = "-" + parseFloat(1-inscription.facteurQF).toFixed(2)*100 + "%"
+            }
+            if (lesInscriptions.length > 0) {
+                lesInscriptions.forEach((inscrit) => {
+                    var dataInscrit = {
+                        prenom: inscrit.prenom,
+                        inscriptions: []
+                    }
+                    if (inscrit.FM && inscrit.FM.tarif) {
+                        dataInscrit.inscriptions.push({titre: inscrit.FM.titre, tarif: parseFloat(inscription.facteurQF*inscrit.FM.tarif).toFixed(2)+"€"})
+                    }
+                    if (inscrit.instruments.length > 0) {
+                        inscrit.instruments.forEach((instrument) => {
+                            dataInscrit.inscriptions.push({titre: instrument.instrument, tarif: parseFloat(inscription.facteurQF*instrument.tarif).toFixed(2)+"€", prof: instrument.prof, duree:instrument.duree})
+                        })
+                    }
+                    if (inscrit.ateliers.length > 0) {
+                        inscrit.ateliers.forEach((atelier) => {
+                            dataInscrit.inscriptions.push({titre: atelier.titre, tarif: parseFloat(inscription.facteurQF*atelier.tarif).toFixed(2)+"€"})
+                        })
+                    }
+                    dataEmail.inscrits.push(dataInscrit)
+                })
+            }
+            functionsCall("sendEmail2", {email: inscription.emailReferent, dataEmail:encodeURIComponent(JSON.stringify(dataEmail))})
                     .then((retour2) => {console.log('fini !'); busySaving = false; saveOK = true; inscriptionDone=true})
-            //} 
-            /*functionsCall('saveInscriptions', {inscriptions: encodeURIComponent(JSON.stringify(tableau)), effacer: encodeURIComponent(JSON.stringify(adherentAEffacer))})
-                .then((retour) => {
-                    adherentAEffacer = []
-                    if (retour.data === "ok") {
-                        messageSaving = "Envoi du mail récapitulatif"
-                        var dataEmail = {
-                            adresse: "https://acl-sappey.netlify.app/inscriptions/?uuid="+inscription.uuid,
-                            adhesion: {titre: "Adhesion " + adhesion.adhesion, tarif: parseFloat(adhesion.valeur).toFixed(2)+"€"},
-                            qf: adhesion.QF,
-                            reglement: reglement,
-                            coutTotal: (parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.valeur)).toFixed(2)+"€",
-                            inscrits: []
-                        }
-                        if (inscription.facteurQF < 1) {
-                            dataEmail.reduction = "-" + parseFloat(1-inscription.facteurQF).toFixed(2)*100 + "%"
-                        }
-                        if (lesInscriptions.length > 0) {
-                            lesInscriptions.forEach((inscrit) => {
-                                var dataInscrit = {
-                                    prenom: inscrit.prenom,
-                                    inscriptions: []
-                                }
-                                if (inscrit.FM.tarif !== null) {
-                                    dataInscrit.inscriptions.push({titre: inscrit.FM.titre, tarif: parseFloat(inscription.facteurQF*inscrit.FM.tarif).toFixed(2)+"€"})
-                                }
-                                if (inscrit.instruments.length > 0) {
-                                    inscrit.instruments.forEach((instrument) => {
-                                        dataInscrit.inscriptions.push({titre: instrument.instrument, tarif: parseFloat(inscription.facteurQF*instrument.tarif).toFixed(2)+"€", prof: instrument.prof, duree:instrument.duree})
-                                    })
-                                }
-                                if (inscrit.ateliers.length > 0) {
-                                    inscrit.ateliers.forEach((atelier) => {
-                                        dataInscrit.inscriptions.push({titre: atelier.titre, tarif: parseFloat(inscription.facteurQF*atelier.tarif).toFixed(2)+"€"})
-                                    })
-                                }
-                                dataEmail.inscrits.push(dataInscrit)
-                            })
-                        }
-                        functionsCall("sendEmail2", {email: inscription.emailReferent, dataEmail:encodeURIComponent(JSON.stringify(dataEmail))})
-                            .then((retour2) => {busySaving = false; saveOK = true; inscriptionDone=true})
-                    } 
-                }) */
         } else {
             noSave = true
         }
@@ -623,6 +581,14 @@
         lesInscriptions[index].verif.prenom = lesInscriptions[index].prenom !== ""
     }
 
+    function verifAge(index) {
+        lesInscriptions[index].verif.age = lesInscriptions[index].age !== null || lesInscriptions[index].age !== 0
+    }
+
+    function verifCommune() {
+        inscription.verif.commune = inscription.commune !== ""
+    }
+
     function redirectEdition() {
         var extracted = /\?uuid=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?/i.exec(urlModifInscription)
         if (extracted!==null)
@@ -661,7 +627,7 @@
     $: {
         let noProb = inscription.verif.referent && inscription.verif.emailReferent
         lesInscriptions.forEach((inscrit)=>{
-            noProb = noProb && inscrit.verif.email && inscrit.verif.telephone && inscrit.verif.prenom
+            noProb = noProb && inscrit.verif.email && inscrit.verif.telephone && inscrit.verif.prenom && inscrit.verif.age
             noProb = noProb && !(inscrit.FM && inscrit.FM.tarif === null && inscrit.instruments.length === 0 && inscrit.ateliers.length === 0)
         })
         noProbleme = noProb
@@ -736,6 +702,15 @@
                     {/if}
                     
                 </div>
+                <div class="flex w-full items-top">
+                    <div class="mr-2">Adresse</div>
+                    <Editable 
+                        classes="text-left bg-fondContenu border border-gray-900 rounded max-w-72 h-20 overflow-hidden p-1"
+                        bind:leHTML={inscription.adresse}
+                        enterUse = {false}
+                        on:update = {() => inscription.verif.adresse = inscription.adresse !== ""}
+                        />
+                </div>
                 <div class="flex gap-2 items-start">
                     <div>Commune</div>
                     <div class="flex flex-wrap gap-2 ">
@@ -754,23 +729,32 @@
                             on:checkChange={()=>{setCommune("Sarcenas")}}
                             />
                         <CheckBox 
-                            label="Corenc, Meylan ou La Tronche" 
-                            lblClass={lesCouleurs[2].textSombre}
-                            cbClass={lesCouleurs[2].cb}
-                            checked={inscription.commune === "Corenc, Meylan ou La Tronche"}
-                            on:checkChange={()=>{setCommune("Corenc, Meylan ou La Tronche")}}
-                            />
-                        <CheckBox 
                             label="Autres" 
                             lblClass={lesCouleurs[2].textSombre}
                             cbClass={lesCouleurs[2].cb}
-                            checked={inscription.commune === "Autres"}
-                            on:checkChange={()=>{setCommune("Autres")}}
+                            checked={inscription.commune !== "Le Sappey en Chartreuse" && inscription.commune !== "Sarcenas"}
+                            on:checkChange={()=>{setCommune("")}}
                             />
                     </div>
-                    
                 </div>
-                
+                {#if inscription.commune !== "Le Sappey en Chartreuse" && inscription.commune !== "Sarcenas"}
+                    <div class="flex gap-2 items-start w-full">
+                        <Input 
+                            largeur = "max-w-460px"
+                            label = "Autre commune" 
+                            id = "autreCommune"
+                            required 
+                            bind:value={inscription.commune} 
+                            on:change={() => verifCommune()} />
+                        {#if inscription.verif.commune} 
+                            <div class="text-sm text-vert-800 whitespace-nowrap ml-2"></div>
+                        {:else}
+                            <div class="text-sm text-rouge-800 whitespace-nowrap ml-2">Merci de préciser votre commune.</div>
+                        {/if}
+                    </div>
+                    
+                {/if}
+            
                 <div class="flex flex-wrap w-full items-center">
                     <InputNumber 
                         label="Quotient familial"
@@ -851,13 +835,19 @@
                                     label="Nom"
                                 />
                                 <div class="text-sm ml-12 mb-2">Nom de FAMILLE/nom alternatif de l'inscrit</div>
-                                <InputNumber 
-                                    id={index +"-naissance"}
-                                    bind:value={inscrit.naissance}
-                                    classes="ml-1 mr-1 mb-2"
-                                    maxWidth="w-14"
-                                    label="Année de naissance"
-                                />
+                                <div class="flex flex-row flex-wrap gap-2 items-center">
+                                    <InputNumber 
+                                        id={index +"-age"}
+                                        bind:value={inscrit.age}
+                                        classes="ml-1 mr-1 mb-2"
+                                        maxWidth="w-14"
+                                        label="Age"
+                                        on:change={() => verifAge(index)}
+                                    />
+                                    {#if !inscrit.verif.age}
+                                        <div class="ml-2 text-sm text-rouge-800">Merci d'entrer un âge.</div>
+                                    {/if}
+                                </div>
                                 <div>
                                     <div class="font-semibold">Téléphones</div>
                                     <div class="text-sm px-1">Format: 10 chiffres sans espace 0612345678</div>
@@ -915,7 +905,7 @@
                                                     lblClass={lesCouleurs[index % 3].textSombre}
                                                     cbClass={lesCouleurs[index % 3].cb}
                                                     checked={lesInscriptions[index].FM && lesInscriptions[index].FM.titre === ems[0].titre}
-                                                    on:checkChange={()=>choixFM(ems[0], index)}
+                                                    on:checkChange={()=>choixFM(ems[0], index, lesInscriptions[index].FM)}
                                                     />
                                             </div>
                                             <div class="w-full flex">
@@ -927,44 +917,9 @@
                                                     lblClass={lesCouleurs[index % 3].textSombre}
                                                     cbClass={lesCouleurs[index % 3].cb}
                                                     checked={lesInscriptions[index].FM && lesInscriptions[index].FM.titre === item.titre}
-                                                    on:checkChange={()=>choixFM(item, index)}
+                                                    on:checkChange={()=>choixFM(item, index, lesInscriptions[index].FM)}
                                                     />
                                                     {/each}
-                                                    <!--<CheckBox 
-                                                        label={"FM2"} 
-                                                        lblClass={lesCouleurs[index % 3].textSombre}
-                                                        cbClass={lesCouleurs[index % 3].cb}
-                                                        checked={lesInscriptions[index].FM.titre === "FM2"}
-                                                        on:checkChange={()=>choixFM("FM2", tarifFM, index)}
-                                                        />
-                                                    <CheckBox 
-                                                        label={"FM3"} 
-                                                        lblClass={lesCouleurs[index % 3].textSombre}
-                                                        cbClass={lesCouleurs[index % 3].cb}
-                                                        checked={lesInscriptions[index].FM.titre === "FM3"}
-                                                        on:checkChange={()=>choixFM("FM3", tarifFM, index)}
-                                                        />
-                                                    <CheckBox 
-                                                        label={"FM4"} 
-                                                        lblClass={lesCouleurs[index % 3].textSombre}
-                                                        cbClass={lesCouleurs[index % 3].cb}
-                                                        checked={lesInscriptions[index].FM.titre === "FM4"}
-                                                        on:checkChange={()=>choixFM("FM4", tarifFM, index)}
-                                                        />
-                                                    <CheckBox 
-                                                        label={"FM5"} 
-                                                        lblClass={lesCouleurs[index % 3].textSombre}
-                                                        cbClass={lesCouleurs[index % 3].cb}
-                                                        checked={lesInscriptions[index].FM.titre === "FM5"}
-                                                        on:checkChange={()=>choixFM("FM5", tarifFM, index)}
-                                                        />
-                                                     <CheckBox 
-                                                        label={"Adulte"} 
-                                                        lblClass={lesCouleurs[index % 3].textSombre}
-                                                        cbClass={lesCouleurs[index % 3].cb}
-                                                        checked={lesInscriptions[index].FM.titre === "Adulte"}
-                                                        on:checkChange={()=>choixFM("Adulte", fms[0].tarifs, index)}
-                                                        /> -->
                                                 </div>
                                             </div> 
                                                 {#if lesInscriptions[index].FM && lesInscriptions[index].FM.tarif}
@@ -990,7 +945,7 @@
                                                 lblClass={lesCouleurs[index % 3].textSombre}
                                                 cbClass={lesCouleurs[index % 3].cb}
                                                 checked={lesInscriptions[index].instruments.filter((item) => {return item.instrument === instrument.titre}).length != 0}
-                                                on:checkChange={(e)=>choixSection(e, instrument, "instrument", index)}/>
+                                                on:checkChange={(e)=>choixSection(e, instrument, "instrument", index, lesInscriptions[index].instruments.filter((item) => {return item.instrument === instrument.titre})[0])}/>
                                             {/each}
                                         </div> 
                                     </div>
@@ -1050,7 +1005,7 @@
                                                         lblClass={lesCouleurs[index % 3].textSombre}
                                                         cbClass={lesCouleurs[index % 3].cb}
                                                         checked={lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre}) != 0}
-                                                        on:checkChange={(e)=>choixSection(e, atelier, "atelier", index)}/>
+                                                        on:checkChange={(e)=>choixSection(e, atelier, "atelier", index, lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre})[0])}/>
                                                     <div class={"text-sm text-center " + lesCouleurs[index % 3].textSombre}>
                                                         {atelier.duree} - {atelier.creneaux}s - {parseFloat(atelier.tarif*inscription.facteurQF).toFixed(2)}&nbsp;€/an 
                                                     </div>
@@ -1179,6 +1134,9 @@
                                         {#if !inscrit.verif.prenom}
                                             <div class="text-sm text-rouge-800 whitespace-nowrap ml-2">Il manque le prénom.</div>
                                         {/if}
+                                        {#if !inscrit.verif.age} 
+                                            <div class="text-sm text-rouge-800 whitespace-nowrap ml-2">Il manque l'âge.</div>
+                                        {/if}
                                         {#if !inscrit.verif.telephone}
                                             <div class="text-sm text-rouge-800 whitespace-nowrap ml-2">Il manque un numéro de téléphone.</div>
                                         {/if}
@@ -1190,7 +1148,7 @@
                             </div>
                         {/if}
                         <div>Merci de bien vérifier les informations de votre ou vos inscription(s) avant d'enregistrer votre inscription en cliquant sur le bouton ci-dessous.</div>
-                        <div class="flex flex-wrap justify-center mt-2">
+                        <div class="flex justify-center mt-2">
                             <Bouton
                                 largeur="w-80"
                                 couleur={lesCouleurs[nRecap % 3].sombre}
