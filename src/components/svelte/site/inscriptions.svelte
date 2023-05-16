@@ -477,6 +477,8 @@
                         "sections": sectionsFacture
                     }
                     const nomFichier = "ACL_"+prenomNom.replaceAll(" ", "")
+                    console.log('data facture', dataFacture)
+                    console.log('nomFichier', nomFichier)
                     const retourFacture = (await functionsCall("factures", {dataFacture: JSON.stringify(dataFacture), nomFichier: nomFichier})).data
                     console.log('retour facture', retourFacture)
                     const uploadPdf = (await functionsCall("uploadViaUrl", {downloadUrl: retourFacture.download_url})).data
