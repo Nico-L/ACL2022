@@ -427,13 +427,10 @@
                 //const retourInscriptions = (await functionsCall("baserowAPI", {type: "POST", finURL:"653/batch/?user_field_names=true", body: JSON.stringify({items: items})})).data
                 if (posts.length > 0) {
                     const retourInscriptions = (await functionsCall("baserowAPI", {type: "POST", finURL:"653/batch/?user_field_names=true", body: JSON.stringify({items: posts})}))//.data
-                    console.log('retourInscr', retourInscriptions)
-                    
                     sectionsIds = [...sectionsIds, ...retourInscriptions.data.items.map((item) => item.id)]
                 }
                 if (patchs.length > 0) {
                     const retourInscriptions = (await functionsCall("baserowAPI", {type: "PATCH", finURL:"653/batch/?user_field_names=true", body: JSON.stringify({items: patchs})}))//.data
-                    console.log('retourInscr', retourInscriptions)
                     sectionsIds = [...sectionsIds, ...retourInscriptions.data.items.map((item) => item.id)]
                 }
                 //const sectionsIds = retourInscriptions.items.map((item) => item.id)

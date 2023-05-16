@@ -1,10 +1,7 @@
-import fetch from 'node-fetch';
 const https = require('https');
 const http = require('http');
 const { URL } = require('url');
 const apitemplate_token = process.env.APITEMPLATE_TOKEN
-const baserow_token = process.env.TOKEN_BASEROW_INSCRIPTIONS
-const baserowURL = "https://baserow.luchier.fr/api/user-files/upload-via-url/"
 
 async function httpPost(url_api, data, apiKey){
     const uri = new URL(url_api);
