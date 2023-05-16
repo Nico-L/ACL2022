@@ -6,3 +6,5 @@ tasks:
 ports:
   - port: 3000
     onOpen: open-browser
+  - port: 8888
+    onOpen: open-browser

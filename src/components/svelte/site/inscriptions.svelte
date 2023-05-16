@@ -469,18 +469,17 @@
                 if (besoinFacture) {
                     var prenomNom = inscrit.nom === ""?inscription.referent:inscrit.nom
                     prenomNom = inscrit.prenom + " " + prenomNom
+                    var numFacture = "ACL_" + prenomNom.replaceAll(" ", "") + "_" + saison
                     const dataFacture = {
-                        "numFacture": "ACL_" + prenomNom.replaceAll(" ", "") + "_" + saison,
+                        "numFacture": numFacture.normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
                         "somme": parseFloat(coutParInscrit*inscription.facteurQF).toFixed(2).toString(),
                         "saison": saison,
-                        "prenomNom": prenomNom,
+                        "prenomNom": prenomNom.normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
                         "sections": sectionsFacture
                     }
-                    const nomFichier = "ACL_"+prenomNom.replaceAll(" ", "")
-                    console.log('data facture', dataFacture)
-                    console.log('nomFichier', nomFichier)
+                    var nomFichier = "ACL_"+prenomNom.replaceAll(" ", "")
+                    nomFichier = nomFichier.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
                     const retourFacture = (await functionsCall("factures", {dataFacture: JSON.stringify(dataFacture), nomFichier: nomFichier})).data
-                    console.log('retour facture', retourFacture)
                     const uploadPdf = (await functionsCall("uploadViaUrl", {downloadUrl: retourFacture.download_url})).data
                     fichiersFactures.push(uploadPdf)
                     dataFactureEmail.push({lien: uploadPdf.url, prenom: inscrit.prenom})
