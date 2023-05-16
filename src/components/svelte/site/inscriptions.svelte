@@ -478,6 +478,7 @@
                     }
                     const nomFichier = "ACL_"+prenomNom.replaceAll(" ", "")
                     const retourFacture = (await functionsCall("factures", {dataFacture: JSON.stringify(dataFacture), nomFichier: nomFichier})).data
+                    console.log('retour facture', retourFacture)
                     const uploadPdf = (await functionsCall("uploadViaUrl", {downloadUrl: retourFacture.download_url})).data
                     fichiersFactures.push(uploadPdf)
                     dataFactureEmail.push({lien: uploadPdf.url, prenom: inscrit.prenom})
