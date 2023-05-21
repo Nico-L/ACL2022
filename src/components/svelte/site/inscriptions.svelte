@@ -474,7 +474,7 @@
                         "numFacture": numFacture.normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
                         "somme": parseFloat(coutParInscrit*inscription.facteurQF).toFixed(2).toString(),
                         "saison": saison,
-                        "prenomNom": prenomNom.normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
+                        "prenomNom": prenomNom,
                         "sections": sectionsFacture
                     }
                     var nomFichier = "ACL_"+prenomNom.replaceAll(" ", "")
@@ -602,7 +602,7 @@
     }
 
     $: {
-        if (inscription.QF === 0 || inscription.QF === null || inscription.QF === "") {
+        if (inscription.QF <= 0 || inscription.QF === null || inscription.QF === "") {
             inscription.facteurQF = 1
         } else if (inscription.QF < 600) {
             inscription.facteurQF = 0.6
