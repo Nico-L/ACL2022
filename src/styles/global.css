@@ -1,7 +1,7 @@
-/* src/styles/global.css
+/* src/styles/global.css */
 @tailwind base;
 @tailwind components;
-@tailwind utilities;*/
+@tailwind utilities;
 
 /*****/
 /** global **/
@@ -14,12 +14,46 @@
 *[contenteditable="true"]{display: inline-block;}
 
 h1 {
-    @apply text-2xl sm:text-4xl mb-2;
+    @apply text-4xl mb-2;
   }
   
 h2 {
-  @apply text-2xl mb-1;
+  @apply text-2xl mb-0 mt-2;
 }
+
+table {
+  @apply table-auto border border-vertClair border-collapse rounded-2xl mx-auto;
+}
+
+thead {
+  @apply bg-vert-200 border border-vertClair;
+}
+
+th, td {
+  @apply p-1 border border-vertClair/40;
+}
+
+a {
+  @apply  p-1 rounded text-jaune-900 font-semibold;
+}
+
+a:hover {
+  @apply text-gray-100 bg-jaune-900;
+}
+
+p {
+  @apply px-2;
+}
+
+.buttonLink {
+  @apply mt-4 p-8;
+  @apply text-2xl font-semibold bg-vert-400 border border-vert-700 text-gray-100 rounded p-1 w-fit;
+}
+
+.buttonLink:hover {
+  @apply bg-vert-600 hover:cursor-pointer;
+}
+
   
   /******/
   /** card prof **/

@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+const ghostUrl = "https://ghost.luchier.fr"
+const apiUrl = ghostUrl + "/ghost/api/content/pages/646341e21e35e30001f58ad5/?key=" + import.meta.env.GHOST_CONTENT
+var data = await fetch(apiUrl)
+var page = (await data.json()).pages[0]
+// récup tarifs adhésions
+data = await fetch(import.meta.env.BASEROW_URL + "rows/table/655/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+const adhesionsTarifs = (await data.json()).results
+var tarifs = {}
+tarifs["adhIndSap"] = adhesionsTarifs.filter((item) => item.isSappey && !item.isFamiliale)[0].valeur
+tarifs["adhFamSap"] = adhesionsTarifs.filter((item) => item.isSappey && item.isFamiliale)[0].valeur
+tarifs["adhIndExt"] = adhesionsTarifs.filter((item) => !item.isSappey && !item.isFamiliale)[0].valeur
+tarifs["adhFamExt"] = adhesionsTarifs.filter((item) => !item.isSappey && item.isFamiliale)[0].valeur
+// récup tarifs instrument
+data = await fetch(import.meta.env.BASEROW_URL + "rows/table/654/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+const tarifsInstTemp = await data.json()
+const tarifsInst = tarifsInstTemp.results.map((tarif) => {return {duree: tarif.duree_seance, tarif: tarif.tarif_acl, type: tarif.type}})
+for(let t of tarifsInst) {
+    tarifs[t.type] = parseInt(t.tarif)
+}
+// récupe tarif fm
+data = await fetch(import.meta.env.BASEROW_URL + "rows/table/651/?user_field_names=true&filter__field_5761__single_select_equal=3131", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+const fm = (await data.json()).results[0]
+tarifs["tarifFm"] = parseInt(fm.tarif)
+//recup tarif ateliers
+data = await fetch(import.meta.env.BASEROW_URL + "rows/table/651/?user_field_names=true&filter__field_5761__single_select_equal=3130&order_by=titre", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+const ateliers = (await data.json()).results
+var rows = ""
+for(let atelier of ateliers) {
+    rows = rows + "<tr><td>" + atelier.titre + "</td><td style=\"text-align:center\">" + atelier.creneaux + "</td><td style=\"text-align:center\">" + parseInt(atelier.tarif) + "</td></tr>"
+}
+var tableAteliers = `
+<table>
+    <thead>
+        <tr>
+            <th>atelier</th>
+            <th style="text-align:center">durée</th>
+            <th style="text-align:center">tarif (€)</th>
+        </tr>
+    </thead>
+    <tbody>
+        ${rows}
+    </tbody>
+</table>
+`
+tableAteliers = tableAteliers
+
+var html = page.html
+for( let key in tarifs ) {
+  html = html.replaceAll("{"+key+"}", tarifs[key])
+}
+
+html = html.replace("<p>{listeAteliers}</p>", tableAteliers).replaceAll(ghostUrl, "")
+
+data = await fetch(import.meta.env.BASEROW_URL + "rows/table/667/?user_field_names=true&filter__field_5959__not_empty", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+const saison = (await data.json()).results.pop().titre.toString()
+---
+<BaseLayout title={page.title.replace("{saison}", saison)}>
+    <h1 >{page.title.replace("{saison}", saison)}</h1>
+    <Fragment set:html={html} />
+    <div class="flex justify-center">
+        <a href="/inscriptions" class="buttonLink">
+            Le formulaire d'inscription
+        </a>
+    </div>
+</BaseLayout>

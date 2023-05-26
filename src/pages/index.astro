@@ -1,10 +1,13 @@
 ---
 // src/pages/index.astro
 import BaseLayout from '../layouts/BaseLayout.astro'
+
+const data = await fetch(import.meta.env.BASEROW_URL + "rows/table/667/?user_field_names=true&filter__field_5959__not_empty", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+const saison = (await data.json()).results.pop().titre.toString()
 ---
 <BaseLayout title="Accueil">
   <h1>Bonjour,</h1>
   <p>Vous vous trouvez sur le site qui permettra de vous inscrire aux cours et ateliers de l'ACL.</p>
-  <p class="my-1">La page d'inscription au stage été de cette année se trouve sur <a href="/stageEte" class="text-gray-100 bg-jaune-900 p-1 rounded font-semibold"><u>cette page</u></a>.</p>
-  <p class="my-1">La page d'inscription ACL 2022-2023 est sur <a href="/inscriptions" class="text-gray-100 bg-jaune-900 p-1 rounded font-semibold"><u>cette page</u></a>. Vous y trouverez toutes les infos sur les cours et les ateliers de cette année ainsi que le formulaire d'inscription.</p>
+  <p class="my-1">La page d'inscription au stage été de cette année se trouve sur <a href="/stageEte">cette page</a>.</p>
+  <p class="my-1">Vous pouver trouver les tarifs de nos cours et nos ateliers pour la {saison} sur <a href="/tarifs">la page des tarifs</a>. Les inscriptions se passent sur cette <a href="/inscriptions">cette page</a>.</p>
 </BaseLayout>
