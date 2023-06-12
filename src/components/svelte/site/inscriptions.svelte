@@ -364,7 +364,7 @@
             }
             if (inscriptionsAEffacer.length > 0) {
                 for (const ins of inscriptionsAEffacer) {
-                    const url = "653/" + adhe + "/"
+                    const url = "653/" + ins + "/"
                     await functionsCall("baserowAPI", {type: "delete", finURL:JSON.stringify([url])})
                 }
             }
