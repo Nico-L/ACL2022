@@ -4,7 +4,7 @@ const baserowURL = "https://baserow.luchier.fr/api/database/rows/table/"
 
 const handler = async function (event) {
   const type = event.queryStringParameters.type || "get"
-  const finURL = event.queryStringParameters.finURL || null
+  const finURL = JSON.parse(event.queryStringParameters.finURL) || null
   const body = event.queryStringParameters.body || null
   var jsonFetch = { method: type, headers: { 'Content-Type': 'application/json', Accept: 'application/json', Authorization:"Token "+token }}
   if (type === "POST" || type === "PATCH") {
@@ -12,8 +12,7 @@ const handler = async function (event) {
   }
 
   try {
-    const response = await fetch(baserowURL + finURL, jsonFetch)
-
+    const response = await fetch(baserowURL + finURL.join("&"), jsonFetch)
     if (!response.ok) {
       // NOT res.status >= 200 && res.status < 300
       return { statusCode: response.status, body: response.statusText }

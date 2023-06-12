@@ -73,7 +73,10 @@
             recupEnCours = true
             etatInconnu = false
             const uuid = extracted[1]
-            const recupAdherents = (await functionsCall("baserowAPI", {type: "get", finURL:"652/?user_field_names=true&search="+uuid})).data.results
+            console.log('uuid', uuid)
+            const filter_url = "filter__field_5764__equal=" + uuid
+            const recupAdherents = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["652/?user_field_names=true",filter_url])})).data.results
+            console.log('data adhenre', recupAdherents)
             if(recupAdherents.length > 0)
             {
                 inscription.uuid = uuid
@@ -91,7 +94,8 @@
                     if (index > 0) {prenomsInscription = prenomsInscription + ", " + row["prenom"]}
                     var inscrits = []
                     for (const inscription of row.inscriptions) {
-                        const inscrit = (await functionsCall("baserowAPI", {type: "get", finURL:"653/" + inscription.id + "/?user_field_names=true"})).data
+                        const url = "653/" + inscription.id + "/?user_field_names=true"
+                        const inscrit = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify([url])})).data
                         inscrits.push(inscrit)
                     }
                     var instruments = []
@@ -354,12 +358,14 @@
             messageSaving = "Enregistrement en cours"
             if (adherentAEffacer.length > 0) {
                 for (const adhe of adherentAEffacer) {
-                    await functionsCall("baserowAPI", {type: "delete", finURL:"652/" + adhe + "/"})
+                    const url = "652/" + adhe + "/"
+                    await functionsCall("baserowAPI", {type: "delete", finURL:JSON.stringify([url])})
                 }
             }
             if (inscriptionsAEffacer.length > 0) {
                 for (const ins of inscriptionsAEffacer) {
-                    await functionsCall("baserowAPI", {type: "delete", finURL:"653/" + ins + "/"})
+                    const url = "653/" + adhe + "/"
+                    await functionsCall("baserowAPI", {type: "delete", finURL:JSON.stringify([url])})
                 }
             }
 
@@ -426,11 +432,11 @@
                 var sectionsIds=[]
                 //const retourInscriptions = (await functionsCall("baserowAPI", {type: "POST", finURL:"653/batch/?user_field_names=true", body: JSON.stringify({items: items})})).data
                 if (posts.length > 0) {
-                    const retourInscriptions = (await functionsCall("baserowAPI", {type: "POST", finURL:"653/batch/?user_field_names=true", body: JSON.stringify({items: posts})}))//.data
+                    const retourInscriptions = (await functionsCall("baserowAPI", {type: "POST", finURL:JSON.stringify(["653/batch/?user_field_names=true"]), body: JSON.stringify({items: posts})}))//.data
                     sectionsIds = [...sectionsIds, ...retourInscriptions.data.items.map((item) => item.id)]
                 }
                 if (patchs.length > 0) {
-                    const retourInscriptions = (await functionsCall("baserowAPI", {type: "PATCH", finURL:"653/batch/?user_field_names=true", body: JSON.stringify({items: patchs})}))//.data
+                    const retourInscriptions = (await functionsCall("baserowAPI", {type: "PATCH", finURL:JSON.stringify(["653/batch/?user_field_names=true"]), body: JSON.stringify({items: patchs})}))//.data
                     sectionsIds = [...sectionsIds, ...retourInscriptions.data.items.map((item) => item.id)]
                 }
                 //const sectionsIds = retourInscriptions.items.map((item) => item.id)
@@ -457,10 +463,11 @@
                     "cout": parseFloat(coutParInscrit*inscription.facteurQF).toFixed(2)
                 }
                 var typeSave = "POST"
-                var finURL = "652/?user_field_names=true"
+                var finURL = JSON.stringify(["652/?user_field_names=true"])
                 if (inscrit.id) {
                     //adherent.id = inscrit.id
-                    finURL = "652/" + inscrit.id + "/?user_field_names=true"
+                    let finURLTemp = "652/" + inscrit.id + "/?user_field_names=true"
+                    finURL = JSON.stringify([finURLTemp])
                     typeSave = "PATCH"
                 }
                 const retourAdherent = (await functionsCall("baserowAPI", {type: typeSave, finURL: finURL, body: JSON.stringify(adherent)})).data
@@ -485,7 +492,8 @@
                     dataFactureEmail.push({lien: uploadPdf.url, prenom: inscrit.prenom})
                 }
                 const updateDataAdherent= {"fichiers_factures": fichiersFactures }
-                const updateAdherent = (await functionsCall("baserowAPI", {type: "PATCH", finURL:"652/"+adherentId+"/?user_field_names=true", body: JSON.stringify(updateDataAdherent)}))
+                const url = "652/"+adherentId+"/?user_field_names=true"
+                const updateAdherent = (await functionsCall("baserowAPI", {type: "PATCH", finURL:JSON.stringify([url]), body: JSON.stringify(updateDataAdherent)}))
             }
             adherentAEffacer = []
             messageSaving = "Envoi du mail récapitulatif"
