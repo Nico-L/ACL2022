@@ -12,7 +12,6 @@ const handler = async function (event) {
   }
 
   const urlFinale = baserowURL + finURL.join("&")
-  console.log('url finale', urlFinale)
 
   try {
     const response = await fetch(urlFinale, jsonFetch)
