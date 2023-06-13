@@ -930,7 +930,7 @@
                                             </div> 
                                                 {#if lesInscriptions[index].FM && lesInscriptions[index].FM.tarif}
                                                     <div class={"mx-auto font-semibold text-sm text-center w-full text-fondContenu rounded p-1 " + lesCouleurs[index % 3].bg}>
-                                                        durée : {lesInscriptions[index].FM.duree} - tarif : {parseFloat(lesInscriptions[index].FM.tarif*inscription.facteurQF).toFixed(2)} €
+                                                        durée : {lesInscriptions[index].FM.duree==="1.00" ? "1 heure" : lesInscriptions[index].FM.duree} - tarif : {parseFloat(lesInscriptions[index].FM.tarif*inscription.facteurQF).toFixed(2)} €
                                                     </div>
                                                 {/if}
                                         </div> 
@@ -964,7 +964,7 @@
                                                     <div>Durée : </div>
                                                     {#each tarifInstruments as tarif, indexTarif}
                                                         <CheckBox 
-                                                            label={tarif.duree}
+                                                            label={tarif.duree + " min"}
                                                             lblClass={lesCouleurs[index % 3].textSombre}
                                                             cbClass={lesCouleurs[index % 3].cb}
                                                             checked={lesInscriptions[index].instruments[indexInstrument].duree === tarif.duree}
@@ -989,7 +989,7 @@
                                                     </div>
                                                 </div>
                                                 <div class={"mx-auto font-semibold text-sm text-center w-full text-fondContenu rounded p-1 " + lesCouleurs[index % 3].bg}>
-                                                    durée : {lesInscriptions[index].instruments[indexInstrument].duree} - tarif : {parseFloat(lesInscriptions[index].instruments[indexInstrument].tarif*inscription.facteurQF).toFixed(2)} €
+                                                    durée : {lesInscriptions[index].instruments[indexInstrument].duree} min - tarif : {parseFloat(lesInscriptions[index].instruments[indexInstrument].tarif*inscription.facteurQF).toFixed(2)} €
                                                 </div>
                                             </div>
                                         {/each}

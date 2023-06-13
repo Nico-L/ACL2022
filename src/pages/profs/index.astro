@@ -1,0 +1,51 @@
+---
+import { Image } from '@astrojs/image/components';
+
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/650/?user_field_names=true&order_by=nom", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+const lesProfs = (await data.json()).results.map((item) => {return {nom: item.nom, prenom: item.prenom, photo: item.photo, sections: item.sections}})
+
+console.log('les profs', lesProfs[0].sections)
+---
+<BaseLayout title="Nos professeurs">
+    <h1 >"Nos professeurs"</h1>
+    <p>Voici les professeurs qui animent nos cours et ateliers</p>
+    <div class="cartes">
+        {lesProfs.map((prof) => (
+        <article class="carte">
+            <header>
+                
+                <h2>{prof.nom === "TBD" ?
+                    "recrutement en cours"
+                    :
+                    prof.nom + " " + prof.prenom}</h2>
+            </header>
+            {prof.photo.length > 0 &&
+                <Image src={prof.photo[0].url} width={174} height={187} format="png" alt={prof.nom + " " + prof.prenom} />
+            }
+            <div>
+                {prof.sections.map((section) => {return section.value}).join(", ")}
+                </div>
+        </article>
+            ))}
+    </div>  
+</BaseLayout>
+
+<style>
+    .cartes {
+        @apply flex gap-2 flex-wrap text-center justify-around mt-4;
+    }
+
+    .carte {
+        @apply p-1 min-w-200px max-w-200px border border-bleu-900 rounded bg-bleu-300/20
+    }
+
+    .carte header {
+        @apply mb-1;
+    }
+
+    .carte img {
+        @apply mx-auto rounded-md mb-2;
+    }
+</style>
