@@ -101,7 +101,6 @@
                     var inscriptionsId = []
                     let FM
                     inscrits.forEach((inscrit) => {
-                        console.log('einsc', inscrit)
                         const sectionProfId = inscrit.professeur_section[0].id
                         const dataProfSection = sectionProf.filter((item) => item.id === sectionProfId)[0]
                         const zeProfId = dataProfSection.profId
@@ -173,7 +172,6 @@
                         voeux: row["voeux"]
                     }
                     ]
-                    console.log('les i', lesInscriptions)
                     recupEnCours = false
                 })
 
@@ -429,7 +427,6 @@
                 }
                 //gestion des factures
                 var sectionsIds=[]
-                //const retourInscriptions = (await functionsCall("baserowAPI", {type: "POST", finURL:"653/batch/?user_field_names=true", body: JSON.stringify({items: items})})).data
                 if (posts.length > 0) {
                     const retourInscriptions = (await functionsCall("baserowAPI", {type: "POST", finURL:JSON.stringify(["653/batch/?user_field_names=true"]), body: JSON.stringify({items: posts})}))//.data
                     sectionsIds = [...sectionsIds, ...retourInscriptions.data.items.map((item) => item.id)]
@@ -438,8 +435,7 @@
                     const retourInscriptions = (await functionsCall("baserowAPI", {type: "PATCH", finURL:JSON.stringify(["653/batch/?user_field_names=true"]), body: JSON.stringify({items: patchs})}))//.data
                     sectionsIds = [...sectionsIds, ...retourInscriptions.data.items.map((item) => item.id)]
                 }
-                //const sectionsIds = retourInscriptions.items.map((item) => item.id)
-                console.log('retour ids', sectionsIds)
+
                 var adherent = {
                     "uuid": inscription.uuid,
                     "email referent": inscription.emailReferent,
