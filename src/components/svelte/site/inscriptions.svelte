@@ -36,7 +36,7 @@
 
     var inscription = {uuid: uuidv4(), referent: "", emailReferent: "", commune: "Le Sappey en Chartreuse", QF:null, facteurQF: 1, adhesion: 0, verif: {referent: false, emailReferent: false}}
     var prenomsInscription = ""
-    var uneInscription = {nom:"", prenom:"", email1:"", email2:"", age:null, telephone1:"", telephone2:"", FM:null, instruments:[], profs:[], durees:[], ateliers:[], verif: {prenom: false, telephone: false, email: false}}
+    var uneInscription = {nom:"", prenom:"", email1:"", email2:"", age:null, telephone1:"", telephone2:"", voeux: "", FM:null, instruments:[], profs:[], durees:[], ateliers:[], verif: {prenom: false, telephone: false, email: false}}
     var lesInscriptions = []
     var isOpen = []
     var lesCouleurs = [
@@ -73,10 +73,8 @@
             recupEnCours = true
             etatInconnu = false
             const uuid = extracted[1]
-            console.log('uuid', uuid)
             const filter_url = "filter__field_5764__equal=" + uuid
             const recupAdherents = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["652/?user_field_names=true",filter_url])})).data.results
-            console.log('data adhenre', recupAdherents)
             if(recupAdherents.length > 0)
             {
                 inscription.uuid = uuid
@@ -171,7 +169,8 @@
                         instruments:instruments,
                         ateliers:ateliers,
                         inscriptionsId: inscriptionsId,
-                        reglement: reglement
+                        reglement: reglement,
+                        voeux: row["voeux"]
                     }
                     ]
                     console.log('les i', lesInscriptions)
@@ -460,7 +459,8 @@
                     "age": parseInt(inscrit.age),
                     "reglement": reglement,
                     "facture": besoinFacture,
-                    "cout": parseFloat(coutParInscrit*inscription.facteurQF).toFixed(2)
+                    "cout": parseFloat(coutParInscrit*inscription.facteurQF).toFixed(2),
+                    "voeux": inscrit.voeux
                 }
                 var typeSave = "POST"
                 var finURL = JSON.stringify(["652/?user_field_names=true"])
@@ -940,8 +940,6 @@
                                         </div> 
                                     </div>
                                 </div>
-                            </div>
-                            <div class="max-w-460px">
                                 <div class="mb-2">
                                     <div class="font-semibold">
                                         Instrument(s)
@@ -1001,6 +999,9 @@
                                         {/each}
                                     {/if}
                                 </div>
+                            </div>
+                            <div class="max-w-460px">
+                                
                                 <div class="mb-2">
                                     <div class="font-semibold flex justify-between items-center">
                                         Musique d'ensemble
@@ -1017,11 +1018,25 @@
                                                         checked={lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre}) != 0}
                                                         on:checkChange={(e)=>choixSection(e, atelier, "atelier", index, lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre})[0])}/>
                                                     <div class={"text-sm text-center " + lesCouleurs[index % 3].textSombre}>
-                                                        {atelier.duree} - {atelier.creneaux}s - {parseFloat(atelier.tarif*inscription.facteurQF).toFixed(2)}&nbsp;€/an 
+                                                        {atelier.creneaux}s - {parseFloat(atelier.tarif*inscription.facteurQF).toFixed(2)}&nbsp;€/an 
                                                     </div>
                                                 </div>  
                                             {/each}
                                         </div> 
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="font-semibold">
+                                        Un vœux ?
+                                    </div>
+                                    <div class="mb-2 px-2 pl-1 ">
+                                        <div>Notre association ne peut proposer tous les cours d'instruments et ateliers. Le bassin de vie (regroupent des écoles de musique du Sappey, de Meylan, Corenc et La Tronche) peuvent avoir des propositions complémentaires. Si vous seriez intéressé par un instrument ou un atelier particulier, merci de l'indiquer dans le champs suivant.</div>
+                                        <Input 
+                                            id="voeux"
+                                            bind:value={inscrit.voeux}
+                                            classes="ml-1 mr-1"
+                                            label="Un vœux ?"
+                                        />
                                     </div>
                                 </div>
                             </div>
