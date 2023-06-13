@@ -5,21 +5,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 
 var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/650/?user_field_names=true&order_by=nom", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const lesProfs = (await data.json()).results.map((item) => {return {nom: item.nom, prenom: item.prenom, photo: item.photo, sections: item.sections}})
-
-console.log('les profs', lesProfs[0].sections)
 ---
 <BaseLayout title="Nos professeurs">
-    <h1 >"Nos professeurs"</h1>
+    <h1 >Nos professeurs</h1>
     <p>Voici les professeurs qui animent nos cours et ateliers</p>
     <div class="cartes">
         {lesProfs.map((prof) => (
         <article class="carte">
             <header>
-                
-                <h2>{prof.nom === "TBD" ?
-                    "recrutement en cours"
+                {prof.nom === "TBD" ?
+                    <h2>recrutement en cours</h2>
                     :
-                    prof.nom + " " + prof.prenom}</h2>
+                    <h2>{prof.prenom}<br />{prof.nom}</h2>}
             </header>
             {prof.photo.length > 0 &&
                 <Image src={prof.photo[0].url} width={174} height={187} format="png" alt={prof.nom + " " + prof.prenom} />
@@ -42,9 +39,11 @@ console.log('les profs', lesProfs[0].sections)
     }
 
     .carte header {
-        @apply mb-1;
+        @apply mb-1 p-0;
     }
-
+    .carte header h2 {
+        @apply m-0 p-0;
+    }
     .carte img {
         @apply mx-auto rounded-md mb-2;
     }

@@ -7,6 +7,7 @@ const sectionsTemp = await data.json()
 const sections = sectionsTemp.results
 data = await fetch(import.meta.env.BASEROW_URL + "rows/table/650/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const professeursTemp = await data.json()
+
 const professeurs = professeursTemp.results.map(prof => {return {id: prof.id, prenom: prof.prenom, nom: prof.nom, acl_sections: prof.sections}})
 data = await fetch(import.meta.env.BASEROW_URL + "rows/table/654/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const lesTarifsTemp = await data.json()
@@ -20,7 +21,6 @@ const saison = saisonTemp.titre
 data = await fetch(import.meta.env.BASEROW_URL + "rows/table/672/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const sectionProfTemp = (await data.json()).results
 const sectionProf = sectionProfTemp.map((sp) => {return {id: sp.id, profId: sp.professeur[0].id, sectionId: sp.section[0].id}})
-
 ---
 <BaseLayout title="Inscriptions">
   <h1 class="px-2 text-4xl mb-2">Inscriptions à l'école de musique</h1>
