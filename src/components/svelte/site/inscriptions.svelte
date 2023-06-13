@@ -36,7 +36,7 @@
 
     var inscription = {uuid: uuidv4(), referent: "", emailReferent: "", commune: "Le Sappey en Chartreuse", QF:null, facteurQF: 1, adhesion: 0, verif: {referent: false, emailReferent: false}}
     var prenomsInscription = ""
-    var uneInscription = {nom:"", prenom:"", email1:"", email2:"", age:null, telephone1:"", telephone2:"", voeux: "", FM:null, instruments:[], profs:[], durees:[], ateliers:[], verif: {prenom: false, telephone: false, email: false}}
+    var uneInscription = {nom:"", prenom:"", email1:"", email2:"", age:null, telephone1:"", telephone2:"", voeux: "", instrument_atelier: "", FM:null, instruments:[], profs:[], durees:[], ateliers:[], verif: {prenom: false, telephone: false, email: false}}
     var lesInscriptions = []
     var isOpen = []
     var lesCouleurs = [
@@ -169,7 +169,8 @@
                         ateliers:ateliers,
                         inscriptionsId: inscriptionsId,
                         reglement: reglement,
-                        voeux: row["voeux"]
+                        voeux: row["voeux"],
+                        instrument_atelier: row["instrument_atelier"]
                     }
                     ]
                     recupEnCours = false
@@ -456,7 +457,8 @@
                     "reglement": reglement,
                     "facture": besoinFacture,
                     "cout": parseFloat(coutParInscrit*inscription.facteurQF).toFixed(2),
-                    "voeux": inscrit.voeux
+                    "voeux": inscrit.voeux,
+                    "instrument_atelier": inscrit.instrument_atelier
                 }
                 var typeSave = "POST"
                 var finURL = JSON.stringify(["652/?user_field_names=true"])
@@ -941,7 +943,7 @@
                                         Instrument(s)
                                     </div>
                                     <div class="mb-2 px-2 pl-1 ">
-                                        <div>Cocher le ou les instrument(s) concerné(s).</div>
+                                        <div class="text-sm">Cocher le ou les instrument(s) concerné(s).</div>
                                         <div class="flex flex-wrap gap-2 justify-around w-full rounded bg-fondContenu border border-bleu-900 p-2">
                                             {#each instruments as instrument}
                                             <CheckBox 
@@ -1004,24 +1006,34 @@
                                     </div>
                                     <div class="mb-2 px-2 pl-1 ">
                                         <div class="text-sm">Cocher le ou les atelier(s) concerné(s). Sous réserve d'un nombre suffisant de participants.</div>
-                                        <div class={"grid grid-cols-2 gap-1 w-full rounded p-1 " + lesCouleurs[index % 3].bg}>
-                                            {#each ateliers as atelier}
-                                                <div class="flex flex-col items-center justify-start px-1 mb-1 rounded bg-fondContenu p-1">
-                                                    <CheckBox 
-                                                        label={atelier.titre} 
-                                                        lblClass={lesCouleurs[index % 3].textSombre}
-                                                        cbClass={lesCouleurs[index % 3].cb}
-                                                        checked={lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre}) != 0}
-                                                        on:checkChange={(e)=>choixSection(e, atelier, "atelier", index, lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre})[0])}/>
-                                                    <div class={"text-sm text-center " + lesCouleurs[index % 3].textSombre}>
-                                                        {atelier.creneaux} - {parseFloat(atelier.tarif*inscription.facteurQF).toFixed(2)}&nbsp;€/an 
-                                                    </div>
-                                                </div>  
-                                            {/each}
-                                        </div> 
+                                        <div class={"w-full rounded p-1 " + lesCouleurs[index % 3].bg}>
+                                            <div class="grid grid-cols-2 gap-1">
+                                                {#each ateliers as atelier}
+                                                    <div class="flex flex-col items-center justify-start px-1 mb-1 rounded bg-fondContenu p-1">
+                                                        <CheckBox 
+                                                            label={atelier.titre} 
+                                                            lblClass={lesCouleurs[index % 3].textSombre}
+                                                            cbClass={lesCouleurs[index % 3].cb}
+                                                            checked={lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre}) != 0}
+                                                            on:checkChange={(e)=>choixSection(e, atelier, "atelier", index, lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre})[0])}/>
+                                                        <div class={"text-sm text-center " + lesCouleurs[index % 3].textSombre}>
+                                                            {atelier.creneaux} - {parseFloat(atelier.tarif*inscription.facteurQF).toFixed(2)}&nbsp;€/an 
+                                                        </div>
+                                                    </div>  
+                                                {/each}
+                                            </div>
+                                            <div class="text-sm text-gray-100">
+                                                Le cas échéant, merci de préciser votre instrument :
+                                            </div>
+                                            <Input 
+                                                id="instrumentAtelier"
+                                                bind:value={inscrit.instrument_atelier}
+                                                classes="ml-1 mr-1"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="mb-2">
+                                <div class="mb-2 text-base">
                                     <div class="font-semibold">
                                         Un vœux ?
                                     </div>
