@@ -1014,7 +1014,7 @@
                                                         checked={lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre}) != 0}
                                                         on:checkChange={(e)=>choixSection(e, atelier, "atelier", index, lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre})[0])}/>
                                                     <div class={"text-sm text-center " + lesCouleurs[index % 3].textSombre}>
-                                                        {atelier.creneaux}s - {parseFloat(atelier.tarif*inscription.facteurQF).toFixed(2)}&nbsp;€/an 
+                                                        {atelier.creneaux} - {parseFloat(atelier.tarif*inscription.facteurQF).toFixed(2)}&nbsp;€/an 
                                                     </div>
                                                 </div>  
                                             {/each}

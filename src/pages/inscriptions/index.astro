@@ -24,6 +24,7 @@ const sectionProf = sectionProfTemp.map((sp) => {return {id: sp.id, profId: sp.p
 ---
 <BaseLayout title="Inscriptions">
   <h1 class="px-2 text-4xl mb-2">Inscriptions à l'école de musique</h1>
+  <p class="ml-4">Vous pouvez consulter les tarifs <a href="/tarifs">ici</a>.</p>
   <Inscriptions client:load {professeurs} {sections} {sectionProf} {adhesionsTarifs} {lesTarifs} {saison}/>
 </BaseLayout>
 
