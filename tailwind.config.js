@@ -18,6 +18,7 @@ module.exports = {
         '10': '10px',
       },
       minWidth: {
+        '174px': '174px',
         '200px': '200px',
         '380px': '380px',
         '32': '8rem',
@@ -27,6 +28,7 @@ module.exports = {
       maxWidth:  {
         '20px': '20px',
         '100px': '100px',
+        '174px': '174px',
         '200px': '200px',
         '380px': '380px',
         '460px': '460px',

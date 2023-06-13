@@ -12,18 +12,18 @@ const lesProfs = (await data.json()).results.map((item) => {return {nom: item.no
     <div class="cartes">
         {lesProfs.map((prof) => (
         <article class="carte">
-            <header>
-                {prof.nom === "TBD" ?
-                    <h2>recrutement en cours</h2>
-                    :
-                    <h2>{prof.prenom}<br />{prof.nom}</h2>}
-            </header>
             {prof.photo.length > 0 &&
                 <Image src={prof.photo[0].url} width={174} height={187} format="png" alt={prof.nom + " " + prof.prenom} />
             }
-            <div>
-                {prof.sections.map((section) => {return section.value}).join(", ")}
-                </div>
+            <div class="bandeau">
+                {prof.nom === "TBD" ?
+                    <h2>recrutement en cours</h2>
+                    :
+                    <h2>{prof.prenom} {prof.nom}</h2>}
+                    <div>
+                        {prof.sections.map((section) => {return section.value}).join(", ")}
+                    </div>
+            </div>
         </article>
             ))}
     </div>  
@@ -35,16 +35,38 @@ const lesProfs = (await data.json()).results.map((item) => {return {nom: item.no
     }
 
     .carte {
-        @apply p-1 min-w-200px max-w-200px border border-bleu-900 rounded bg-bleu-300/20
+        @apply p-0 min-w-174px max-w-174px rounded;
     }
 
-    .carte header {
-        @apply mb-1 p-0;
+    .carte .bandeau {
+        @apply text-gray-200 h-16 rounded-b;
     }
-    .carte header h2 {
-        @apply m-0 p-0;
+
+    .carte:nth-child(4n + 1) .bandeau {
+        @apply bg-bleu-800;
     }
+
+    .carte:nth-child(4n + 2) .bandeau {
+        @apply bg-vert-800;
+    }
+
+    .carte:nth-child(4n + 3) .bandeau {
+        @apply bg-jaune-800;
+    }
+
+    .carte:nth-child(4n + 4) .bandeau {
+        @apply bg-rouge-800;
+    }
+
+    .carte .bandeau h2 {
+        @apply m-0 p-0 text-base font-bold;
+    }
+
+    .carte .bandeau div {
+        @apply text-sm;
+    }
+
     .carte img {
-        @apply mx-auto rounded-md mb-2;
+        @apply mx-auto rounded-t;
     }
 </style>
