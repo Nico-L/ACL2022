@@ -11,8 +11,11 @@ const handler = async function (event) {
     jsonFetch.body = body
   }
 
+  const urlFinale = baserowURL + finURL.join("&")
+  console.log('url finale', urlFinale)
+
   try {
-    const response = await fetch(baserowURL + finURL.join("&"), jsonFetch)
+    const response = await fetch(urlFinale, jsonFetch)
     if (!response.ok) {
       // NOT res.status >= 200 && res.status < 300
       return { statusCode: response.status, body: response.statusText }
