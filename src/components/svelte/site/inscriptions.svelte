@@ -1170,7 +1170,6 @@
                                     <div class="text-sm text-rouge-800 whitespace-nowrap ml-2">Il manque l'adresse email référente ou l'adresse n'est pas valide.</div>
                                 {/if}
                                 {#each lesInscriptions as inscrit, index}
-                                {inscrit.verif.age}
                                     {#if (inscrit.FM && inscrit.FM.tarif === null && inscrit.instruments.length === 0 && inscrit.ateliers.length === 0) || !inscrit.verif.prenom || !inscrit.verif.telephone || !inscrit.verif.email || !inscrit.verif.age}
                                         <div class="font-medium">
                                             Inscription 
