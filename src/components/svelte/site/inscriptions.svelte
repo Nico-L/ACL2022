@@ -34,9 +34,9 @@
     const tarifInstruments = lesTarifs.filter(item => item.type.includes("instrument") && !item.type.includes("instrument-15mn")).map((item) => {return {duree: parseFloat(item.duree), tarif: parseFloat(item.tarif)}})
     const ateliers = sections.filter((section) => {return section && section.type && section.type.value === "atelier"})
 
-    var inscription = {uuid: uuidv4(), referent: "", emailReferent: "", commune: "Le Sappey en Chartreuse", QF:null, facteurQF: 1, adhesion: 0, verif: {referent: false, emailReferent: false}}
+    var inscription = {uuid: uuidv4(), referent: "", emailReferent: "", commune: "Le Sappey en Chartreuse", QF:null, facteurQF: 1, adhesion: 0, verif: {referent: false, emailReferent: false, age: false}}
     var prenomsInscription = ""
-    var uneInscription = {nom:"", prenom:"", email1:"", email2:"", age:null, telephone1:"", telephone2:"", voeux: "", instrument_atelier: "", FM:null, instruments:[], profs:[], durees:[], ateliers:[], verif: {prenom: false, telephone: false, email: false}}
+    var uneInscription = {nom:"", prenom:"", email1:"", email2:"", age:null, telephone1:"", telephone2:"", voeux: "", instrument_atelier: "", FM:null, instruments:[], profs:[], durees:[], ateliers:[], verif: {prenom: false, telephone: false, email: false, age: false}}
     var lesInscriptions = []
     var isOpen = []
     var lesCouleurs = [
@@ -63,6 +63,8 @@
     var inscriptionsAEffacer = []
 
     var flagTotalPrix = false
+
+    var flagAccepteSave = false
 
     onMount(async () => {
         urlModifInscription = window.location.search
@@ -100,7 +102,8 @@
                     var ateliers = []
                     var inscriptionsId = []
                     let FM
-                    inscrits.forEach((inscrit) => {
+                    let instAtelier = ""
+                    inscrits.forEach((inscrit, index) => {
                         const sectionProfId = inscrit.professeur_section[0].id
                         const dataProfSection = sectionProf.filter((item) => item.id === sectionProfId)[0]
                         const zeProfId = dataProfSection.profId
@@ -131,6 +134,11 @@
                                     id: zeSectionId, //inscrit.section[0].id, 
                                     profId: zeProfId,//inscrit.nomProf[0].id, 
                                     tarif: parseFloat(inscrit.tarif)/inscription.facteurQF
+                                }
+                                console.log('inst ate', inscrit.instrument_atelier)
+                                if (inscrit.instrument_atelier!== null || inscrit.instrument_atelier!=="") {
+                                    console.log('bob ?', inscrits[index])
+                                    instAtelier = inscrit.instrument_atelier
                                 }
                                 ateliers.push(ate)
                                 break;
@@ -170,7 +178,7 @@
                         inscriptionsId: inscriptionsId,
                         reglement: reglement,
                         voeux: row["voeux"],
-                        instrument_atelier: row["instrument_atelier"]
+                        instrument_atelier: instAtelier
                     }
                     ]
                     recupEnCours = false
@@ -388,7 +396,7 @@
                     if (item.profId && item.profId !== '') {profId = item.profId}
                     const zeSectionProf = sectionProf.filter((sp) => sp.profId === profId && sp.sectionId === item.id).map((item) => {return item.id})
                     //items.push({tarif: item.tarif*inscription.facteurQF, professeur_section: zeSectionProf})
-                    const ins = {tarif: item.tarif*inscription.facteurQF, professeur_section: zeSectionProf}
+                    let ins = {tarif: item.tarif*inscription.facteurQF, professeur_section: zeSectionProf, instrument_atelier: inscrit.instrument_atelier}
                     if (item.saveId) {
                         ins.id = item.saveId
                         patchs.push(ins)
@@ -402,7 +410,7 @@
                     if (item.profId && item.profId !== '') {profId = item.profId}
                     const zeSectionProf = sectionProf.filter((sp) => sp.profId === profId && sp.sectionId === item.id).map((item) => {return item.id})
                     //items.push({duree: item.duree, tarif: item.tarif*inscription.facteurQF, professeur_section: zeSectionProf})
-                    const ins = {duree: item.duree, tarif: item.tarif*inscription.facteurQF, professeur_section: zeSectionProf}
+                    let ins = {duree: item.duree, tarif: item.tarif*inscription.facteurQF, professeur_section: zeSectionProf}
                     if (item.saveId) {
                         ins.id = item.saveId
                         patchs.push(ins)
@@ -457,8 +465,7 @@
                     "reglement": reglement,
                     "facture": besoinFacture,
                     "cout": parseFloat(coutParInscrit*inscription.facteurQF).toFixed(2),
-                    "voeux": inscrit.voeux,
-                    "instrument_atelier": inscrit.instrument_atelier
+                    "voeux": inscrit.voeux
                 }
                 var typeSave = "POST"
                 var finURL = JSON.stringify(["652/?user_field_names=true"])
@@ -590,7 +597,7 @@
     }
 
     function verifAge(index) {
-        lesInscriptions[index].verif.age = lesInscriptions[index].age !== null || lesInscriptions[index].age !== 0
+        lesInscriptions[index].verif.age = lesInscriptions[index].age !== null && lesInscriptions[index].age !== 0
     }
 
     function verifCommune() {
@@ -637,6 +644,7 @@
         lesInscriptions.forEach((inscrit)=>{
             noProb = noProb && inscrit.verif.email && inscrit.verif.telephone && inscrit.verif.prenom && inscrit.verif.age
             noProb = noProb && !(inscrit.FM && inscrit.FM.tarif === null && inscrit.instruments.length === 0 && inscrit.ateliers.length === 0)
+            noProb = noProb && flagAccepteSave
         })
         noProbleme = noProb
     }
@@ -980,7 +988,7 @@
                                                         {#each listeProfs(instrument.instrument) as prof}
                                                             <div class="mr-3">
                                                                 <CheckBox 
-                                                                    label={prof.prenom + " " + prof.nom}
+                                                                    label={prof.nom == "TBD" ?"précisé dès que possible":prof.prenom + " " + prof.nom}
                                                                     lblClass={lesCouleurs[index % 3].textSombre}
                                                                     cbClass={lesCouleurs[index % 3].cb}
                                                                     checked={inscrit.instruments[indexInstrument].prof === prof.prenom + " " + prof.nom}
@@ -1139,6 +1147,16 @@
                                 checked={besoinFacture === true}
                                 on:checkChange={(e)=>{besoinFacture = !besoinFacture }}/>
                         </div>
+                        <div>
+                            <div class="font-medium">Vos informations ne nous serve qu'à la gestion de notre association et à nous permettre de vous contacter. En cochant la case ci-dessous, vous acceptez que nous les enregistrions pour cette saison.</div>
+                            <CheckBox 
+                                label="J'accepte que mes informations soient enregistrées" 
+                                lblClass={lesCouleurs[nRecap % 3].textSombre}
+                                cbClass={lesCouleurs[nRecap % 3].cb}
+                                checked={flagAccepteSave}
+                                on:checkChange={()=>{flagAccepteSave = !flagAccepteSave}}
+                                />
+                        </div>
                         {#if inscription.facteurQF < 1}
                             <div class={"mt-2 bg-fondContenu rounded-lg p-1 border border " + lesCouleurs[nRecap % 3].border}>Merci de nous faire parvenir l'attestation de quotient familial avec votre réglement.</div>
                         {/if}
@@ -1152,7 +1170,8 @@
                                     <div class="text-sm text-rouge-800 whitespace-nowrap ml-2">Il manque l'adresse email référente ou l'adresse n'est pas valide.</div>
                                 {/if}
                                 {#each lesInscriptions as inscrit, index}
-                                    {#if (inscrit.FM && inscrit.FM.tarif === null && inscrit.instruments.length === 0 && inscrit.ateliers.length === 0) || !inscrit.verif.prenom || !inscrit.verif.telephone || !inscrit.verif.email}
+                                {inscrit.verif.age}
+                                    {#if (inscrit.FM && inscrit.FM.tarif === null && inscrit.instruments.length === 0 && inscrit.ateliers.length === 0) || !inscrit.verif.prenom || !inscrit.verif.telephone || !inscrit.verif.email || !inscrit.verif.age}
                                         <div class="font-medium">
                                             Inscription 
                                             {#if inscrit.prenom !== ""}
@@ -1178,39 +1197,44 @@
                                         {/if}
                                     {/if}
                                 {/each}
+                                {#if !flagAccepteSave}
+                                    <div class="mt-2 text-sm font-medium text-rouge-800 whitespace-nowrap">Merci de cocher la case nous permettant d'enregistrer vos informations.</div>
+                                {/if}
                             </div>
                         {/if}
                         <div>Merci de bien vérifier les informations de votre ou vos inscription(s) avant d'enregistrer votre inscription en cliquant sur le bouton ci-dessous.</div>
-                        <div class="flex justify-center mt-2">
-                            <Bouton
-                                largeur="w-80"
-                                couleur={lesCouleurs[nRecap % 3].sombre}
-                                active = {lesCouleurs[nRecap % 3].active}
-                                on:actionBouton={saveInscription}
-                                >
-                                <div class="flex justify-center items-center px-3">
-                                    {#if busySaving}
-                                        <Spinner couleur={lesCouleurs[nRecap % 3].sombre} caption={true}>{messageSaving}</Spinner>
-                                    {:else}
-                                        <div>Enregistrer votre inscription</div>
-                                    {/if}
-                                </div>
-                            </Bouton>
-                            {#if noSave}
-                                <div class="text-rouge-800 text-sm">
-                                    Merci de corriger votre formulaire avant d'enregistrer.
-                                </div>
-                            {/if}
-                            {#if busySaving}
-                                <div class="text-rouge-800 text-sm">
-                                    Ne quittez pas la page avant la fin du processus.
-                                </div>
-                            {/if}
-                            {#if saveOK}
-                                <div class="text-vert-800 text-sm">
-                                    Enregistrement réussi, vous pouvez quittez la page.
-                                </div>
-                            {/if}
+                        <div class="w-full flex flex-col justify-center content-center mt-2">
+                            <div class="mx-auto">
+                                <Bouton
+                                    largeur="w-80"
+                                    couleur={lesCouleurs[nRecap % 3].sombre}
+                                    active = {lesCouleurs[nRecap % 3].active}
+                                    on:actionBouton={saveInscription}
+                                    >
+                                    <div class="flex justify-center items-center px-3">
+                                        {#if busySaving}
+                                            <Spinner couleur={lesCouleurs[nRecap % 3].sombre} caption={true}>{messageSaving}</Spinner>
+                                        {:else}
+                                            <div>Enregistrer votre inscription</div>
+                                        {/if}
+                                    </div>
+                                </Bouton>
+                                {#if noSave}
+                                    <div class="text-rouge-800 text-sm">
+                                        Merci de corriger votre formulaire avant d'enregistrer.
+                                    </div>
+                                {/if}
+                                {#if busySaving}
+                                    <div class="text-rouge-800 text-sm">
+                                        Ne quittez pas la page avant la fin du processus.
+                                    </div>
+                                {/if}
+                                {#if saveOK}
+                                    <div class="text-vert-800 text-sm">
+                                        Enregistrement réussi, vous pouvez quittez la page.
+                                    </div>
+                                {/if}
+                            </div>
                         </div>
                     {/if}
                 </div>

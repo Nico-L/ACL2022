@@ -12,8 +12,10 @@ const lesProfs = (await data.json()).results.map((item) => {return {nom: item.no
     <div class="cartes">
         {lesProfs.map((prof) => (
         <article class="carte">
-            {prof.photo.length > 0 &&
+            {prof.photo.length > 0 ?
                 <Image src={prof.photo[0].url} width={174} height={187} format="png" alt={prof.nom + " " + prof.prenom} />
+                :
+                <Image src={import('./fondProf.png')} width={174} height={187} format="png" alt="image de remplacement" />
             }
             <div class="bandeau">
                 {prof.nom === "TBD" ?
@@ -26,7 +28,12 @@ const lesProfs = (await data.json()).results.map((item) => {return {nom: item.no
             </div>
         </article>
             ))}
-    </div>  
+    </div> 
+    <div class="flex justify-center">
+        <a href="/inscriptions" class="buttonLink">
+            Le formulaire d'inscription
+        </a>
+    </div>
 </BaseLayout>
 
 <style>
