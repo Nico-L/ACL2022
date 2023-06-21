@@ -614,6 +614,12 @@
             }
     }
 
+    function labelProf(prof) {
+        var retour = prof.creneau && prof.creneau !=="" ? prof.prenom + " " + prof.nom +" (" + prof.creneau + ")" : prof.prenom + " " + prof.nom
+        retour = prof.nom == "TBD" ?"précisé dès que possible":retour
+        return retour
+    }
+
     $: {
         if (inscription.QF <= 0 || inscription.QF === null || inscription.QF === "") {
             inscription.facteurQF = 1
@@ -653,6 +659,7 @@
         lesInscriptions = lesInscriptions
         flagTotalPrix = totalPrix() > 0
     }
+
 </script>
 
 <div>
@@ -988,7 +995,7 @@
                                                         {#each listeProfs(instrument.instrument) as prof}
                                                             <div class="mr-3">
                                                                 <CheckBox 
-                                                                    label={prof.nom == "TBD" ?"précisé dès que possible":prof.prenom + " " + prof.nom}
+                                                                    label={labelProf(prof)}
                                                                     lblClass={lesCouleurs[index % 3].textSombre}
                                                                     cbClass={lesCouleurs[index % 3].cb}
                                                                     checked={inscrit.instruments[indexInstrument].prof === prof.prenom + " " + prof.nom}

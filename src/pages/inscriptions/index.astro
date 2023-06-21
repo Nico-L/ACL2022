@@ -8,7 +8,7 @@ const sections = sectionsTemp.results
 data = await fetch(import.meta.env.BASEROW_URL + "rows/table/650/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const professeursTemp = await data.json()
 
-const professeurs = professeursTemp.results.map(prof => {return {id: prof.id, prenom: prof.prenom, nom: prof.nom, acl_sections: prof.sections}})
+const professeurs = professeursTemp.results.map(prof => {return {id: prof.id, prenom: prof.prenom, nom: prof.nom, acl_sections: prof.sections, creneau: prof.creneau}})
 data = await fetch(import.meta.env.BASEROW_URL + "rows/table/654/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const lesTarifsTemp = await data.json()
 const lesTarifs = lesTarifsTemp.results.map((tarif) => {return {duree: tarif.duree_seance, tarif: tarif.tarif_acl, type: tarif.type}})
