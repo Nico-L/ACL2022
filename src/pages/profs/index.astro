@@ -5,6 +5,22 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 
 var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/650/?user_field_names=true&order_by=nom", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const lesProfs = (await data.json()).results.map((item) => {return {nom: item.nom, prenom: item.prenom, photo: item.photo, sections: item.sections}})
+lesProfs.forEach((prof) => {
+    var flagFM = false
+    var sectionCondensee = []
+    prof.sections.forEach((section) => {
+        if (section.value.includes("FM")||section.value.includes("fm")) {
+            if (!flagFM) {
+                sectionCondensee.push("formation musicale")
+                flagFM = true
+            }
+        } else {
+            sectionCondensee.push(section.value)
+        }
+    })
+    prof.sections = sectionCondensee
+    console.log('sections prof', prof.sections)
+})
 ---
 <BaseLayout title="Nos professeurs">
     <h1 >Nos professeurs</h1>
@@ -22,8 +38,8 @@ const lesProfs = (await data.json()).results.map((item) => {return {nom: item.no
                     <h2>recrutement en cours</h2>
                     :
                     <h2>{prof.prenom} {prof.nom}</h2>}
-                    <div>
-                        {prof.sections.map((section) => {return section.value}).join(", ")}
+                    <div class="px-px">
+                        {prof.sections.map((section) => {return section}).join(", ")}
                     </div>
             </div>
         </article>
