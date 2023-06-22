@@ -36,7 +36,7 @@
 
     var inscription = {uuid: uuidv4(), referent: "", emailReferent: "", commune: "Le Sappey en Chartreuse", QF:null, facteurQF: 1, adhesion: 0, verif: {referent: false, emailReferent: false, age: false}}
     var prenomsInscription = ""
-    var uneInscription = {nom:"", prenom:"", email1:"", email2:"", age:null, telephone1:"", telephone2:"", voeux: "", instrument_atelier: "", FM:null, instruments:[], profs:[], durees:[], ateliers:[], verif: {prenom: false, telephone: false, email: false, age: false}}
+    var uneInscription = {nom:"", prenom:"", email1:"", email2:"", age:null, telephone1:"", telephone2:"", voeux: "", instrument_atelier: "", FM:null, instruments:[], profs:[], durees:[], ateliers:[], benevolat: false, verif: {prenom: false, telephone: false, email: false, age: false}}
     var lesInscriptions = []
     var isOpen = []
     var lesCouleurs = [
@@ -178,7 +178,8 @@
                         inscriptionsId: inscriptionsId,
                         reglement: reglement,
                         voeux: row["voeux"],
-                        instrument_atelier: instAtelier
+                        instrument_atelier: instAtelier,
+                        benevolat: row["benevolat"]
                     }
                     ]
                     recupEnCours = false
@@ -465,7 +466,8 @@
                     "reglement": reglement,
                     "facture": besoinFacture,
                     "cout": parseFloat(coutParInscrit*inscription.facteurQF).toFixed(2),
-                    "voeux": inscrit.voeux
+                    "voeux": inscrit.voeux,
+                    "benevolat": inscrit.benevolat
                 }
                 var typeSave = "POST"
                 var finURL = JSON.stringify(["652/?user_field_names=true"])
@@ -1050,16 +1052,30 @@
                                 </div>
                                 <div class="mb-2 text-base">
                                     <div class="font-semibold">
-                                        Un vœux ?
+                                        Un vœu ?
                                     </div>
                                     <div class="mb-2 px-2 pl-1 ">
-                                        <div>Notre association ne peut proposer tous les cours d'instruments et ateliers. Le bassin de vie (regroupent des écoles de musique du Sappey, de Meylan, Corenc et La Tronche) peuvent avoir des propositions complémentaires. Si vous seriez intéressé par un instrument ou un atelier particulier, merci de l'indiquer dans le champs suivant.</div>
+                                        <div>Vous souhaitez pratiquer un instrument ou un atelier de musique d’ensemble qui n’est pas proposé par ACL ? Faites-nous en part ici. </div>
                                         <Input 
                                             id="voeux"
                                             bind:value={inscrit.voeux}
                                             classes="ml-1 mr-1"
-                                            label="Un vœux ?"
+                                            label=""
                                         />
+                                    </div>
+                                </div>
+                                <div class="mb-2 text-base">
+                                    <div class="font-semibold">
+                                        L'ACL recrute
+                                    </div>
+                                    <div class="mb-2 px-2 pl-1 ">
+                                        <div>L’école de musique du Sappey a besoin de vous !</div>
+                                        <CheckBox 
+                                            label="Je suis prêt à devenir bénévole en 2023-2024 pour ACL" 
+                                            lblClass={lesCouleurs[index % 3].textSombre}
+                                            cbClass={lesCouleurs[index % 3].cb}
+                                            checked={inscrit.benevolat}
+                                            on:checkChange={(e)=>{inscrit.benevolat = !inscrit.benevolat}}/>
                                     </div>
                                 </div>
                             </div>
