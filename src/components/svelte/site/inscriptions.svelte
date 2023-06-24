@@ -135,9 +135,7 @@
                                     profId: zeProfId,//inscrit.nomProf[0].id, 
                                     tarif: parseFloat(inscrit.tarif)/inscription.facteurQF
                                 }
-                                console.log('inst ate', inscrit.instrument_atelier)
                                 if (inscrit.instrument_atelier!== null || inscrit.instrument_atelier!=="") {
-                                    console.log('bob ?', inscrits[index])
                                     instAtelier = inscrit.instrument_atelier
                                 }
                                 ateliers.push(ate)
