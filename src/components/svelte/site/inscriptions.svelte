@@ -82,6 +82,7 @@
                 inscription.uuid = uuid
                 inscription.referent = recupAdherents[0]["nom referent"]
                 inscription.emailReferent = recupAdherents[0]["email referent"]
+                inscription.adresse = recupAdherents[0]["adresse"]
                 inscription.commune = recupAdherents[0]["commune"]
                 inscription.verif.referent = true
                 inscription.verif.emailReferent = true
