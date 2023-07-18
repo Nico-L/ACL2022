@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
-var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/672/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/652/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+const nbAdherentsTemp = await data.json()
+const nbAdherents = nbAdherentsTemp.count
+data = await fetch(import.meta.env.BASEROW_URL + "rows/table/672/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const inscriptionsTemp = await data.json()
 const inscriptions = inscriptionsTemp.results
-console.log(inscriptions)
 let labels = ['instrument', 'atelier', 'FM']
 let parents = ['', '', '']
 let values = [0, 0, 0]
@@ -58,11 +60,13 @@ const lesMois = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet
 ---
 
 <BaseLayout title="Quelques chiffres">
-    <h1>Répartition des inscriptions</h1>
-    <h3>dernière mise à jour le {jour} {lesMois[nbMois]} {annee}</h3>
+    <p class="mb-4 text-xl">L'association Culture et loisirs est forte de {nbAdherents} adhérents</p>
+    <h2>Répartition des inscriptions</h2>
     <graph-acl data-labels={JSON.stringify(labels)} data-parents={JSON.stringify(parents)} data-values={JSON.stringify(values)}>
         <div id="graph" style="width:100%;"></div>
     </graph-acl>
+    <h3 class="text-right">dernière mise à jour le {jour} {lesMois[nbMois]} {annee}</h3>
+    
 </BaseLayout>
 
 <script >
@@ -101,11 +105,4 @@ const lesMois = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet
   }
 
   customElements.define('graph-acl', GraphAcl);
-
-
-    //const graph = document.getElementById('graph');
-
-
-
-        
-  </script>
+</script>
