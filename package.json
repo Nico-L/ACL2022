@@ -25,6 +25,7 @@
     "mjml": "^4.12.0",
     "node-fetch": "^3.3.1",
     "node-mailjet": "^3.3.7",
+    "plotly.js-dist-min": "^2.24.3",
     "svelte-fa": "^2.4.0",
     "uuid": "^8.3.2"
   },
@@ -34,7 +35,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@tailwindcss/forms": "^0.5.2",
-    "astro": "^2.7.0",
+    "astro": "^2.8.4",
     "tailwindcss": "^3.1.4"
   }
 }

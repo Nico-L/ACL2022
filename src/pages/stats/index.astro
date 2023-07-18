@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/672/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+const inscriptionsTemp = await data.json()
+const inscriptions = inscriptionsTemp.results
+console.log(inscriptions)
+let labels = ['instrument', 'atelier', 'FM']
+let parents = ['', '', '']
+let values = [0, 0, 0]
+let nbAtelier = 0
+let nbInstrument = 0
+let nbFM = 0
+inscriptions.forEach((inscription) => {
+    switch(inscription.type) {
+        case 'instrument':
+            const n = labels.indexOf(inscription.section[0].value)
+            if (n >=0) {
+                values[n] = values[n] + parseInt(inscription['nb inscrits'])
+            } else {
+                labels.push(inscription.section[0].value)
+                parents.push(inscription.type)
+                values.push(parseInt(inscription['nb inscrits']))
+            }
+            nbInstrument = nbInstrument + parseInt(inscription['nb inscrits'])
+            break;
+        case 'atelier':
+            labels.push(inscription.section[0].value)
+            parents.push(inscription.type)
+            values.push(parseInt(inscription['nb inscrits']))
+            nbAtelier = nbAtelier + parseInt(inscription['nb inscrits'])
+            break;
+        case 'fm':
+            parents.push('FM')
+            labels.push(inscription.section[0].value)
+            values.push(parseInt(inscription['nb inscrits']))
+            nbFM = nbFM + parseInt(inscription['nb inscrits'])
+            break;
+        case 'em':
+            parents.push('FM')
+            nbFM = nbFM + parseInt(inscription['nb inscrits'])
+            labels.push(inscription.section[0].value)
+            values.push(parseInt(inscription['nb inscrits']))
+            break;
+        default:
+            break;
+    }
+})
+values[0] = nbInstrument
+values[1] = nbAtelier
+values[2] = nbFM
+
+let date = new Date()
+let jour = date.getDate()
+let nbMois = date.getMonth()
+let annee = date.getFullYear()
+const lesMois = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
+---
+
+<BaseLayout title="Quelques chiffres">
+    <h1>Répartition des inscriptions</h1>
+    <h3>dernière mise à jour le {jour} {lesMois[nbMois]} {annee}</h3>
+    <graph-acl data-labels={JSON.stringify(labels)} data-parents={JSON.stringify(parents)} data-values={JSON.stringify(values)}>
+        <div id="graph" style="width:100%;"></div>
+    </graph-acl>
+</BaseLayout>
+
+<script >
+    import Plotly from 'plotly.js-dist-min'
+
+    class GraphAcl extends HTMLElement {
+    constructor() {
+        super();
+
+        // Read the message from the data attribute.
+        const labels = JSON.parse(this.dataset.labels)
+        const parents = JSON.parse(this.dataset.parents)
+        const values = JSON.parse(this.dataset.values)
+        var data = [
+            {
+            "type": "sunburst",
+            "labels": labels,
+            "parents": parents,
+            "values":  values,
+            "leaf": {"opacity": 0.4},
+            "marker": {"line": {"width": 2}},
+            "branchvalues": 'total'
+            }];
+
+            var layout = {
+                paper_bgcolor:"#fefaeb",
+                sunburstcolorway:[
+                    "#5DB7C5","#87c618","#f8c311","#DE5A5B"
+                ],
+                extendsunburstcolorway: true,
+                "margin": {"l": 0, "r": 0, "b": 20, "t": 20},
+            };
+      const graph = this.querySelector('div');
+      Plotly.newPlot(graph, data, layout, {displayModeBar: false})
+    }
+  }
+
+  customElements.define('graph-acl', GraphAcl);
+
+
+    //const graph = document.getElementById('graph');
+
+
+
+        
+  </script>
