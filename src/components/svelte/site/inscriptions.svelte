@@ -358,6 +358,7 @@
     }
 
     async function saveInscription() {
+        if (busySaving) return;
         if (noProbleme || saveOK) {
             noSave = false
             busySaving = true
