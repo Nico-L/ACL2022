@@ -1015,8 +1015,7 @@
                                     {/if}
                                 </div>
                             </div>
-                            <div class="max-w-460px">
-                                
+                            <div class="max-w-460px">                     
                                 <div class="mb-2">
                                     <div class="font-semibold flex justify-between items-center">
                                         Musique d'ensemble
@@ -1038,7 +1037,7 @@
                                                         </div>
                                                     </div>  
                                                 {/each}
-                                            </div>
+                                            </div> 
                                             <div class="text-sm text-gray-100">
                                                 Le cas échéant, merci de préciser votre instrument :
                                             </div>
@@ -1069,12 +1068,13 @@
                                         L'ACL recrute
                                     </div>
                                     <div class="mb-2 px-2 pl-1 ">
-                                        <div>L’école de musique du Sappey a besoin de vous !</div>
+                                        <div >L’école de musique du Sappey a besoin de vous&nbsp;!</div>
                                         <CheckBox 
                                             label="Je suis prêt à devenir bénévole en 2023-2024 pour ACL" 
-                                            lblClass={lesCouleurs[index % 3].textSombre}
+                                            lblClass={lesCouleurs[index % 3].textSombre + " text-center"}
                                             cbClass={lesCouleurs[index % 3].cb}
                                             checked={inscrit.benevolat}
+                                            wordWrap={true}
                                             on:checkChange={(e)=>{inscrit.benevolat = !inscrit.benevolat}}/>
                                     </div>
                                 </div>
