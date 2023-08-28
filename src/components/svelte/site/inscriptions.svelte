@@ -1028,8 +1028,9 @@
                                                     <div class="flex flex-col items-center justify-start px-1 mb-1 rounded bg-fondContenu p-1">
                                                         <CheckBox 
                                                             label={atelier.titre} 
-                                                            lblClass={lesCouleurs[index % 3].textSombre}
+                                                            lblClass={lesCouleurs[index % 3].textSombre + " text-center"}
                                                             cbClass={lesCouleurs[index % 3].cb}
+                                                            wordWrap={true}
                                                             checked={lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre}) != 0}
                                                             on:checkChange={(e)=>choixSection(e, atelier, "atelier", index, lesInscriptions[index].ateliers.filter((item) => {return item.titre === atelier.titre})[0])}/>
                                                         <div class={"text-sm text-center " + lesCouleurs[index % 3].textSombre}>
