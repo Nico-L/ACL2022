@@ -54,6 +54,7 @@ module.exports = {
         }
   },
     colors: {
+      transparent: 'transparent',
       current: 'currentColor',
       "fondSite": "#fff5d1",
       "fondContenu": "#fefaeb",

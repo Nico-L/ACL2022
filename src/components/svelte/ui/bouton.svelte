@@ -22,6 +22,7 @@
     export let disabled = false;
     export let hover = "";
     export let active = "";
+    export let type = "button"
 
     var lesCouleurs = []
     lesCouleurs["rougeClair"] = {bouton: "text-rougeClair border-rougeClair", spinner: "border-t-rougeClair", text: "text-rougeClair"}
@@ -38,9 +39,9 @@
 
     </script>
     
-    <button on:click={() => {if (!occupe && !disabled) {actionBouton()}}} class={classBouton} id={"leBouton"+couleur}>
+    <button type={type} on:click={() => {if (!occupe && !disabled) {actionBouton()}}} class={classBouton} id={"leBouton"+couleur}>
         {#if occupe}
-            <div class={"loader ease-linear rounded-full border-4 border-t-4 border-gray-700 h-8 w-8 mx-auto " + lesCouleurs[couleur].spinner}></div>
+            <div class={"loader ease-linear rounded-full border-4 border-t-4 border-gray-200/0 h-8 w-8 mx-auto " + lesCouleurs[couleur].spinner}></div>
         {:else if succes}
             <div class={lesCouleurs[couleur].bouton}>
                 <Fa icon={faCheck} size="2x" class="mx-auto"/>

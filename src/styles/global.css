@@ -33,11 +33,11 @@ th, td {
   @apply p-1 border border-vertClair/40;
 }
 
-a {
+.lien {
   @apply  p-1 rounded text-jaune-900 font-semibold;
 }
 
-a:hover {
+.lien:hover {
   @apply text-gray-100 bg-jaune-900;
 }
 
