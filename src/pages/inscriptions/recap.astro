@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import RecapInscriptions from '../../components/svelte/site/recapInscriptions.svelte'
+
+var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/655/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+const adhesionsTarifsTemp = await data.json()
+const adhesionsTarifs = adhesionsTarifsTemp.results.map((item) => {return {id: item.id, type: item.type, valeur: item.valeur, isSappey: item.isSappey, isFamiliale: item.isFamiliale}})
+---
+<BaseLayout title="Inscriptions">
+  <h1 class="px-2 text-4xl mb-2">Administration des inscriptions</h1>
+  <RecapInscriptions client:load {adhesionsTarifs}/>
+</BaseLayout>
+
+<style>
+:global(.FM) {
+  @apply flex flex-wrap gap-2 mb-4;
+}
+
+:global(.FM div) {
+  @apply border border-vert-700 bg-vert-400/50 p-2 rounded;
+}
+
+:global(.FM div h3) {
+  @apply font-semibold;
+  @apply text-base text-vert-900 p-0 m-0;
+}
+
+:global(#formation-musicale) {
+  font-weight: 600;
+  @apply text-xl text-vert-900 p-0 m-0;
+}
+
+:global(.ateliers) {
+  @apply flex flex-wrap gap-2 mb-4;
+}
+
+:global(.ateliers div) {
+  @apply border border-bleu-700 bg-bleu-400/50 p-2 rounded;
+}
+
+:global(.ateliers div h3) {
+  @apply font-semibold;
+  @apply text-base text-bleu-900 p-0 m-0;
+}
+
+:global(#ateliers) {
+  font-weight: 600;
+  @apply text-xl text-bleu-900 p-0 m-0;
+}
+
+
+:global(.instruments) {
+  @apply flex flex-wrap gap-2 mb-4;
+}
+
+:global(.instruments div) {
+  @apply border border-jaune-700 bg-jaune-400/50 p-2 rounded;
+}
+
+:global(.instruments div h3) {
+  @apply font-semibold;
+  @apply text-base text-jaune-900 p-0 m-0;
+}
+
+:global(#instruments) {
+  font-weight: 600;
+  @apply text-xl text-jaune-900 p-0 m-0;
+}
+</style>
