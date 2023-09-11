@@ -49,7 +49,9 @@
             const verifUuid = extracted[1]
             loadAdherent(verifUuid)
         } else {
-            flagRecup = false
+            hasFound = false
+            etatInconnu = false
+            flagRecup = true
         }
     })
 
