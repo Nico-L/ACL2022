@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import AdminBilanMensuel from '../../components/svelte/site/adminBilanMensuel.svelte'
+
+---
+<BaseLayout title="Bilan mensuel">
+  <h1 class="px-2 text-4xl mb-2">Bilan Mensuel</h1>
+  <AdminBilanMensuel client:load />
+</BaseLayout>
