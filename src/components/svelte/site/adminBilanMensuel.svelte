@@ -289,7 +289,7 @@
                         </div>
                     {/if}
                     </div>
-                    <Bouton
+                    <!-- <Bouton
                         type="submit"
                         couleur={lesCouleurs[1].sombre}
                         hover={lesCouleurs[1].hover}
@@ -300,7 +300,7 @@
                         on:actionBouton={saveBilans}
                         >
                         sauver
-                    </Bouton>
+                    </Bouton> -->
                 <!-- </form> -->
             </div>
         {/if}
