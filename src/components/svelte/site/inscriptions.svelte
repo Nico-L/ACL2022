@@ -480,8 +480,8 @@
                 const retourAdherent = (await functionsCall("baserowAPI", {type: typeSave, finURL: finURL, body: JSON.stringify(adherent)})).data
                 const adherentId = retourAdherent.id
                 let fichiersFactures = []
-                // quota facture dépassé
-                /* if (besoinFacture) {
+                // mettre en commentaire si quota facture dépassé
+                if (besoinFacture) {
                     var prenomNom = inscrit.nom === ""?inscription.referent:inscrit.nom
                     prenomNom = inscrit.prenom + " " + prenomNom
                     var numFacture = "ACL_" + prenomNom.replaceAll(" ", "") + "_" + saison
@@ -498,7 +498,7 @@
                     const uploadPdf = (await functionsCall("uploadViaUrl", {downloadUrl: retourFacture.download_url})).data
                     fichiersFactures.push(uploadPdf)
                     dataFactureEmail.push({lien: uploadPdf.url, prenom: inscrit.prenom})
-                } */
+                }
                 const updateDataAdherent= {"fichiers_factures": fichiersFactures }
                 const url = "652/"+adherentId+"/?user_field_names=true"
                 const updateAdherent = (await functionsCall("baserowAPI", {type: "PATCH", finURL:JSON.stringify([url]), body: JSON.stringify(updateDataAdherent)}))
