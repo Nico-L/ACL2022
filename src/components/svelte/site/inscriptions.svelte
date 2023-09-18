@@ -124,7 +124,7 @@
                                     prof:leNomProf, 
                                     profId: zeProfId,//inscrit.nomProf[0] && inscrit.nomProf[0].id ?inscrit.nomProf[0].id:0, 
                                     duree: parseFloat(inscrit.duree), 
-                                    tarif: parseFloat(inscrit.tarif)
+                                    tarif: parseFloat(inscrit.tarif)/inscription.facteurQF
                                 }
                                 instruments.push(inst)
                                 break;
