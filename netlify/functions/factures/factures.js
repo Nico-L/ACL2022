@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 const handler = async function (event) {
   const dataFacture = event.queryStringParameters.dataFacture || null
   const nomFichier = event.queryStringParameters.nomFichier || "facture"
-  let url = 'https://rest.apitemplate.io/v2/create-pdf?template_id=37c77b238f13a10c&export_type=json&expiration=5'
+  let url = 'https://rest.apitemplate.io/v2/create-pdf?template_id=2b477b23a5726208&export_type=json&expiration=5'
   if (nomFichier) {
     url = url + "&filename=" + nomFichier + ".pdf"
   }
