@@ -62,6 +62,10 @@
     var adherentAEffacer = []
     var inscriptionsAEffacer = []
 
+    var today = new Date
+    today = today.toLocaleDateString("fr")
+
+
     var flagTotalPrix = false
 
     var flagAccepteSave = false
@@ -490,7 +494,8 @@
                         "somme": parseFloat(coutParInscrit*inscription.facteurQF).toFixed(2).toString(),
                         "saison": saison,
                         "prenomNom": prenomNom,
-                        "sections": sectionsFacture
+                        "sections": sectionsFacture,
+                        "date": today
                     }
                     var nomFichier = "ACL_"+prenomNom.replaceAll(" ", "")
                     nomFichier = nomFichier.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
