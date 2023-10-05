@@ -18,6 +18,8 @@
     let facteurQF
     let nbCheques = 1
     let estRegle = false
+    let aFacture = false
+    let factures = []
     let note=""
 
     let hasFound = false
@@ -75,7 +77,6 @@
         const filter_url = "filter__field_5764__equal=" + uuid
         console.log('begin recup', uuid)
         const recupAdherents = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["652/?user_field_names=true",filter_url])})).data.results
-        console.log('fin recup', recupAdherents)
         if (recupAdherents.length > 0) 
         {
             hasFound = true
@@ -84,12 +85,14 @@
             fQF(adherent.qf)
             note = adherent.notes_ACL
             estRegle = adherent["réglé"]
+            aFacture = adherent["facture"]
             nbCheques = adherent.reglement
             nomReferent = adherent["nom referent"]
             ids.push(adherent.id)
             adhesion = adhesionsTarifs.find(item => {return item.type == adherent["type adhesion"]})
             uuid = adherent.uuid
-            let adherentTemp={prenom: adherent.prenom, inscriptions: []}
+            let factureAdherent = adherent.fichiers_factures.length > 0 ? adherent.fichiers_factures[0].url : ""
+            let adherentTemp={prenom: adherent.prenom, inscriptions: [], facture: factureAdherent}
             for(let inscription of adherent.inscriptions) {
                 const recupInscription = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["653/"+inscription.id+"/?user_field_names=true"])})).data
                 coutTotal += parseFloat(recupInscription.tarif)
@@ -144,31 +147,6 @@
 
 {#if !etatInconnu}
 <div>
-    <!-- <div class={"m-2 p-1 rounded w-full " + lesCouleurs[2].border + " " + lesCouleurs[2].bgCadre}>
-        <form on:submit|preventDefault={handleSubmit} class="flex flex-wrap w-full justify-start items-center gap-2">
-            <div>
-                <label for="recherche">Recherche sur nom ou email :</label>
-                <input
-                    type="text"
-                    id="recherche"
-                    name="recherche"
-                    value=""
-                    class="mx-auto focus:outline-none bg-fondContenu placeholder:text-gray-700"
-                    /> 
-            </div>
-            <Bouton
-                type="submit"
-                couleur={lesCouleurs[2].sombre}
-                hover={lesCouleurs[2].hover}
-                occupe={recherching}
-                succes={rechercheOK}
-                active = "active:bg-jaune-900 active:text-gray-100"
-                >
-                    rechercher
-            </Bouton>       
-        </form>
-    </div> -->
-
     <!-- récap inscription-->
     {#if flagRecup}
         {#if hasFound}
@@ -197,6 +175,13 @@
                             <div class="grow-0 px-1 whitespace-nowrap">{inscription.tarif} €</div>
                         </div>
                     {/each}
+                    {#if aFacture}
+                        <div class="flex ml-2 items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 384 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M320 464c8.8 0 16-7.2 16-16V160H256c-17.7 0-32-14.3-32-32V48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H320zM0 64C0 28.7 28.7 0 64 0H229.5c17 0 33.3 6.7 45.3 18.7l90.5 90.5c12 12 18.7 28.3 18.7 45.3V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64z"/></svg>
+                            <div class="ml-1 text-lg font-semibold"><a href={adherent.facture}>Facture {adherent.prenom}</a></div>
+                        </div>
+                    {/if}
+                    
                 {/each}
                 <div class={"font-medium text-lg mt-5 w-full flex flex-nowrap justify-between border-t-2 " + lesCouleurs[0].border}>
                     <div class="ligne overflow-hidden px-1 whitespace-nowrap">Coût total </div>
@@ -212,54 +197,6 @@
                     {/if}
                 </div>
             </div>
-
-            <!-- <div class={"m-2 p-1 rounded w-full " + lesCouleurs[1].border + " " + lesCouleurs[1].bgCadre}>
-                <header 
-                    class={"py-1 font-semibold flex gap-2 rounded " + lesCouleurs[1].textSombre} 
-                    >
-                        Cadre ACL
-                </header>
-                <div class="flex flex-wrap w-full justify-start items-center gap-2">
-                    <a rel="noreferrer" target="_blank" href={"/inscriptions?uuid="+uuid} class={"h-10 p-1 my-auto rounded text-base font-medium border-2 " + lesCouleurs[1].hover + " " + lesCouleurs[1].border + " " + lesCouleurs[1].textSombre + " hover:" + lesCouleurs[1].textSombre}>
-                        éditer l'inscription</a>
-                    {#if !estRegle}
-                    <Bouton
-                        couleur={lesCouleurs[1].sombre}
-                        hover={lesCouleurs[1].hover}
-                        largeur="w-fit"
-                        occupe={savingReglement}
-                        succes={savedReglement}
-                        active = "active:bg-jaune-900 active:text-gray-100"
-                        on:actionBouton={validationReglement}
-                        >
-                            valider le réglement
-                    </Bouton> 
-                    {/if}
-                </div>
-                <form on:submit|preventDefault={handleNote} class="flex flex-wrap w-full justify-start items-center gap-2">
-                    <div>
-                        <label for="recherche">Ajouter une note :</label>
-                        <input
-                            type="text"
-                            id="note"
-                            name="note"
-                            value={note}
-                            class="mx-auto focus:outline-none bg-fondContenu placeholder:text-gray-700"
-                            /> 
-                    </div>            
-                    <Bouton
-                        type="submit"
-                        couleur={lesCouleurs[1].sombre}
-                        hover={lesCouleurs[1].hover}
-                        largeur="w-fit"
-                        occupe={savingNote}
-                        succes={savedNote}
-                        active = "active:bg-jaune-900 active:text-gray-100"
-                        >
-                            sauver
-                    </Bouton>
-                </form>
-            </div> -->
         {:else}
         <div class={"m-2 p-1 rounded w-full " + lesCouleurs[0].border + " " + lesCouleurs[0].bgCadre}>
             Aucune inscription n'a été trouvée, merci de vérifier les données et de relancer une recherche.
