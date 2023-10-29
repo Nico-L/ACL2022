@@ -56,7 +56,7 @@
         let n=0
         for (const adherent of lesAdherents) {
             n=n+1
-            message = "Envoi du message n°" + n
+            message = "Envoi du message n° " + n
             let familleAdherent = lesAdherentsFull.filter(elem => elem.uuid === adherent.uuid)
             let teteFamille = familleAdherent.filter((e) => e["tarif adhesion"] !== null)[0]
             let email = teteFamille["email referent"]
@@ -94,19 +94,23 @@
 
 {#if !etatInconnu && !recupDataAdherents}
 <p class="mb-2">{lesAdherents.length} familles n'ont pas encore réglé leur cotisation.</p>
-<form on:submit|preventDefault={handleSubmitEmail} class="w-full p-1" >
-    <Bouton
-        type="submit"
-        couleur={lesCouleurs[1].clair}
-        hover="hover:bg-vert-900/60 hover:text-gray-100"
-        largeur="w-fit"
-        occupe={envoyingMail}
-        succes={succesEnvoi}
-        active = "active:bg-vert-900 active:text-gray-100"
-        >
-        Envoyer un rappel
-    </Bouton>
-</form>
+{#if !flagDejaEnvoye}
+    <form on:submit|preventDefault={handleSubmitEmail} class="w-full p-1" >
+        <Bouton
+            type="submit"
+            couleur={lesCouleurs[1].clair}
+            hover="hover:bg-vert-900/60 hover:text-gray-100"
+            largeur="w-fit"
+            occupe={envoyingMail}
+            succes={succesEnvoi}
+            active = "active:bg-vert-900 active:text-gray-100"
+            >
+            Envoyer un rappel
+        </Bouton>
+    </form>
+{:else}
+    <p>Emails bien envoyés !</p>
+{/if}
     {#if envoyingMail}
         <div>{message}</div>
     {/if}
