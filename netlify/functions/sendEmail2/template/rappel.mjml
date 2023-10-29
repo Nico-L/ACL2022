@@ -1,0 +1,95 @@
+<mjml>
+  <mj-head>
+    <mj-preview>Votre inscription a bien été enregitrée.</mj-preview>
+    <mj-title>Votre inscription ACL</mj-title>
+  </mj-head>
+  <mj-body background-color="#fff5d1">
+     <!-- logo -->
+      <mj-section background-color="#fefaeb" padding="0px" border-top="2px solid #5DB7C5" border-left="2px solid #5DB7C5" border-right="2px solid #5DB7C5" border-radius="5px">
+        <mj-column>
+          <mj-image src="https://0p4ng.mjt.lu/tplimg/0p4ng/b/1jmgw/g0nz.png" alt="logo acl rond" width="160px" height="158px" />
+        </mj-column>
+      </mj-section>
+    
+    <mj-wrapper background-color="#fefaeb" border-left="2px solid #5DB7C5" border-right="2px solid #5DB7C5" padding="0px" padding-left="5px" padding-right="5px">
+      <!-- titre -->
+    <mj-section>
+        <mj-column>
+          <mj-text font-size="28px" font-weight="600" align="center" color="#116B79" padding="0px" line-height="0px">
+            Association Culture et Loisirs
+          </mj-text>
+        </mj-column>
+    </mj-section>
+      <!-- text info !-->
+      <mj-section>
+      <mj-column>
+        <mj-text font-size="16px" padding="0px" padding-bottom="5px">
+          Sauf erreur de notre part, nous n'avons pas reçu votre réglement. Vous pouvez trouver un récapitulatif de votre ou vos inscription(s) en find d'email.
+          </mj-text>
+          {% if var:reduction != ""}
+            <mj-text font-size="16px" padding="0px" padding-bottom="5px">
+              Vous bénéficiez d'une réduction en raison de votre quotient familiale, merci de joindre un justificatif avec votre réglement.
+            </mj-text>
+          {% endif %}
+        </mj-column>
+      </mj-section>
+      <mj-section>
+        <mj-column>
+          <mj-text font-size="20px" font-weight="600" align="left" color="#116B79" padding="0px" line-height="20px">
+            Récapitulatif
+          </mj-text>
+          <mj-table padding="0px" padding-left="5px" padding-right="5px" font-size="16px">
+          <tr>
+            <td style="width:80%">{{var:adhesion.titre}}</td>
+              <td style="text-align:right">{{var:adhesion.tarif}}</td>
+            </tr>
+            {% if var:qf!="" %}
+              <tr>
+                <td style="width:80%">Quotient familiale</td>
+                <td style="text-align:right">{{var:qf}}</td>
+              </tr>
+            {% endif %}
+            {% if var:reduction!="" %}
+              <tr>
+                <td style="width:80%">Réduction</td>
+                <td style="text-align:right">{{var:reduction}}</td>
+              </tr>
+            {% endif %}
+          </mj-table>
+          <mj-raw>
+          {% for inscrit in var:inscrits %}
+          </mj-raw>
+          <mj-text  font-size="18px" font-weight="400" align="left" color="#116B79" padding="0px">
+          {{inscrit.prenom}}
+          </mj-text>
+          <mj-divider border-width="2px" border-style="solid" border-color="#116B79" padding="0px" padding-top="4px" padding-bottom="5px"/>
+          <mj-table padding="0px" padding-left="5px" padding-right="5px" font-size="16px">
+            {% for inscription in inscrit.inscriptions %}
+            <tr>
+                <td style="width:80%">{{inscription.titre}}</td>
+                <td style="text-align:right">{{inscription.tarif}}</td>
+              </tr>
+            {% endfor %}
+          </mj-table>
+          <mj-raw>
+          {% endfor %}
+          </mj-raw>
+        </mj-column>
+    </mj-section>
+    </mj-wrapper>
+    
+  <mj-section background-color="#fefaeb" padding="5px" border-bottom="2px solid #5DB7C5" border-left="2px solid #5DB7C5" border-right="2px solid #5DB7C5" border-radius="5px">
+    <mj-column>
+      <mj-text font-size="16px" padding="0px" padding-bottom="5px">
+        Cordialement,
+        </mj-text>
+      <mj-text font-size="16px" padding="0px" padding-bottom="5px">
+        le bureau
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    
+
+  </mj-body>
+</mjml>

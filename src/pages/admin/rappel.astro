@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import AdminRappel from '../../components/svelte/site/adminRappel.svelte'
+
+---
+<BaseLayout title="Rappel non réglé">
+  <h1 class="px-2 text-4xl mb-2">Envoi mail pour rappel cotisation</h1>
+  <AdminRappel client:load />
+</BaseLayout>

@@ -8,7 +8,8 @@ const emailBureau = process.env.EMAIL_BUREAU_ACL
 
 const fileName = {
   inscriptions: "./netlify/functions/sendEmail2/template/confirmationEmail.hbs",
-  stage:"./netlify/functions/sendEmail2/template/confirmationStage.hbs"
+  stage:"./netlify/functions/sendEmail2/template/confirmationStage.hbs",
+  rappel: "./netlify/functions/sendEmail2/template/rappel.hbs"
 }
 
 
@@ -65,6 +66,26 @@ const email = event.queryStringParameters.email || null
               ],
             })
             break;
+            case "rappel":
+              request = mailjet.post('send', { version: 'v3.1' }).request({
+                  Messages: [
+                    {
+                      From: {
+                        Email: emailBureau,
+                        Name: 'ACL',
+                      },
+                      To: [
+                        {
+                          Email: email
+                        },
+                      ],
+                      Subject: 'Rappel : cotisation ACL',
+                      TextPart: 'Rappel : cotisation ACL',
+                      HTMLPart: hbsHtml,
+                    },
+                  ],
+                })
+                break;
         default:
           console.log('rien')
       }

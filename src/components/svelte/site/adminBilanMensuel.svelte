@@ -17,9 +17,10 @@
 
     let bilansMensuels = []
     let leBilan = []
-    let value = 0
     let modifHeures = 0
     let totalheures = 0
+    let heuresRestantes = 0
+    let newHeuresMensuelles = 0
 
     let mois = [
         "septembre",
@@ -36,16 +37,16 @@
         "août",
     ]
 
-    let nMois = ((new Date()).getMonth() + 4) % 12 - 1 >= 0 ? ((new Date()).getMonth() + 4) % 12 - 1 : 0
+    let nMois = ((new Date()).getMonth() + 4) % 12
     let nbMoisRestant = 12-nMois
     let netPayer = 0
 
     let moisCourant = {salaireBrut: 0}
     
     var lesCouleurs = [
-        {border: "border-bleu-900", bgCadre:"bg-bleu-400/50", textSombre: "text-bleu-900", hover:"hover:bg-bleu-400/50", bg:"bg-bleu-800", cb:"border-bleu-700 checked:border-bleu-700 text-bleu-700 focus:ring-bleu-700", sombre:"bleuSombre", active:"active:bg-bleu-900 active:text-gray-100"},
-        {border: "border-vert-900", bgCadre:"bg-vert-400/50", textSombre: "text-vert-900", hover:"hover:bg-vert-400/50", bg:"bg-vert-800", cb:"border-vert-700 checked:border-vert-700 text-vert-700 focus:ring-vert-700", sombre:"vertSombre",  active:"active:bg-vert-900 active:text-gray-100"},
-        {border: "border-jaune-900", bgCadre:"bg-jaune-400/50", textSombre: "text-jaune-900", hover:"hover:bg-jaune-400/50", bg:"bg-jaune-800", cb:"border-jaune-700 checked:border-jaune-700 text-jaune-700 focus:ring-jaune-700", sombre:"jauneSombre", active:"active:bg-jaune-900 active:text-gray-100"},
+        {border: "border-bleu-900", bgCadre:"bg-bleu-400/50", textSombre: "text-bleu-900", hover:"hover:bg-bleu-400/50", bg:"bg-bleu-800", cb:"border-bleu-700 checked:border-bleu-700 text-bleu-700 focus:ring-bleu-700", sombre:"bleuSombre", clair:"bleuClair", active:"active:bg-bleu-900 active:text-gray-100"},
+        {border: "border-vert-900", bgCadre:"bg-vert-400/50", textSombre: "text-vert-900", hover:"hover:bg-vert-400/50", bg:"bg-vert-800", cb:"border-vert-700 checked:border-vert-700 text-vert-700 focus:ring-vert-700", sombre:"vertSombre", clair:"vertClair",  active:"active:bg-vert-900 active:text-gray-100"},
+        {border: "border-jaune-900", bgCadre:"bg-jaune-400/50", textSombre: "text-jaune-900", hover:"hover:bg-jaune-400/50", bg:"bg-jaune-800", cb:"border-jaune-700 checked:border-jaune-700 text-jaune-700 focus:ring-jaune-700", sombre:"jauneSombre", clair:"jauneClair", active:"active:bg-jaune-900 active:text-gray-100"},
     ]
 
     onMount(async () => {
@@ -74,47 +75,60 @@
         }
     })
 
-    function changeProf(prof) {
+    async function changeProf(prof) {
         if(leProf.prenom === prof.prenom) {
             leProf = {}
-            leBilan = {}
+            leBilan = []
         } else {
             leProf = prof
             leProf["heures payées mensuelles"] = (prof["volume horaire total annuel"]/12).toFixed(2)
+            const hpm = parseFloat(leProf["heures payées mensuelles"]).toFixed(2)
             leBilan = bilansMensuels.filter((item) => item.prof[0].id === prof.id)
             if(leBilan.length === 0) {
                 leBilan = [
-                    {mois: "septembre", "heures payées par mois": leProf["heures payées mensuelles"], prof: [leProf.id]},
-                    {mois: "octobre", "heures payées par mois": leProf["heures payées mensuelles"], prof: [leProf.id]},
-                    {mois: "novembre", "heures payées par mois": leProf["heures payées mensuelles"], prof: [leProf.id]},
-                    {mois: "décembre", "heures payées par mois": leProf["heures payées mensuelles"], prof: [leProf.id]},
-                    {mois: "janvier", "heures payées par mois": leProf["heures payées mensuelles"], prof: [leProf.id]},
-                    {mois: "février", "heures payées par mois": leProf["heures payées mensuelles"], prof: [leProf.id]},
-                    {mois: "mars", "heures payées par mois": leProf["heures payées mensuelles"], prof: [leProf.id]},
-                    {mois: "avril", "heures payées par mois": leProf["heures payées mensuelles"], prof: [leProf.id]},
-                    {mois: "mai", "heures payées par mois": leProf["heures payées mensuelles"], prof: [leProf.id]},
-                    {mois: "juin", "heures payées par mois": leProf["heures payées mensuelles"], prof: [leProf.id]},
-                    {mois: "juillet", "heures payées par mois": leProf["heures payées mensuelles"], prof: [leProf.id]},
-                    {mois: "août", "heures payées par mois": leProf["heures payées mensuelles"], prof: [leProf.id]}
+                    {mois: "septembre", 'heures payées par mois': hpm, prof: [leProf.id]},
+                    {mois: "octobre", "heures payées par mois": hpm, prof: [leProf.id]},
+                    {mois: "novembre", "heures payées par mois": hpm, prof: [leProf.id]},
+                    {mois: "décembre", "heures payées par mois": hpm, prof: [leProf.id]},
+                    {mois: "janvier", "heures payées par mois": hpm, prof: [leProf.id]},
+                    {mois: "février", "heures payées par mois": hpm, prof: [leProf.id]},
+                    {mois: "mars", "heures payées par mois": hpm, prof: [leProf.id]},
+                    {mois: "avril", "heures payées par mois": hpm, prof: [leProf.id]},
+                    {mois: "mai", "heures payées par mois": hpm, prof: [leProf.id]},
+                    {mois: "juin", "heures payées par mois": hpm, prof: [leProf.id]},
+                    {mois: "juillet", "heures payées par mois": hpm, prof: [leProf.id]},
+                    {mois: "août", "heures payées par mois": hpm, prof: [leProf.id]}
                 ]
+                leBilan = (await functionsCall("baserowAPI", {type: "POST", finURL:JSON.stringify(["757/batch/?user_field_names=true"]), body: JSON.stringify({items: leBilan})})).data.items
             }
-            const moisPayes = leBilan.filter((item) => item.hasOwnProperty("heures totales payées") && item["heures totales payées"] !== null)
-            leProf.dernierMoisPaye = moisPayes >0 ? leBilan[moisPayes.length-1].mois : "aucun"
-            leProf.heuresDejaPayees = moisPayes >0 ? leBilan[moisPayes.length-1].hasOwnProperty("heures déjà payées") ? leBilan[moisPayes.length-1]["heures déjà payées"]:0:0
+            const moisPayes = leBilan.filter((item) => parseFloat(item["heures déjà payées"])!==0)
+            console.log('moisPayés', moisPayes)
+            leProf.dernierMoisPaye = moisPayes.length >0 ? moisPayes[moisPayes.length-1].mois : "aucun"
+            leProf.heuresDejaPayees = moisPayes.length >0 ? moisPayes[moisPayes.length-1].hasOwnProperty("heures déjà payées") ? moisPayes[moisPayes.length-1]["heures déjà payées"]:0:0
         }
     }
 
-    async function saveBilans() {
+    async function saveBilans(data) {
         savingBilans = true
         savedBilans = false
-        bilansMensuels = [...leBilan]
-        //await functionsCall("baserowAPI", {type: "POST", finURL:JSON.stringify(["757/batch/?user_field_names=true"]), body: JSON.stringify({items: bilansMensuels})})
+        data.prof = [leBilan[nMois].prof[0].id]
+        data["heures déjà payées"] = nMois > 0 ? parseFloat(leBilan[nMois-1]["heures déjà payées"])+parseFloat(leBilan[nMois-1]["heures payées par mois"]):leBilan[0]["heures payées par mois"]
+        console.log('data', data)
+        const url = "757/" + leBilan[nMois].id + "/?user_field_names=true"
+        const retour = await functionsCall("baserowAPI", {type: "PATCH", finURL:JSON.stringify([url]), body: JSON.stringify(data)})
+        console.log('retour', retour)
         savingBilans = false
         savedBilans = true
     }
 
-    function handleSubmit() {
-        
+    function handleSubmitSalaires(e) {
+        const formData = new FormData(e.target);
+        var lesData = {}
+        for (let field of formData) {
+        const [key, value] = field;
+        lesData[key] = parseFloat(value);
+        }
+        saveBilans(lesData)
     }
 
     $: {if ((nMois > 0) && (leBilan[nMois].hasOwnProperty("salaire net") && leBilan[nMois]["salaire net"] !== null))
@@ -125,9 +139,25 @@
             }
         }
     
+    $: {
+        if ((nMois >= 0) && leBilan[nMois] && (leBilan[nMois].hasOwnProperty("salaire brut URSSAF") && leBilan[nMois]["salaire brut URSSAF"] !== null))
+        {
+            moisCourant.salaireBrut = leBilan[nMois]["salaire brut URSSAF"]
+        } else {
+            moisCourant.salaireBrut = 0
+        }
+    }
+    
     $: totalheures = (parseFloat(modifHeures||0)+parseFloat(leProf["volume horaire total annuel"])).toFixed(2)
     $: nbMoisRestant = 12 - nMois
-    $: netPayer = ((totalheures-leProf.heuresDejaPayees)*25/nbMoisRestant).toFixed(2)
+    $: if (leBilan && leBilan[0]) {
+        netPayer = nMois > 0 ?((totalheures-leBilan[nMois-1]["heures déjà payées"])*25/nbMoisRestant):25*leBilan[0]["heures payées par mois"]
+    }
+    $: {
+        heuresRestantes = totalheures - leProf.heuresDejaPayees
+        newHeuresMensuelles = heuresRestantes/nbMoisRestant
+    }
+
 
 </script>
 
@@ -167,6 +197,7 @@
                         <li><b class={lesCouleurs[0].textSombre}>volume horaire annuel : </b>{leProf["volume horaire total annuel"]}&nbsp;h</li>
                         <li><b class={lesCouleurs[0].textSombre}>nombre d'heures moyen mensuel : </b>{leProf["heures payées mensuelles"]}&nbsp;h</li>
                         <li><b class={lesCouleurs[0].textSombre}>nombre d'heures déjà payées : </b>{leProf.heuresDejaPayees}&nbsp;h</li>
+                        <li><b class={lesCouleurs[0].textSombre}>dernier mois payé : </b>{leProf.dernierMoisPaye}</li>
                         <li><b class={lesCouleurs[0].textSombre}>salaire annuel net : </b>{leProf["salaire annuel net"]}&nbsp;€</li>
                         <li><b class={lesCouleurs[0].textSombre}>salaire mensuel net (lissé sur 12 mois) : </b>{(parseFloat(leProf["salaire annuel net"])/12).toFixed(2)}&nbsp;€</li>
                         
@@ -191,58 +222,76 @@
                             />
                     {/each}
                 </div>
-                <!-- <form on:submit|preventDefault={handleSubmit}> -->
+                <!-- <form on:submit|preventDefault={handleSubmitSalaires}> -->
                 <div class="flex flex-col flex-wrap w-full justify-start items-center gap-2 mb-2">
-                    <form on:submit|preventDefault={handleSubmit} class={"p-2 w-full rounded " + lesCouleurs[1].bgCadre}>
+                    <div class={"p-2 w-full rounded " + lesCouleurs[1].bgCadre}>
+                        <div class="font-semibold text-lg">Changement d'heures</div>
+                        <div class="mb-2 pl-1">         
+                            <InputNumber 
+                                label="Modification des heures :"
+                                id="modifHeures"
+                                bind:value={modifHeures}
+                                maxWidth="w-16"
+                                classes="text-gray-900"
+                            />
+                            <ul>
+                                <li><b>Nombre d'heures annuel:</b> {totalheures}&nbsp;h</li>
+                                <li><b>Nombre de mois restant :</b> {nbMoisRestant}</li>
+                                <li><b>rappel des heures payées :</b> {leProf.heuresDejaPayees}&nbsp;h</li>
+                                <li><b>net à payer mensuel :</b> {netPayer}&nbsp;€</li>
+                                <li><b>heures mensuelles :</b> {newHeuresMensuelles}</li>
+                            </ul>
+                            <!-- <label for="modifHeures">Modification des heures :</label>
+                            <input
+                                type="number"
+                                id="modifHeures"
+                                name="modifHeures"
+                                bind.value
+                                class="pl-1 text-gray-900 mx-auto focus:outline-none bg-fondContenu placeholder:text-gray-700"
+                                on:input={()=>console.log('val',value)}
+                                /> -->
+                        </div>
+                    </div>
+                    
+                    
+                    <form on:submit|preventDefault={handleSubmitSalaires} class={"w-full p-1 text-gray-300 rounded "+lesCouleurs[1].bg}>
                         <div class="font-semibold text-lg ">Salaire</div>
                         <div class="mb-2 ml-1">
-                            <label for="salaireNet">Net :</label>
+                            <label for="salaire net">Net :</label>
                             <input
-                                type="number"
-                                id="salaireNet"
-                                name="salaireNet"
+                                type="text"
+                                inputmode="decimal"
+                                id="salaire net"
+                                name="salaire net"
                                 value={moisCourant.salaireNet}
-                                class="pl-1 mx-auto focus:outline-none bg-fondContenu placeholder:text-gray-700"
+                                class="pl-1 mx-auto focus:outline-none bg-fondContenu text-gray-900 placeholder:text-gray-900"
                                 /> 
                         </div>
-                        <div class="ml-1">
-                            <label for="salaireBrut">Brut (calcul URSAFF) :</label>
+                        <div class="ml-1 mb-1">
+                            <label for="salaire brut URSSAF">Brut (calcul URSAFF) :</label>
                             <input
-                                type="number"
-                                id="salaireBrut"
-                                name="salaireBrut"
+                                type="text"
+                                inputmode="decimal"
+                                id="salaire brut URSSAF"
+                                name="salaire brut URSSAF"
                                 value={moisCourant.salaireBrut}
-                                class="pl-1 mx-auto focus:outline-none bg-fondContenu placeholder:text-gray-700"
+                                class="pl-1 mx-auto focus:outline-none bg-fondContenu text-gray-900 placeholder:text-gray-900"
                                 /> 
                         </div>
+                        <Bouton
+                            type="submit"
+                            couleur={lesCouleurs[1].clair}
+                            hover="hover:bg-vert-900/50"
+                            largeur="w-fit"
+                            occupe={savingBilans}
+                            succes={savedBilans}
+                            active = "active:bg-vert-900 active:text-gray-100"
+                            >
+                            sauver
+                        </Bouton>
+                        <p class="m-0 mt-1">Sauver valide le paiment de {nMois > 0 ? leBilan[nMois - 1]["heures payées par mois"]:leBilan[0]["heures payées par mois"]}&nbsp;h pour le mois de {leBilan[nMois].mois}</p>
                     </form>
-                    <div class={"w-full l p-1 text-gray-300 rounded "+lesCouleurs[1].bg}>
-                        <div class="font-semibold text-lg">Changement d'heures</div>
-                            <div class="mb-2 pl-1">         
-                                <InputNumber 
-                                    label="Modification des heures :"
-                                    id="modifHeures"
-                                    bind:value={modifHeures}
-                                    maxWidth="w-16"
-                                    classes="text-gray-900"
-                                />
-                                <ul>
-                                    <li><b>Nombre d'heures annuel:</b> {totalheures}&nbsp;h</li>
-                                    <li><b>Nombre de mois restant :</b> {nbMoisRestant}</li>
-                                    <li><b>rappel des heures payées :</b> {leProf.heuresDejaPayees}&nbsp;h</li>
-                                    <li><b>net à payer mensuel :</b> {netPayer}&nbsp;€</li>
-                                </ul>
-                                <!-- <label for="modifHeures">Modification des heures :</label>
-                                <input
-                                    type="number"
-                                    id="modifHeures"
-                                    name="modifHeures"
-                                    bind.value
-                                    class="pl-1 text-gray-900 mx-auto focus:outline-none bg-fondContenu placeholder:text-gray-700"
-                                    on:input={()=>console.log('val',value)}
-                                    /> -->
-                            </div>
-                    </div>
+                    
                     <div class={"w-full p-1 rounded " + lesCouleurs[1].bgCadre}>
                         <div class="font-semibold text-lg">Arrêt</div>
                         <div class="mb-2">
