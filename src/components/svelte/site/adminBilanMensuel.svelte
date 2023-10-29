@@ -131,7 +131,7 @@
         saveBilans(lesData)
     }
 
-    $: {if ((nMois > 0) && (leBilan[nMois].hasOwnProperty("salaire net") && leBilan[nMois]["salaire net"] !== null))
+    $: {if ((nMois > 0) && leBilan[nMois] && (leBilan[nMois].hasOwnProperty("salaire net") && leBilan[nMois]["salaire net"] !== null))
             {
                 moisCourant.salaireNet = leBilan[nMois]["salaire net"]
             } else {
