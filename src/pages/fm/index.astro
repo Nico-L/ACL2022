@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/791/?user_field_names=true&order_by=date", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+
+const planning = (await data.json()).results.map((e) => {return {date: new Date(e.date), FM1:e.FM1, FM2: e.FM2, FM3: e.FM3, FM45: e["FM4-5"]}})
+
+const options = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+};
+
+---
+
+<BaseLayout title="Planning FM">
+<p>Le planning des la formation musicale pour les prochaines semaines :</p>
+<table class="table-auto">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>FM1</th>
+        <th>FM2</th>
+        <th>FM3</th>
+        <th>FM4-5</th>
+      </tr>
+    </thead>
+    <tbody>
+        {planning.map((e)=> (
+            <tr>
+                <td>{e.date.toLocaleDateString('fr-fr', options)}</td>
+                <td>{e.FM1}</td>
+                <td>{e.FM2}</td>
+                <td>{e.FM3}</td>
+                <td>{e.FM45}</td>
+            </tr>
+        ))}
+    </tbody>
+  </table>
+</BaseLayout>
