@@ -20,23 +20,30 @@
   },
   "homepage": "https://github.com/Nico-L/ACL2022#readme",
   "dependencies": {
-    "@astrojs/image": "^0.17.0",
+    "@astrojs/markdoc": "^0.7.2",
+    "@astrojs/react": "^3.0.5",
+    "@keystatic/astro": "^2.0.0",
+    "@keystatic/core": "^0.2.3",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
     "handlebars": "^4.7.7",
     "marked": "^9.0.3",
     "marked-base-url": "^1.1.0",
     "node-fetch": "^3.3.1",
     "node-mailjet": "^3.3.7",
     "plotly.js-dist-min": "^2.24.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "svelte-fa": "^2.4.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@astrojs/svelte": "^2.1.0",
-    "@astrojs/tailwind": "^3.1.1",
+    "@astrojs/svelte": "^4.0.4",
+    "@astrojs/tailwind": "^5.0.2",
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@tailwindcss/forms": "^0.5.2",
-    "astro": "^2.10.15",
+    "astro": "^3.6.4",
     "tailwindcss": "^3.1.4"
   }
 }
