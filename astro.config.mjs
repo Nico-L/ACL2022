@@ -16,7 +16,7 @@ export default defineConfig( /** @type {import('astro').AstroUserConfig} */{
   srcDir: './src/',
   site: 'https://acl-sappey.netlify.app/',
   integrations: [svelte(), tailwind()],
-  output: 'hybrid',
+  output: 'static',
   vite: {
     server: {
       // configure vite for HMR with Gitpod
