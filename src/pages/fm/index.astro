@@ -3,8 +3,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 
 var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/791/?user_field_names=true&order_by=date", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 
-const planning = (await data.json()).results.map((e) => {return {date: new Date(e.date), FM1:e.FM1, FM2: e.FM2, FM3: e.FM3, FM45: e["FM4-5"]}})
-
+const planning = (await data.json()).results.map((e) => {return {id: (new Date(e.date)).getTime(),date: new Date(e.date), FM1:e.FM1, FM2: e.FM2, FM3: e.FM3, FM45: e["FM4-5"]}})
+var lesDates =  []
+planning.forEach((el) => lesDates.push({date: el.id}))
 const options = {
   year: 'numeric',
   month: 'long',
@@ -26,8 +27,8 @@ const options = {
       </tr>
     </thead>
     <tbody>
-        {planning.map((e)=> (
-            <tr>
+        {planning.map((e, n)=> (
+            <tr id={e.id}>
                 <td>{e.date.toLocaleDateString('fr-fr', options)}</td>
                 <td>{e.FM1}</td>
                 <td>{e.FM2}</td>
@@ -38,3 +39,27 @@ const options = {
     </tbody>
   </table>
 </BaseLayout>
+
+<style>
+  .gras {
+    @apply font-bold;
+  }
+</style>
+
+<script define:vars={{ lesDates }}>
+  const now = (new Date()).getTime()
+  for(let i=0; i<lesDates.length; i++) {
+    console.log(now, lesDates[i].date)
+    if (i>0) {
+      if(now>lesDates[i-1].date && now<lesDates[i].date) {
+        var element = document.getElementById(lesDates[i].date);
+        element.classList.add("gras");
+      }
+    } else {
+      if(now<lesDates[0].date) {
+        var element = document.getElementById(lesDates[0].date);
+        element.classList.add("gras");
+      }
+    }
+  }
+</script>
