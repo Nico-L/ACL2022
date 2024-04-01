@@ -32,14 +32,14 @@
             const verifUuid = extracted[1]
             const filter_active_url = "filter__field_5959__boolean=true"
             const filter_uuid_url = "filter__field_6762__equal=" + verifUuid
-            const verif = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["667/?user_field_names=true","filter_type=AND", filter_active_url, filter_uuid_url])})).data
+            const verif = (await functionsCall("baserowAPIOld", {type: "get", finURL:JSON.stringify(["667/?user_field_names=true","filter_type=AND", filter_active_url, filter_uuid_url])})).data
             if (verif.count === 0) {
                 window.location.replace("../")
             }
             etatInconnu = false
             recupDataAdherents = true
             const filter_nonRegle = "filter__field_6050__boolean=false"
-            lesAdherentsFull = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["652/?user_field_names=true", filter_nonRegle])})).data.results
+            lesAdherentsFull = (await functionsCall("baserowAPIOld", {type: "get", finURL:JSON.stringify(["652/?user_field_names=true", filter_nonRegle])})).data.results
             console.log('les adherents', lesAdherentsFull)
             lesAdherents = returnUniques(lesAdherentsFull, 'uuid').map(function (elem) { return {uuid: elem.uuid, email: elem["email referent"]}})
             console.log('lesAd', lesAdherents)
@@ -61,7 +61,7 @@
             let teteFamille = familleAdherent.filter((e) => e["tarif adhesion"] !== null)[0]
             let email = teteFamille["email referent"]
             const filter_uuid = "filter__field_6899__equal=" + adherent.uuid
-            let adhesions = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["653/?user_field_names=true", filter_uuid])})).data.results
+            let adhesions = (await functionsCall("baserowAPIOld", {type: "get", finURL:JSON.stringify(["653/?user_field_names=true", filter_uuid])})).data.results
             let coutTotal = parseFloat(teteFamille["tarif adhesion"])
             var dataEmail = {
                 adhesion: {titre: "Adhésion " + teteFamille["type adhesion"], tarif: parseFloat(teteFamille["tarif adhesion"]).toFixed(0)+" €"},

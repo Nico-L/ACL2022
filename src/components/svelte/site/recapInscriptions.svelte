@@ -76,7 +76,7 @@
         flagRecup = false
         const filter_url = "filter__field_5764__equal=" + uuid
         console.log('begin recup', uuid)
-        const recupAdherents = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["652/?user_field_names=true",filter_url])})).data.results
+        const recupAdherents = (await functionsCall("baserowAPIOld", {type: "get", finURL:JSON.stringify(["652/?user_field_names=true",filter_url])})).data.results
         if (recupAdherents.length > 0) 
         {
             hasFound = true
@@ -94,7 +94,7 @@
             let factureAdherent = adherent.fichiers_factures.length > 0 ? adherent.fichiers_factures[0].url : ""
             let adherentTemp={prenom: adherent.prenom, inscriptions: [], facture: factureAdherent}
             for(let inscription of adherent.inscriptions) {
-                const recupInscription = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["653/"+inscription.id+"/?user_field_names=true"])})).data
+                const recupInscription = (await functionsCall("baserowAPIOld", {type: "get", finURL:JSON.stringify(["653/"+inscription.id+"/?user_field_names=true"])})).data
                 coutTotal += parseFloat(recupInscription.tarif)
                 adherentTemp.inscriptions.push({tarif: parseFloat(recupInscription.tarif), section:recupInscription.section[0].value})
             }
@@ -111,7 +111,7 @@
         savingReglement = true
         for(let id of ids) {
             let url = "652/"+id+"/?user_field_names=true"
-            await functionsCall("baserowAPI", {type: "PATCH", finURL:JSON.stringify([url]), body: JSON.stringify({"réglé": true})})
+            await functionsCall("baserowAPIOld", {type: "PATCH", finURL:JSON.stringify([url]), body: JSON.stringify({"réglé": true})})
         }
         loadAdherent(dataRecherche)
     } */
@@ -126,7 +126,7 @@
         }
         for(let id of ids) {
             let url = "652/"+id+"/?user_field_names=true"
-            await functionsCall("baserowAPI", {type: "PATCH", finURL:JSON.stringify([url]), body: JSON.stringify({"notes_ACL": data.note})})
+            await functionsCall("baserowAPIOld", {type: "PATCH", finURL:JSON.stringify([url]), body: JSON.stringify({"notes_ACL": data.note})})
         }
         loadAdherent(dataRecherche)
     } */

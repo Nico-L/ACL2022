@@ -58,7 +58,7 @@
             const verifUuid = extracted[1]
             const filter_active_url = "filter__field_5959__boolean=true"
             const filter_uuid_url = "filter__field_6762__equal=" + verifUuid
-            const verif = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["667/?user_field_names=true","filter_type=AND", filter_active_url, filter_uuid_url])})).data
+            const verif = (await functionsCall("baserowAPIOld", {type: "get", finURL:JSON.stringify(["667/?user_field_names=true","filter_type=AND", filter_active_url, filter_uuid_url])})).data
             if (verif.count === 0) {
                 window.location.replace("../")
             }
@@ -66,9 +66,9 @@
             recupDataProfs=true
             const include = "include=nom,prenom,volume horaire total annuel,salaire annuel net,mensualisation,photo"
             const order = "order_by=prenom"
-            lesProfs = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["650/?user_field_names=true", include, order])})).data.results
+            lesProfs = (await functionsCall("baserowAPIOld", {type: "get", finURL:JSON.stringify(["650/?user_field_names=true", include, order])})).data.results
             console.log('lesprof', lesProfs)
-            bilansMensuels = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["757/?user_field_names=true"])})).data.results
+            bilansMensuels = (await functionsCall("baserowAPIOld", {type: "get", finURL:JSON.stringify(["757/?user_field_names=true"])})).data.results
             recupDataProfs = false
         } else {
             window.location.replace("../")
@@ -99,7 +99,7 @@
                     {mois: "juillet", "heures payées par mois": hpm, prof: [leProf.id]},
                     {mois: "août", "heures payées par mois": hpm, prof: [leProf.id]}
                 ]
-                leBilan = (await functionsCall("baserowAPI", {type: "POST", finURL:JSON.stringify(["757/batch/?user_field_names=true"]), body: JSON.stringify({items: leBilan})})).data.items
+                leBilan = (await functionsCall("baserowAPIOld", {type: "POST", finURL:JSON.stringify(["757/batch/?user_field_names=true"]), body: JSON.stringify({items: leBilan})})).data.items
             }
             const moisPayes = leBilan.filter((item) => parseFloat(item["heures déjà payées"])!==0)
             console.log('moisPayés', moisPayes)
@@ -115,7 +115,7 @@
         data["heures déjà payées"] = nMois > 0 ? parseFloat(leBilan[nMois-1]["heures déjà payées"])+parseFloat(leBilan[nMois-1]["heures payées par mois"]):leBilan[0]["heures payées par mois"]
         console.log('data', data)
         const url = "757/" + leBilan[nMois].id + "/?user_field_names=true"
-        const retour = await functionsCall("baserowAPI", {type: "PATCH", finURL:JSON.stringify([url]), body: JSON.stringify(data)})
+        const retour = await functionsCall("baserowAPIOld", {type: "PATCH", finURL:JSON.stringify([url]), body: JSON.stringify(data)})
         console.log('retour', retour)
         savingBilans = false
         savedBilans = true
@@ -191,7 +191,7 @@
                         {#if leProf.photo.length > 0}
                             <img src={leProf.photo[0].url} width={140} height={150} format="png" alt={leProf.nom + " " + leProf.prenom} class={"mx-auto rounded-md border border-2 "+lesCouleurs[0].border}/>
                         {:else}
-                            <img src='./../img/fondProf.png' width={140} height={150} format="png" alt="image de remplacement" class={"mx-auto rounded-md border border-2 "+lesCouleurs[0].border}/>
+                            <img src='./../img/fondProf.png' width={140} height={150} format="png" alt="fond de substitution" class={"mx-auto rounded-md border border-2 "+lesCouleurs[0].border}/>
                         {/if}
                     <ul class="ml-2">
                         <li><b class={lesCouleurs[0].textSombre}>volume horaire annuel : </b>{leProf["volume horaire total annuel"]}&nbsp;h</li>
