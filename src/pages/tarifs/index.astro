@@ -6,7 +6,7 @@ const apiUrl = ghostUrl + "/ghost/api/content/pages/646341e21e35e30001f58ad5/?ke
 var data = await fetch(apiUrl)
 var page = (await data.json()).pages[0]
 // récup tarifs adhésions
-data = await fetch(import.meta.env.BASEROW_URL + "rows/table/655/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/655/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 const adhesionsTarifs = (await data.json()).results
 var tarifs = {}
 tarifs["adhIndSap"] = adhesionsTarifs.filter((item) => item.isSappey && !item.isFamiliale)[0].valeur
@@ -14,18 +14,18 @@ tarifs["adhFamSap"] = adhesionsTarifs.filter((item) => item.isSappey && item.isF
 tarifs["adhIndExt"] = adhesionsTarifs.filter((item) => !item.isSappey && !item.isFamiliale)[0].valeur
 tarifs["adhFamExt"] = adhesionsTarifs.filter((item) => !item.isSappey && item.isFamiliale)[0].valeur
 // récup tarifs instrument
-data = await fetch(import.meta.env.BASEROW_URL + "rows/table/654/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/654/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 const tarifsInstTemp = await data.json()
 const tarifsInst = tarifsInstTemp.results.map((tarif) => {return {duree: tarif.duree_seance, tarif: tarif.tarif_acl, type: tarif.type}})
 for(let t of tarifsInst) {
     tarifs[t.type] = parseInt(t.tarif)
 }
 // récupe tarif fm
-data = await fetch(import.meta.env.BASEROW_URL + "rows/table/651/?user_field_names=true&filter__field_5761__single_select_equal=3131", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/651/?user_field_names=true&filter__field_5761__single_select_equal=3131", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 const fm = (await data.json()).results[0]
 tarifs["tarifFm"] = parseInt(fm.tarif)
 //recup tarif ateliers
-data = await fetch(import.meta.env.BASEROW_URL + "rows/table/651/?user_field_names=true&filter__field_5761__single_select_equal=3130&order_by=titre", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/651/?user_field_names=true&filter__field_5761__single_select_equal=3130&order_by=titre", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 const ateliers = (await data.json()).results
 var rows = ""
 for(let atelier of ateliers) {
@@ -54,10 +54,10 @@ for( let key in tarifs ) {
 
 html = html.replace("<p>{listeAteliers}</p>", tableAteliers).replaceAll(ghostUrl, "")
 
-data = await fetch(import.meta.env.BASEROW_URL + "rows/table/667/?user_field_names=true&filter__field_5959__not_empty", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
-const saison = (await data.json()).results.pop().titre.toString()
-
-data = await fetch(import.meta.env.BASEROW_URL + "rows/table/651/?user_field_names=true&filter__field_5761__single_select_equal=3129&order_by=titre", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/667/?user_field_names=true&filter__field_5959__not_empty", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
+const saison = (await data.json())//.results.pop().titre.toString()
+console.log(saison)
+data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/651/?user_field_names=true&filter__field_5761__single_select_equal=3129&order_by=titre", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 const instruments = (await data.json()).results.map((item) => item.titre).join(", ")
 
 html = html.replace("{listeInstruments}", "<b class='text-vert-500'>"+instruments+"</b>")

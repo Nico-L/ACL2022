@@ -2,23 +2,23 @@
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import Inscriptions from '../../components/svelte/site/inscriptions.svelte'
 
-var data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/651/?user_field_names=true&order_by=titre", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+var data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/651/?user_field_names=true&order_by=titre", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 const sectionsTemp = await data.json()
 const sections = sectionsTemp.results
-data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/650/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/650/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 const professeursTemp = await data.json()
 
 const professeurs = professeursTemp.results.map(prof => {return {id: prof.id, prenom: prof.prenom, nom: prof.nom, acl_sections: prof.sections, creneau: prof.creneau}})
-data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/654/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/654/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 const lesTarifsTemp = await data.json()
 const lesTarifs = lesTarifsTemp.results.map((tarif) => {return {duree: tarif.duree_seance, tarif: tarif.tarif_acl, type: tarif.type}})
-data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/655/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/655/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 const adhesionsTarifsTemp = await data.json()
 const adhesionsTarifs = adhesionsTarifsTemp.results.map((item) => {return {id: item.id, type: item.type, valeur: item.valeur, isSappey: item.isSappey, isFamiliale: item.isFamiliale}})
-data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/667/?user_field_names=true&filter__field_5959__not_empty", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/667/?user_field_names=true&filter__field_5959__not_empty", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 const saisonTemp = (await data.json()).results.pop()
 const saison = saisonTemp.titre
-data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/672/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/672/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 const sectionProfTemp = (await data.json()).results
 const sectionProf = sectionProfTemp.map((sp) => {return {id: sp.id, profId: sp.professeur[0].id, sectionId: sp.section[0].id}})
 ---
