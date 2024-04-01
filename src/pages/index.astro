@@ -2,7 +2,7 @@
 // src/pages/index.astro
 import BaseLayout from '../layouts/BaseLayout.astro'
 
-const data = await fetch(import.meta.env.BASEROW_URL + "rows/table/667/?user_field_names=true&filter__field_5959__not_empty", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+const data = await fetch(import.meta.env.BASEROW_URL + "rows/table/276321/?user_field_names=true&filter__field_1972513__not_empty", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const saison = (await data.json()).results.pop().titre.toString()
 ---
 <BaseLayout title="Accueil">

@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 const token = process.env.TOKEN_BASEROW_INSCRIPTIONS
-const baserowURL = "https://baserow.luchier.fr/api/database/rows/table/"
+const baserowURL = "https://api.baserow.io/api/database/rows/table/"
 
 const handler = async function (event) {
   const type = event.queryStringParameters.type || "get"

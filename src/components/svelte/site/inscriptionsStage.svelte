@@ -196,7 +196,7 @@
                     "prix total": coutTotal
             })
             }
-            await functionsCall("baserowAPI", {type: "POST", finURL:"665/batch/?user_field_names=true", body: JSON.stringify({items: dataInscriptions})})
+            await functionsCall("baserowAPI", {type: "POST", finURL:"276311/batch/?user_field_names=true", body: JSON.stringify({items: dataInscriptions})})
             messageSaving = "Envoi email"
             var dataEmail = {
                 adhesion: inscription.adhesion === "Déjà adhérent"?null:{titre: "Adhésion " + inscription.adhesion, tarif: findTarif(inscription.adhesion) +" €"},
