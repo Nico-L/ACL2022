@@ -196,7 +196,7 @@
                     "prix total": coutTotal
             })
             }
-            await functionsCall("baserowAPI", {type: "POST", finURL:"276311/batch/?user_field_names=true", body: JSON.stringify({items: dataInscriptions})})
+            await functionsCall("baserowAPI", {type: "POST", finURL:JSON.stringify(["276311/batch/?user_field_names=true"]), body: JSON.stringify({items: dataInscriptions})})
             messageSaving = "Envoi email"
             var dataEmail = {
                 adhesion: inscription.adhesion === "Déjà adhérent"?null:{titre: "Adhésion " + inscription.adhesion, tarif: findTarif(inscription.adhesion) +" €"},
@@ -578,6 +578,8 @@
                                 <div class="flex justify-center items-center px-3">
                                     {#if busySaving}
                                         <Spinner couleur={lesCouleurs[nRecap % 3].sombre} caption={true}>{messageSaving}</Spinner>
+                                    {:else if saveOK}
+                                        <div>OK</div>
                                     {:else}
                                         <div>Enregistrer votre inscription</div>
                                     {/if}
