@@ -1,10 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
-var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/652/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+var data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/652/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 const nbAdherentsTemp = await data.json()
 const nbAdherents = nbAdherentsTemp.count
-data = await fetch(import.meta.env.BASEROW_URL + "rows/table/672/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/672/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 const inscriptionsTemp = await data.json()
 const inscriptions = inscriptionsTemp.results
 let labels = ['instrument', 'atelier', 'FM']
