@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
-var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/791/?user_field_names=true&order_by=date", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+var data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/791/?user_field_names=true&order_by=date", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
 
 const planning = (await data.json()).results.map((e) => {return {id: (new Date(e.date)).getTime(),date: new Date(e.date), FM1:e.FM1, FM2: e.FM2, FM3: e.FM3, FM45: e["FM4-5"]}})
 var lesDates =  []
