@@ -30,6 +30,7 @@
         adresse: "",
         adhesion: "Déjà adhérent", 
         inscrits: [], 
+        souhaits:"",
         verif: {
             referent: false, 
             emailReferent: false, 
@@ -50,6 +51,7 @@
         autorisationDroitImage: false, 
         autorisationMedecin: false, 
         contactUrgence: {nom: "", telephone:""},
+        souhaits: "",
         verif: {
             nom: false, 
             prenom: false, 
@@ -193,7 +195,8 @@
                     "instrument": inscrit.instrument,
                     "duree pratique": inscrit.dureePratique,
                     "musique chambre": inscrit.musiqueChambre,
-                    "prix total": coutTotal
+                    "prix total": coutTotal,
+                    "souhaits": inscrit.souhaits
             })
             }
             await functionsCall("baserowAPI", {type: "POST", finURL:JSON.stringify(["276311/batch/?user_field_names=true"]), body: JSON.stringify({items: dataInscriptions})})
@@ -491,6 +494,14 @@
                                     cbClass={lesCouleurs[index % 3].cb}
                                     checked={inscrit.musiqueChambre}
                                     on:checkChange={()=>inscrit.musiqueChambre = !inscrit.musiqueChambre}
+                                    />
+                            </div>
+                            <div class="flex w-full items-top">
+                                <div class="mr-2">Des souhaits particuliers ?</div>
+                                <Editable 
+                                    classes="text-left bg-fondContenu border border-gray-900 rounded max-w-72 h-20 overflow-hidden p-1"
+                                    bind:leHTML={inscription.souhaits}
+                                    enterUse = {false}
                                     />
                             </div>
                         </div>
