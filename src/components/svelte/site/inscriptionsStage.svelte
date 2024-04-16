@@ -403,7 +403,7 @@
                         </svg>
                     </div>
                 </header>
-                <div class="mt-1">
+                <div class="mt-1 pb-4">
                     <div class="flex flex-row flex-wrap gap-1 justify-around">
                         <div class="max-w-460px">
                             <div class="mb-2">
@@ -496,11 +496,12 @@
                                     on:checkChange={()=>inscrit.musiqueChambre = !inscrit.musiqueChambre}
                                     />
                             </div>
-                            <div class="flex w-full items-top">
-                                <div class="mr-2">Des souhaits particuliers ?</div>
+                            <div class="mb-2">
+                                <div class={lesCouleurs[index % 3].textSombre + " font-semibold"}>Des souhaits particuliers ?</div>
+                                <p class="text-sm">Un style particulier peut-être ? Ou des copains avec qui jouer ?</p>
                                 <Editable 
-                                    classes="text-left bg-fondContenu border border-gray-900 rounded max-w-72 h-20 overflow-hidden p-1"
-                                    bind:leHTML={inscription.souhaits}
+                                    classes="text-left bg-fondContenu border border-gray-900 rounded max-w-80 h-20 overflow-hidden p-1"
+                                    bind:leHTML={inscrit.souhaits}
                                     enterUse = {false}
                                     />
                             </div>
