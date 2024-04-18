@@ -192,13 +192,14 @@
                     "annee naissance": inscrit.anneeNaissance,
                     "telephone": inscrit.telephone,
                     "email": inscrit.email,
-                    "instrument": inscrit.instrument,
+                    "instrument": inscrit.instrument.replace("&", " et "),
                     "duree pratique": inscrit.dureePratique,
                     "musique chambre": inscrit.musiqueChambre,
                     "prix total": coutTotal,
-                    "souhaits": inscrit.souhaits
+                    "souhaits": inscrit.souhaits.replace("&", " et ")
             })
             }
+            console.log("instrum", dataInscriptions)
             await functionsCall("baserowAPI", {type: "POST", finURL:JSON.stringify(["276311/batch/?user_field_names=true"]), body: JSON.stringify({items: dataInscriptions})})
             messageSaving = "Envoi email"
             var dataEmail = {
@@ -206,7 +207,7 @@
                 inscrits: inscription.inscrits.map((item) => {
                     return {
                         prenom: item.prenom, 
-                        instrument: item.instrument,
+                        instrument: item.instrument.replace("&", " et "),
                         dureePratique: item.dureePratique + " ans",
                         musiqueChambre: item.musiqueChambre,
                         chant: item.chant
