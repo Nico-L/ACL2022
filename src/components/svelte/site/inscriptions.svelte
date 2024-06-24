@@ -449,7 +449,6 @@
                     const retourInscriptions = (await functionsCall("baserowAPI", {type: "PATCH", finURL:JSON.stringify(["312281/batch/?user_field_names=true"]), body: JSON.stringify({items: patchs})}))//.data
                     sectionsIds = [...sectionsIds, ...retourInscriptions.data.items.map((item) => item.id)]
                 }
-
                 var adherent = {
                     "uuid": inscription.uuid,
                     "email referent": inscription.emailReferent,
@@ -458,7 +457,7 @@
                     "commune": inscription.commune,
                     "qf": inscription.QF,
                     "type adhesion": adhesion.type,
-                    "tarif adhesion": parseFloat(adhesion.valeur).toFixed(2),
+                    "tarif adhesion": adhesion.valeur,
                     "notes_ACL": "",
                     "prenom": inscrit.prenom,
                     "nom": inscrit.nom === ""?inscription.referent:inscrit.nom,
