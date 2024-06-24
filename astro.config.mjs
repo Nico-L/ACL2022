@@ -1,11 +1,6 @@
 import svelte from '@astrojs/svelte';
 import tailwind from '@astrojs/tailwind';
 import { defineConfig } from "astro/config";
-import keystatic from '@keystatic/astro'
-//import image from "@astrojs/image";
-
-//import react from "@astrojs/react";
-//import markdoc from "@astrojs/markdoc";
 
 // https://astro.build/config
 export default defineConfig( /** @type {import('astro').AstroUserConfig} */{
