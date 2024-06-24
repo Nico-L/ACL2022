@@ -458,6 +458,7 @@
                     "commune": inscription.commune,
                     "qf": inscription.QF,
                     "type adhesion": adhesion.type,
+                    "tarif adhesion": parseFloat(adhesion.valeur).toFixed(2),
                     "notes_ACL": "",
                     "prenom": inscrit.prenom,
                     "nom": inscrit.nom === ""?inscription.referent:inscrit.nom,
@@ -481,7 +482,6 @@
                     finURL = JSON.stringify([finURLTemp])
                     typeSave = "PATCH"
                 }
-                console.log("adherent", adherent)
                 const retourAdherent = (await functionsCall("baserowAPI", {type: typeSave, finURL: finURL, body: JSON.stringify(adherent)})).data
                 const adherentId = retourAdherent.id
                 let fichiersFactures = []
