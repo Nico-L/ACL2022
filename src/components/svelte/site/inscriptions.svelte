@@ -67,6 +67,7 @@
 
 
     var flagTotalPrix = false
+    var leCout = 0
 
     var flagAccepteSave = false
 
@@ -217,35 +218,55 @@
 
     function PrepareInscriptions () {
         const inscritsPrenoms = lesInscriptions.map(inscrit => inscrit.prenom)
-        if (prenomsInscription.split(",").length > 0)
+        let lesPrenoms = prenomsInscription.split(",")
+        if (lesPrenoms.length > 0)
         {
-            let lesPrenoms = prenomsInscription.split(",")
             lesPrenoms = lesPrenoms.map((prenom) => prenom.trim())
             lesPrenoms = lesPrenoms.filter((prenom) => {return prenom && prenom !== ""})
-            if (lesPrenoms.length > inscritsPrenoms.length) {
-                lesInscriptions.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
-                var temp = JSON.parse(JSON.stringify(uneInscription))
-                temp.prenom = lesPrenoms.slice(-1)[0]
-                temp.verif.prenom = true
-                temp.email1 = inscription.emailReferent
-                temp.verif.email = inscription.verif.emailReferent,
-                temp.telephone1 = lesInscriptions.length>0?lesInscriptions[0].telephone1:"",
-                temp.verif.telephone = lesInscriptions.length>0?lesInscriptions[0].telephone1:false,
-                temp.nom = inscription.referent
-                temp.tarifs = {FM: null, instruments: [], ateliers: []}
-                lesInscriptions.push(temp)
-                isOpen.push(isOpen.length === 0)
-            } else if (lesPrenoms.length === inscritsPrenoms.length) {
-                lesInscriptions.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
-            } else {
-                lesInscriptions.slice(lesPrenoms.length-lesInscriptions.length).forEach((item) => {
-                    if (item.hasOwnProperty('nrow')) {
-                        adherentAEffacer.push(item.nrow)
-                    }
+            if (inscritsPrenoms.length == 0) {
+                lesPrenoms.forEach((prenom) => {
+                    var temp = JSON.parse(JSON.stringify(uneInscription))
+                    temp.prenom = prenom
+                    temp.verif.prenom = true
+                    temp.email1 = inscription.emailReferent
+                    temp.verif.email = inscription.verif.emailReferent,
+                    temp.telephone1 = lesInscriptions.length>0?lesInscriptions[0].telephone1:"",
+                    temp.verif.telephone = lesInscriptions.length>0?lesInscriptions[0].telephone1:false,
+                    temp.nom = inscription.referent
+                    temp.tarifs = {FM: null, instruments: [], ateliers: []}
+                    lesInscriptions.push(temp)
+                    isOpen.push(isOpen.length === 0)
                 })
-                lesInscriptions = JSON.parse(JSON.stringify(lesInscriptions.slice(0,lesPrenoms.length)))
-                lesInscriptions.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
-            }
+            } else {
+                if (lesPrenoms.length === inscritsPrenoms.length) {
+                    lesInscriptions.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
+                    //lesPrenoms.forEach((prenom, index) => lesInscriptions[index].prenom = prenom)
+                }
+                if (lesPrenoms.length > inscritsPrenoms.length) {
+                    lesInscriptions.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
+                    var temp = JSON.parse(JSON.stringify(uneInscription))
+                    temp.prenom = lesPrenoms.slice(-1)[0]
+                    temp.verif.prenom = true
+                    temp.email1 = inscription.emailReferent
+                    temp.verif.email = inscription.verif.emailReferent,
+                    temp.telephone1 = lesInscriptions.length>0?lesInscriptions[0].telephone1:"",
+                    temp.verif.telephone = lesInscriptions.length>0?lesInscriptions[0].telephone1:false,
+                    temp.nom = inscription.referent
+                    temp.tarifs = {FM: null, instruments: [], ateliers: []}
+                    lesInscriptions.push(temp)
+                    isOpen.push(isOpen.length === 0)
+                }
+                if (lesPrenoms.length < inscritsPrenoms.length) {
+                    lesInscriptions.slice(lesPrenoms.length-lesInscriptions.length).forEach((item) => {
+                    if (item.hasOwnProperty('id')) {
+                        adherentAEffacer.push(item.id)
+                    }
+                    lesInscriptions = JSON.parse(JSON.stringify(lesInscriptions.slice(0,lesPrenoms.length)))
+                    lesInscriptions.forEach((inscrit, index) => inscrit.prenom = lesPrenoms[index])
+                })
+                }
+            }    
+            
             lesInscriptions = lesInscriptions 
             isOpen = isOpen  
         } else {
@@ -338,24 +359,22 @@
     function totalPrixInscrit(inscrit) {
         var total = 0
         if (inscrit.FM && inscrit.FM.tarif !== null) {
-            total = parseFloat(total) + inscrit.FM.tarif
+            total = parseFloat(total) + parseFloat(inscrit.FM.tarif)
         }
         inscrit.instruments.forEach((instrument) => {
             if (instrument.tarif) total = parseFloat(total) + parseFloat(instrument.tarif)
         })
         inscrit.ateliers.forEach((atelier) => {
-            
             if (atelier.tarif) {
                 total = parseFloat(total) + parseFloat(atelier.tarif)
             }
         })
-
         return total
     }
 
     function totalPrix() {
         var total = 0
-        lesInscriptions.forEach((inscrit) => {
+        lesInscriptions.forEach((inscrit, index) => {
             total += (totalPrixInscrit(inscrit))
         })
         return total
@@ -666,6 +685,11 @@
     $: {
         lesInscriptions = lesInscriptions
         flagTotalPrix = totalPrix() > 0
+    }
+
+    $: {
+        lesInscriptions = lesInscriptions
+        leCout = totalPrix()*inscription.facteurQF
     }
 
 </script>
@@ -1151,7 +1175,8 @@
                     {#if flagTotalPrix}
                         <div class={"font-medium text-lg mt-5 w-full flex flex-nowrap justify-between border-t-2 " + lesCouleurs[nRecap % 3].border}>
                             <div class="ligne overflow-hidden px-1 whitespace-nowrap">Coût total </div>
-                            <div class="grow-0 px-1 whitespace-nowrap">{(parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.valeur)).toFixed(2)} €</div>
+                            <div class="grow-0 px-1 whitespace-nowrap">{(parseFloat(leCout) + parseFloat(adhesion.valeur)).toFixed(2)}</div>
+                            <!-- <div class="grow-0 px-1 whitespace-nowrap">{(parseFloat(totalPrix()*inscription.facteurQF) + parseFloat(adhesion.valeur)).toFixed(2)} €</div>-->
                         </div>
                         <div class="flex gap-2 text-lg mt-2">
                             <div class="font-medium">Réglement</div>              
