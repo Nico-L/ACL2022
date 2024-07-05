@@ -20,7 +20,7 @@
     export let saison = ""
     export let sectionProf = []
 
-console.log('les sections', sections)
+//console.log('les sections', sections)
 //console.log('les tarifs', lesTarifs.filter(item => item.type.includes("instrument") && !item.type.includes("instrument-15mn")).map((item) => {return {duree: item.duree, tarif: item.tarif}}))
 //console.log('les profs', professeurs)
 // console.log('adhesion', adhesionsTarifs)
