@@ -3,7 +3,7 @@
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
-var data = await fetch(import.meta.env.BASEROW_URL_OLD + "rows/table/650/?user_field_names=true&order_by=nom", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE_OLD}})
+var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/650/?user_field_names=true&order_by=nom", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const lesProfs = (await data.json()).results.map((item) => {return {nom: item.nom, prenom: item.prenom, photo: item.photo, sections: item.sections}})
 
 lesProfs.forEach((prof) => {
