@@ -5,7 +5,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 
 var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/312262/?user_field_names=true&order_by=nom", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const lesProfs = (await data.json()).results.map((item) => {return {nom: item.nom, prenom: item.prenom, photo: item.photo, sections: item.sections}})
-console.log('lesprofs', lesProfs)
+
 lesProfs.forEach((prof) => {
     var flagFM = false
     var sectionCondensee = []
@@ -29,18 +29,18 @@ lesProfs.forEach((prof) => {
         {lesProfs.map((prof) => (
         <article class="carte">
             {prof.photo.length > 0 ?
-                <Image src={prof.photo[0].url} width={174} height={187} format="png" alt={prof.nom + " " + prof.prenom} />
+                <Image src={prof.photo[0].url} width="174" inferSize={true} format="png" alt={prof.nom + " " + prof.prenom} class="object-cover h-187px min-w-174px max-w-174px" />
                 :
-                <Image src={import('./fondProf.png')} width={174} height={187} format="png" alt="image de remplacement" />
+                <Image src={import('./fondProf.png')} width="174" inferSize={true} format="png" alt="image de remplacement" class="object-cover h-187px min-w-174px max-w-174px" />
             }
             <div class="bandeau">
                 {prof.nom === "TBD" ?
                     <h2>recrutement en cours</h2>
                     :
                     <h2>{prof.prenom} {prof.nom}</h2>}
-                    <div class="px-px">
-                        {prof.sections.map((section) => {return section}).join(", ")}
-                    </div>
+                <div class="px-px">
+                    {prof.sections.map((section) => {return section}).join(", ")}
+                </div>
             </div>
         </article>
             ))}
@@ -62,7 +62,11 @@ lesProfs.forEach((prof) => {
     }
 
     .carte .bandeau {
-        @apply text-gray-200 h-16 rounded-b;
+        @apply text-gray-200 h-24 rounded-b;
+    }
+
+    .carte .bandeau div {
+        @apply my-auto;
     }
 
     .carte:nth-child(4n + 1) .bandeau {
