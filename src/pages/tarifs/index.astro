@@ -68,7 +68,7 @@ const instruments = (await data.json()).results.map((item) => item.titre).join("
 html = html.replace("{listeInstruments}", "<b class='text-vert-500'>"+instruments+"</b>")
 html = html.replace("{saison}", saison)
 ---
-<BaseLayout title={page.title.replace("{saison}", saison)}>>
+<BaseLayout title={page.title.replace("{saison}", saison)}>
     <Fragment set:html={html} />
     <div class="flex justify-center">
         <a href="/inscriptions" class="buttonLink">
