@@ -1,3 +1,4 @@
+import { log } from 'handlebars';
 import fetch from 'node-fetch';
 const token = process.env.TOKEN_BASEROW_INSCRIPTIONS
 const baserowURL = "https://api.baserow.io/api/database/rows/table/"
@@ -27,7 +28,7 @@ const handler = async function (event) {
     }
   } catch (error) {
     // output to netlify function log
-    console.log(error)
+    console.log("erreur", error)
     return {
       statusCode: 500,
       // Could be a custom message or object i.e. JSON.stringify(err)

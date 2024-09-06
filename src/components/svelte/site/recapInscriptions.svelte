@@ -49,7 +49,6 @@
         {
             etatInconnu = true
             const verifUuid = extracted[1]
-            console.log('verif uuid', verifUuid)
             loadAdherent(verifUuid)
         } else {
             hasFound = false
@@ -76,7 +75,6 @@
         coutTotal = 0
         flagRecup = false
         const filter_url = "filter__field_2258827__equal=" + uuid
-        console.log('begin recup', uuid)
         const recupAdherents = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["312277/?user_field_names=true",filter_url])})).data.results
         if (recupAdherents.length > 0) 
         {
