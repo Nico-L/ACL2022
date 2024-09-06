@@ -3,13 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import { marked } from 'marked';
 import * as ossature from './tarifsOssature.md'
 
-const ghostUrl = "https://ghost.luchier.fr"
-const apiUrl = ghostUrl + "/ghost/api/content/pages/646341e21e35e30001f58ad5/?key=" + import.meta.env.GHOST_CONTENT
-var data = await fetch(apiUrl)
-var page = (await data.json()).pages[0]
-
 // récup tarifs adhésions
-data = await fetch(import.meta.env.BASEROW_URL + "rows/table/276323/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
+var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/276323/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const adhesionsTarifs = (await data.json()).results
 var tarifs = {}
 tarifs["adhIndSap"] = adhesionsTarifs.filter((item) => item.isSappey && !item.isFamiliale)[0].valeur
@@ -57,7 +52,7 @@ for( let key in tarifs ) {
   html = html.replaceAll("{"+key+"}", tarifs[key])
 }
 
-html = html.replace("<p>{listeAteliers}</p>", tableAteliers).replaceAll(ghostUrl, "")
+html = html.replace("<p>{listeAteliers}</p>", tableAteliers)
 
 data = await fetch(import.meta.env.BASEROW_URL + "rows/table/276321/?user_field_names=true&filter__field_1972513__not_empty", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const saison = (await data.json()).results.pop().titre.toString()
@@ -67,8 +62,10 @@ const instruments = (await data.json()).results.map((item) => item.titre).join("
 
 html = html.replace("{listeInstruments}", "<b class='text-vert-500'>"+instruments+"</b>")
 html = html.replace("{saison}", saison)
+
+var titre = "Cours et tarifs " + saison
 ---
-<BaseLayout title={page.title.replace("{saison}", saison)}>
+<BaseLayout title={titre}>
     <Fragment set:html={html} />
     <div class="flex justify-center">
         <a href="/inscriptions" class="buttonLink">
