@@ -1,6 +1,6 @@
 ﻿
 # Cours et tarifs année {saison}
-Voici les cours et ateliers proposés par notre association cette année. **Les tarifs pour la saison {saison} sont également indiqués, sous réserve de leur validation par l'assemblée générale de l'association.**
+Voici les cours et ateliers proposés par notre association cette année. **Les tarifs {saison} sont également indiqués, sous réserve de leur validation par l'assemblée générale de l'association.**
 ## Adhésions
 Les tarifs d'adhésion sont les suivants :
 | adhésion (€) | Sappey | Extérieur |

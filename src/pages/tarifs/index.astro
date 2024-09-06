@@ -61,7 +61,7 @@ data = await fetch(import.meta.env.BASEROW_URL + "rows/table/312263/?user_field_
 const instruments = (await data.json()).results.map((item) => item.titre).join(", ")
 
 html = html.replace("{listeInstruments}", "<b class='text-vert-500'>"+instruments+"</b>")
-html = html.replace("{saison}", saison)
+html = html.replaceAll("{saison}", saison)
 
 var titre = "Cours et tarifs " + saison
 ---
