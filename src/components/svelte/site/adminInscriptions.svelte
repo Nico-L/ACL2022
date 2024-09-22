@@ -121,7 +121,7 @@
         data[key] = value;
         }
         for(let id of ids) {
-            let url = "652/"+id+"/?user_field_names=true"
+            let url = "312277/"+id+"/?user_field_names=true"
             await functionsCall("baserowAPI", {type: "PATCH", finURL:JSON.stringify([url]), body: JSON.stringify({"notes_ACL": data.note})})
         }
         loadAdherent(dataRecherche)
