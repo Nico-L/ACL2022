@@ -7,7 +7,7 @@ const adhesionsTarifsTemp = await data.json()
 const adhesionsTarifs = adhesionsTarifsTemp.results.map((item) => {return {id: item.id, type: item.type, valeur: item.valeur, isSappey: item.isSappey, isFamiliale: item.isFamiliale}})
 ---
 <BaseLayout title="Inscriptions">
-  <h1 class="px-2 text-4xl mb-2">Administration des inscriptions</h1>
+  <h1 class="px-2 text-4xl mb-2">Récapitulatif des inscriptions</h1>
   <RecapInscriptions client:load {adhesionsTarifs}/>
 </BaseLayout>
 
