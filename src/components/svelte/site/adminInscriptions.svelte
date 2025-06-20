@@ -19,6 +19,7 @@
     let nbCheques = 1
     let estRegle = false
     let note=""
+    let sommeCheques = 0
 
     let hasFound = false
 
@@ -30,6 +31,9 @@
 
     let savingNote = false
     let savedNote = false
+
+    let savingSommeCheques = false
+    let savedSommeCheques = false
 
     let etatInconnu = true
 
@@ -86,6 +90,7 @@
             estRegle = adherent["réglé"]
             nbCheques = adherent.reglement
             nomReferent = adherent["nom referent"]
+            sommeCheques = adherent["total cheques recus"]
             ids.push(adherent.id)
             adhesion = adhesionsTarifs.find(item => {return item.type == adherent["type adhesion"]})
             uuid = adherent.uuid
@@ -101,6 +106,7 @@
         recherching = false
         savingReglement = false
         savingNote = false
+        savingSommeCheques = false
     }
 
     async function validationReglement() {
@@ -123,6 +129,21 @@
         for(let id of ids) {
             let url = "312277/"+id+"/?user_field_names=true"
             await functionsCall("baserowAPI", {type: "PATCH", finURL:JSON.stringify([url]), body: JSON.stringify({"notes_ACL": data.note})})
+        }
+        loadAdherent(dataRecherche)
+    }
+
+        async function handleCheques(e) {
+        savingSommeCheques = true
+        const formData = new FormData(e.target);
+        const data = {};
+        for (let field of formData) {
+        const [key, value] = field;
+        data[key] = value;
+        }
+        for(let id of ids) {
+            let url = "312277/"+id+"/?user_field_names=true"
+            await functionsCall("baserowAPI", {type: "PATCH", finURL:JSON.stringify([url]), body: JSON.stringify({"total cheques recus": data.sommeCheques})})
         }
         loadAdherent(dataRecherche)
     }
@@ -253,6 +274,29 @@
                         largeur="w-fit"
                         occupe={savingNote}
                         succes={savedNote}
+                        active = "active:bg-jaune-900 active:text-gray-100"
+                        >
+                            sauver
+                    </Bouton>
+                </form>
+                <form on:submit|preventDefault={handleCheques} class="flex flex-wrap w-full justify-start items-center gap-2">
+                    <div>
+                        <label for="recherche">Somme totale des chèques :</label>
+                        <input
+                            type="text"
+                            id="sommeCheques"
+                            name="sommeCheques"
+                            value={sommeCheques}
+                            class="mx-auto focus:outline-none bg-fondContenu placeholder:text-gray-700"
+                            /> 
+                    </div>            
+                    <Bouton
+                        type="submit"
+                        couleur={lesCouleurs[1].sombre}
+                        hover={lesCouleurs[1].hover}
+                        largeur="w-fit"
+                        occupe={savingSommeCheques}
+                        succes={savedSommeCheques}
                         active = "active:bg-jaune-900 active:text-gray-100"
                         >
                             sauver
