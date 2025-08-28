@@ -4,7 +4,8 @@ import Inscriptions from '../../components/svelte/site/inscriptions.svelte'
 
 var data = await fetch(import.meta.env.BASEROW_URL + "rows/table/312263/?user_field_names=true&order_by=titre", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const sectionsTemp = await data.json()
-const sections = sectionsTemp.results
+#const sections = sectionsTemp.results
+const sections = sectionsTemp.results.filter((sec)=> sec.maintenu==true)
 data = await fetch(import.meta.env.BASEROW_URL + "rows/table/312262/?user_field_names=true", {headers: {Authorization: "Token " + import.meta.env.TOKEN_BASEROW_LECTURE}})
 const professeursTemp = await data.json()
 
