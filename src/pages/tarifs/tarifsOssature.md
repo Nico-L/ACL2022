@@ -12,7 +12,7 @@ D’une durée de 45 mn par semaine + 1 heure de chorale, la formation musicale 
 L'éveil musical est destiné aux enfants de grande section ou de CP.
 |  | durée | jour | tarif (€) |
 |--------------|:----------:|:----------:|:---------:|
-| éveil musical |     1 heure  | mercredi |     {tarifFm}    |
+| éveil musical |     1 heure  | mercredi<br />9h15 |     {tarifFm}    |
 | formation musicale |     45 min <br /> 45 min de chorale |mercredi <br /> mardi   |     {tarifFm}    |
 ## Les cours
 L'association propose des cours d'instrument de {listeInstruments}.
