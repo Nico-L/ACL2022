@@ -83,6 +83,7 @@
         const filter_email_url = "filter__field_2258804__equal=" + data["recherche"]
         const filter_nom_url = "filter__field_2258803__contains=" + data["recherche"]
         const recupAdherents = (await functionsCall("baserowAPI", {type: "get", finURL:JSON.stringify(["312277/?user_field_names=true","filter_type=OR", filter_email_url, filter_nom_url])})).data.results
+        console.log(recupAdherents)
         if (recupAdherents.length > 0) hasFound = true
         for(let adherent of recupAdherents) {
             fQF(adherent.qf)
