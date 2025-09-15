@@ -74,6 +74,7 @@
     }
 
     async function loadAdherent(data) {
+        console.log('bob')
         hasFound = false
         recherching = true
         ids=[]
