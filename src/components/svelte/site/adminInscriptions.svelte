@@ -283,7 +283,7 @@
                     <div>
                         <label for="recherche">Somme totale des chèques :</label>
                         <input
-                            type="text"
+                            type="number"
                             id="sommeCheques"
                             name="sommeCheques"
                             value={sommeCheques}
