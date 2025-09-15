@@ -285,6 +285,7 @@
                         <input
                             type="number"
                             step="any"
+                            min="0"
                             id="sommeCheques"
                             name="sommeCheques"
                             value={sommeCheques}
