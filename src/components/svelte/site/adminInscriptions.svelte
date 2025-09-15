@@ -284,6 +284,7 @@
                         <label for="recherche">Somme totale des chèques :</label>
                         <input
                             type="number"
+                            step="any"
                             id="sommeCheques"
                             name="sommeCheques"
                             value={sommeCheques}
